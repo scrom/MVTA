@@ -234,3 +234,9 @@ test('Attempting to put an object we dont own into a bowl fails gracefully', () 
     console.debug(actualResult);
     expect(expectedResults.includes(actualResult)).toBe(true);
 });
+
+test('test "try" verb', () => {
+    const input = "try to eat food";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});

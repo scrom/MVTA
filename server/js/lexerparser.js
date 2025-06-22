@@ -1,7 +1,4 @@
 "use strict";
-
-const { RootNodesUnavailableError } = require('redis');
-
 //action object - manager user actions and pack/unpack JSON equivalents
 module.exports.LexerParser = function LexerParser() {
     try{

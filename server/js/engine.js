@@ -1,7 +1,8 @@
 // engine.js
 const lpModule = require('./lexerparser.js');
-const actions = require('./actions.js');
+const actionsModule = require('./actions.js');
 lp = new lpModule.LexerParser();
+a = new actionsModule.Actions();
 
 function createEngine(player, map) {
   return function handle(input) {
@@ -10,12 +11,13 @@ function createEngine(player, map) {
     if (parsedObject.error) return parsedObject.error;
 
     const {action} = parsedObject;
-    const handler = actions[action];
+    const handler = a[action];
 
     if (!handler) {
       return `Nothing happens. (No logic for "${action}")`;
     }
 
+    
     return handler(action, player, map, parsedObject);
   };
 }
