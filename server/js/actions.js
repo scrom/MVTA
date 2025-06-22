@@ -2,15 +2,15 @@
 module.exports= {
   /*
   po = parsedObject
-                category: verbs[verb].category,
-                originalVerb: tokens[0],
-                originalInput: input,
-                action: verb,
-                adverb: adverb,
-                subject: objects[0] || null,
-                object: objects[1] || null,
-                preposition: preposition || null,
-                target: rest || null
+        category: verbs[verb].category,
+        originalVerb: tokens[0],
+        originalInput: input,
+        action: verb,
+        adverb: adverb,
+        subject: objects[0] || null,
+        object: objects[1] || null,
+        preposition: preposition || null,
+        target: rest || null
   */
          null: () =>{
           var randomReplies = ["Can you try again?", "It's probably my fault for not listening to you properly.", "Can you try something else?", "I'm sensing that we have a communication problem here.", "Is everything ok?"];

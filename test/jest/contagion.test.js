@@ -137,19 +137,19 @@ describe('Contagion', () => {
         console.debug(p0.get('get', venom.getName()));
         //p0.put("collect", "venom", "into", "mug");
         l0.addObject(mug);
-        console.debug("Get - no container - Remaining Venom: "+venom.chargesRemaining());
+        console.debug("^^ Get - no container - Remaining Venom: "+venom.chargesRemaining());
         console.debug(p0.get("get", "venom"));
-        console.debug("Get - with mug in location - Remaining Venom: "+venom.chargesRemaining());
+        console.debug("^^ Get - with mug in location - Remaining Venom: "+venom.chargesRemaining());
         console.debug(p0.put("pour", "venom", "into", "mug"));
         console.debug("Put/Pour - Remaining Venom: "+venom.chargesRemaining());
         console.debug(p0.examine("examine", "mug"));
 
         console.debug(p0.position("put", "venom", "mug", "into"));
-        console.debug("Position/Put - Remaining Venom: "+venom.chargesRemaining());
+        console.debug("^^ Position/Put - Remaining Venom: "+venom.chargesRemaining());
         console.debug(p0.examine("examine", "mug"));
 
         console.debug(p0.take("collect", "venom", "mug"));
-        console.debug("Collect - Remaining Venom: "+venom.chargesRemaining());
+        console.debug("^^ Collect - Remaining Venom: "+venom.chargesRemaining());
         console.debug(p0.examine("examine", "mug"));
 
         l0.addObject(syringe);

@@ -515,29 +515,6 @@ exports.Action = function Action(player, map, fileManager) {
                             description = _player.examine(_verb, _object0, null, _map);
                         };
                         break;  
-                    case 'where':    
-                    case 'hunt':                               
-                    case 'find': 
-                        if (_inConversationWith) {
-                            _ticks = 1;
-                            var objectToFind = _object0 + _object1;
-                            _player.setLastVerbUsed('say');    
-                            return player.say("say", "find " + objectToFind, _inConversationWith, _map);
-                        } else { 
-                            _ticks = _baseTickSize * 2;
-                            //if player enters "search for x", we'll have an object 1 (but no object 0).
-                            if (!(_object0)) {_object0 = _object1};                                     
-                            description = _player.hunt(_verb, _object0, map);                            
-                        };
-                        break;
-                    case 'follow':
-                    case 'chase':
-                    case 'pursue':
-                    case 'track':
-                    case 'tail':
-                        if (!(_object0)) { _object0 = _object1 };
-                        description = _player.follow(_verb, _object0, map);
-                        break;
                     case 'inspect': 
                     case 'investigate':
                     case 'search':  
@@ -577,6 +554,30 @@ exports.Action = function Action(player, map, fileManager) {
                             description = _player.examine(_verb, _object0, null, _map);
                         };
                         break;  
+//////Conversion to new engine rached here
+                    case 'where':    
+                    case 'hunt':                               
+                    case 'find': 
+                        if (_inConversationWith) {
+                            _ticks = 1;
+                            var objectToFind = _object0 + _object1;
+                            _player.setLastVerbUsed('say');    
+                            return player.say("say", "find " + objectToFind, _inConversationWith, _map);
+                        } else { 
+                            _ticks = _baseTickSize * 2;
+                            //if player enters "search for x", we'll have an object 1 (but no object 0).
+                            if (!(_object0)) {_object0 = _object1};                                     
+                            description = _player.hunt(_verb, _object0, map);                            
+                        };
+                        break;
+                    case 'follow':
+                    case 'chase':
+                    case 'pursue':
+                    case 'track':
+                    case 'tail':
+                        if (!(_object0)) { _object0 = _object1 };
+                        description = _player.follow(_verb, _object0, map);
+                        break;
                     case 'rest':
                     case 'sit':
                     case 'zz':
