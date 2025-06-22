@@ -222,7 +222,6 @@ test('can call engine with player interacting with 2 objects with different prep
 });
 
 test('Attempting to put an object we dont own into a bowl fails gracefully', () => {
-
     var atrium = m0.getLocation("atrium");
     const objectJSON  = fm.readFile("artefacts/bowl.json"); 
     const object = mb.buildArtefact(objectJSON);
@@ -235,9 +234,10 @@ test('Attempting to put an object we dont own into a bowl fails gracefully', () 
     expect(expectedResults.includes(actualResult)).toBe(true);
 });
 
-test('test "try" verb', () => {
+test('test "try/attempt" verb with a nonexistent object', () => {
     const input = "attempt very carefully to eat a tiny tin of dog food with a spoon";
-    const actualResult = engine(input);
-    const expectedResult = "xxx";
-    expect(actualResult).toBe(expectedResult);
+    const expectedResults = ["There's no","You can't ","You'll nee"];
+    const actualResult = engine(input).substring(0,10);
+    console.debug(actualResult);
+    expect(expectedResults.includes(actualResult)).toBe(true);
 });

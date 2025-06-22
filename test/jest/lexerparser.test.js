@@ -256,3 +256,39 @@ test('can we handle "all" in a sentence?', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+test('check for confusion over subject and object', () => {
+    const input = "collect the bottle into a box";
+    const expectedResult =  {
+      category: 'inventory',
+      originalVerb: 'collect',
+      originalInput: input,
+      action: 'get',
+      adverb: null,
+      subject: "bottle",
+      object: 'box',
+      preposition: 'into'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('check for confusion over subject and object', () => {
+    //current parser will just see "collect a bottle"
+    const input = "use the box to collect a bottle"; //use is a special case
+    const expectedResult =  {
+      category: 'inventory',
+      originalVerb: 'use',
+      originalInput: input,
+      action: 'get',
+      adverb: null,
+      subject: "bottle",
+      object: null, //@todo- should be box
+      preposition: null
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
