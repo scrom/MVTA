@@ -2,7 +2,7 @@
 const lpModule = require('./lexerparser.js');
 const actionsModule = require('./actions.js');
 lp = new lpModule.LexerParser();
-a = new actionsModule.Actions();
+a = new actionsModule.Actions(lp);
 
 function createEngine(player, map) {
   return function handle(input) {

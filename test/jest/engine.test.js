@@ -236,7 +236,8 @@ test('Attempting to put an object we dont own into a bowl fails gracefully', () 
 });
 
 test('test "try" verb', () => {
-    const input = "try to eat food";
+    const input = "attempt very carefully to eat a tiny tin of dog food with a spoon";
     const actualResult = engine(input);
+    const expectedResult = "xxx";
     expect(actualResult).toBe(expectedResult);
 });

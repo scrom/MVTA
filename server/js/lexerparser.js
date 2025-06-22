@@ -16,7 +16,8 @@ module.exports.LexerParser = function LexerParser() {
         const salutations = ["hello", "hi", "hey", "hiya", "ahoy", "good morning", "good afternoon", "good evening"];
         const goodbyes  =["bye", "good bye", "goodbye","seeya", "later","laters", "goodnight", "good night"]
         const noWords = ['n','no', 'nay', 'nope', 'narp', 'reject','rejected', 'rejection','deny','denied','refuse','refused', 'refusal','negative', 'negatory']
-        const stopWords = ["the", "some", "a", "an", "again", "are", "any", "there", "to", "of", "is", "are"];
+        //original action.js stopWords = ["the", "some", "a", "an", "again"];
+        const stopWords = ["the", "some", "a", "an", "again", "are", "any", "there", "is", "are"];
         const commonTypos = ["fomr", "drpo", "destry", "definately"]
         const numerals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
         const firstPersonPronouns = ['i', 'me', 'my', 'mine', 'myself', 'we', 'us', 'our', 'ours', 'ourselves'];
@@ -35,7 +36,7 @@ module.exports.LexerParser = function LexerParser() {
         const modalVerbs = ['can', 'could', 'may', 'might', 'must', 'shall', 'should', 'will', 'would'];
         const verbs = fm.readFile("verb-lexicon.json");  //add  'ignore','blank','squeeze','grasp','clutch','clasp','hold','smoosh', 'smear','squish', 'chirp', 'tweet', 'bark', 'meow', 'moo','growl'
         const locationPrepositions = [
-            'in', 'into', 'inside', //container or not has different context
+            'in', 'into', 'in to', 'inside', //container or not has different context
             'onto', 'on to', 'on top of', 'on', // hook verb or object optional
             'off of', 'off', // hook verb or object optional
             'above', 'over', // not the same as on top of - need to hang on a "hook"
@@ -48,7 +49,12 @@ module.exports.LexerParser = function LexerParser() {
 
         const givingPrepositions = ['to', 'for', 'with', 'onto', 'on', 'on to', 'toward', 'towards'];
         const receivingPrepositions = ['from', 'by', 'at', 'in', 'out', 'out of', 'with',];
-        var sharedPrepositions = ['by', 'at', 'in', 'into', 'in to'];
+        const sharedPrepositions = ['by', 'at', 'in', 'into', 'in to'];
+
+        //collate prepositions and sort by number of words - important for when we try to split later.
+        let allPrepositions = sharedPrepositions.concat(receivingPrepositions.concat(givingPrepositions.concat(locationPrepositions)));
+        allPrepositions = Array.from(new Set(allPrepositions)); //remove duplicates.
+        allPrepositions.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words greatest first
 
         //action string components
         var _inputString = "";
@@ -105,41 +111,51 @@ module.exports.LexerParser = function LexerParser() {
 
             const rest = tokens.join(' ');
 
-            //extract and *split* on prepositions...
-            //sharedPrepositions
-            let sharedPreposition = tokens.filter(function (value, index, array) {
-                return (sharedPrepositions.includes(value))
-            });
-            //receivingPrepositions
-            let receivingPreposition = tokens.filter(function (value, index, array) {
-                return (receivingPrepositions.includes(value))
-            });
-            //givingPrepositions 
-            let givingPreposition = tokens.filter(function (value, index, array) {
-                return (givingPrepositions.includes(value))
-            });
-            //locationPrepositions
-            let locationPreposition = tokens.filter(function (value, index, array) {
-                return (locationPrepositions.includes(value))
-            });
-
-            const allFoundPrepositions = sharedPreposition.concat(receivingPreposition.concat(givingPreposition.concat(locationPreposition)));
-            //attempt to split "rest" using prepositions in order.
-            let objects = [rest];
             let preposition = null;
-            for (p=0; p<allFoundPrepositions.length;p++) {
-                objects = rest.split(allFoundPrepositions[p]);
-                if (objects.length > 1) {
-                    preposition = allFoundPrepositions[p];
+            for (var i=0; i<=allPrepositions.length; i++) {              
+                //support case where first word of string is a preposition
+                if (rest.startsWith(allPrepositions[i]+" ")) {
+                    //console.debug('first word is split');
+                    preposition = allPrepositions[i];
+                    objects = [rest.substring(allPrepositions[i].length).trim()];
                     break;
-                }
+                };
+
+                //support case where last word of string is a preposition
+                if (rest.endsWith(" "+allPrepositions[i])) {
+                    //console.debug('last word is split');
+                    preposition = allPrepositions[i];
+                    objects = [rest.substring(0, rest.indexOf(' '+allPrepositions[i])).trim()];
+                    break;
+                };
+
+                var objects = rest.split(' '+allPrepositions[i]+' '); //pad each side with spaces to avoid substring oddities - easier to understand than a regex
+                if (objects != rest) { //split successful
+                    //console.debug('split using "'+allPrepositions[i]+'".');
+                    preposition = allPrepositions[i];                  
+                    break; //exit the loop early
+                }; //end if
             };
-            
-            for (let o=objects.length-1; o >=0 ;o--) {
-                //work backwards as we may splice if anything is null.
-                objects[o] = objects[o].trim();  
-                if (!objects[o]) {objects.splice(o,1);};
+
+            //If current input object is "it", we use the last object instead.
+            //work out where last noun will belong 
+            for (let n=1;n<objects.length; n++) {
+                if (objects[n] == 'it' || objects[n] == 'them') {
+                    if (_nouns.length == 1) {
+                        // - get bottle, put it in box - vs - get box, put bottle in it 
+                        objects[n] = _nouns[0];
+                    } if (_nouns.length == 2); {
+                        // - get bottle from box - put it in car // put bottle in box, put it in car
+                        //we need to interpret verb *and* preposition
+                        console.debug("Complex preposition handling not yet implemented: _nouns:"+_nouns+" objects: "+objects+" input: "+input);
+                    };
+                };
             };
+
+            //save values for next call
+            //update stored nouns
+            _nouns = objects;
+           _preposition = preposition;
             return {objects, preposition, rest}
    
         };

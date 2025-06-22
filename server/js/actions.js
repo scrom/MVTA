@@ -1,7 +1,8 @@
 // actions.js
   // To reference any of the functions in this file from within another function -  inside any function, we can call another function like: actions.help();
-module.exports.Actions = function Actions() {
+module.exports.Actions = function Actions(parser) {
   var self = this; //closure so we don't lose this reference in callbacks
+  var lp = parser; //so we can re-parse inputs when needed before returning to engine.
   try{
   /*
   po = parsedObject
@@ -16,20 +17,41 @@ module.exports.Actions = function Actions() {
         target: rest || null
   */
 
+        self.reconstructInputAndRecallSelftWithNewVerb = function(verb, player, map, po) {
+          //reconstruct sentence without "try/attempt" - second verb usually ends up as part of subject...
+          console.debug ("Input: "+ po.originalInput);
+          console.debug ("Subject: "+po.subject);
+          console.debug ("Object: "+po.object);
+          console.debug ("Preposition: "+po.preposition);
+          console.debug ("Adverb: "+po.adverb);
 
-        self.null = function() {
+          let newParsedInput = lp.parseInput(po.adverb+" "+po.subject+" "+po.preposition+" "+po.object)
+          if (newParsedInput.error) { return newParsedInput.error; };
+          const {action} = newParsedInput;
+          const handler = self[action];
+          if (!handler) { return `Nothing happens. (No logic for "${action}")`; };
+          return handler(action, player, map, newParsedInput);
+
+        };
+
+        self.null = function(verb, player, map, po) {
           var randomReplies = ["Can you try again?", "It's probably my fault for not listening to you properly.", "Can you try something else?", "I'm sensing that we have a communication problem here.", "Is everything ok?"];
           var randomIndex = Math.floor(Math.random() * randomReplies.length);
           return "Sorry, I didn't hear you there. " + randomReplies[randomIndex];
         };
-        self.try = function() {
-          return (self.cheat())
+        self.try = function(verb, player, map, po) {
+          return self.reconstructInputAndRecallSelftWithNewVerb(verb, player, map, po)
         };
-        self.cheat = function() {
+        
+        self.cheat = function(verb, player, map, po) {
           return "Hmmm. I'm sure I heard about some cheat codes somewhere...<br><br>...Nope, I must have imagined it.<br>Looks like it's just you and your brain for now.";
         };
 
-        self.help = function() {
+        self.eat = function(verb, player, map, po) {
+          return player.eat(po.originalVerb, po.subject);
+        };
+
+        self.help = function(verb, player, map, po) {
           return "<br> I accept basic commands to move e.g. <i>'north','south','up','in'</i> etc.<br>" +
                  "You can interact with objects and creatures by supplying a <i>verb</i> and the <i>name</i> of the object or creature. e.g. <i>'get sword'</i> or <i>'eat apple'</i>.<br>" +
                  "You can also <i>'use'</i> objects on others (and creatures) e.g. <i>'give sword to farmer'</i>, <i>'hit door with sword'</i> or <i>'put key in box'</i>.<br>" +
@@ -41,7 +63,7 @@ module.exports.Actions = function Actions() {
                   "If you've really had enough of playing, you can enter <i>quit</i> to exit the game (without saving).<br>";
         };
 
-        self.map = function () {
+        self.map = function (verb, player, map, po) {
           return "Oh dear, are you lost? This is a text adventure you know.<br>Time to get some graph paper, a pencil and start drawing!";
         };
 
