@@ -204,7 +204,6 @@ test('what happens with another complex sentence?', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('what happens with another complex sentence?', () => {
     const input = 'put the bowl in the dishwasher';
     const expectedResult =  {
@@ -216,6 +215,42 @@ test('what happens with another complex sentence?', () => {
       subject: "bowl",
       object: 'dishwasher',
       preposition: 'in'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('what happens with another complex sentence?', () => {
+    const input = "please friend please attempt very carefully to eat a tiny tin of dog food with a spoon";
+    const expectedResult =  {
+      category: 'food_drink',
+      originalVerb: 'attempt',
+      originalInput: input,
+      action: 'eat',
+      adverb: 'carefully',
+      subject: "tiny tin of dog food",
+      object: 'spoon',
+      preposition: 'with'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('can we handle "all" in a sentence?', () => {
+    //parser should treat this as part of subject - game internals will have to translate "all".
+    const input = "throw all of the books on the bonfire";
+    const expectedResult =  {
+      category: 'item_use',
+      originalVerb: 'throw',
+      originalInput: input,
+      action: 'throw',
+      adverb: null,
+      subject: "all of books",
+      object: 'bonfire',
+      preposition: 'on'
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
