@@ -11,7 +11,8 @@
     "subType": "bottle",
     "holdsLiquid": true,
     "canCollect": true,
-    "isBreakable": true
+    "isBreakable": true,
+    "imageName": "vial.jpg"
   },
   "synonyms": [
     "bottle",

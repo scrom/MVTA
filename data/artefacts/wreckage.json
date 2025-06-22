@@ -8,6 +8,7 @@
     "plural": true,
     "weight": 1500,
     "carryWeight": 95,
+    "imageName": "wreckage.jpg",
     "smell": "The whole area smells like a combination of burned plastic and barbecued hair."
   },
   "synonyms": [

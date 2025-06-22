@@ -3334,7 +3334,8 @@
                             "customAction": [
                                 "wear"
                             ],
-                            "defaultResult": "Nope, that's really not a good look for you. (Or anyone for that matter)"
+                            "defaultResult": "Nope, that's really not a good look for you. (Or anyone for that matter)",
+                            "imageName": "wig.jpg"
                         },
                         "synonyms": [
                             "blonde",
@@ -3926,7 +3927,8 @@
                             "subType": "bottle",
                             "holdsLiquid": true,
                             "canCollect": true,
-                            "isBreakable": true
+                            "isBreakable": true,
+                            "imageName": "vial.jpg"
                         },
                         "synonyms": [
                             "bottle",
@@ -11297,6 +11299,7 @@
                                         "weight": 1500,
                                         "carryWeight": 95,
                                         "plural": true,
+                                        "imageName": "wreckage.jpg",
                                         "smell": "The whole area smells like a combination of burned plastic and barbecued hair."
                                     },
                                     "synonyms": [
@@ -12757,7 +12760,7 @@
         "object": "location",
         "name": "lift-first-floor",
         "displayName": "Lift",
-        "description": "A metallic voice says 'First floor; Doors opening'.<br>You're in a lift on the first floor.<br>The cool blue-white of the LED lighting gives you a somewhat sickened pallor in the full mirror.<br>You try not to keep staring at yourself",
+        "description": "You're in a lift on the first floor.<br>A metallic voice says 'First floor; Doors opening'.<br>The cool blue-white of the LED lighting gives you a somewhat sickened pallor in the full mirror.<br>You try not to keep staring at yourself.",
         "attributes": {
             "imageName": "liftdoor-1.jpg"
         },
@@ -12873,7 +12876,7 @@
         "object": "location",
         "name": "lift-ground-floor",
         "displayName": "Lift",
-        "description": "The lift doors automatically close behind you. You're in the ground floor lift. It's quite dark in here and every now and again a disembodied voice chants something about electrical faults.<br>You contemplate pressing the alarm button but it'll only route to a call centre somewhere.",
+        "description": "You're in the ground floor lift.<br>The lift doors automatically close behind you...<br>It's quite dark in here and every now and again a disembodied voice chants something about electrical faults.<br>You contemplate pressing the alarm button but it'll only route to a call centre somewhere.",
         "attributes": {
             "imageName": "liftdoor.jpg"
         },
@@ -14899,6 +14902,7 @@
                 "attributes": {
                     "defaultAction": "get water from cooler",
                     "weight": 100,
+                    "imageName": "watercooler.jpg",
                     "canDrawOn": true
                 },
                 "synonyms": [

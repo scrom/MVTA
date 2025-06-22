@@ -10,6 +10,7 @@
     "customAction": [
       "wear"
     ],
+    "imageName": "wig.jpg",
     "defaultResult": "Nope, that's really not a good look for you. (Or anyone for that matter)"
   },
   "synonyms": [

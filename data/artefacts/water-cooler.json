@@ -6,7 +6,8 @@
   "attributes": {
     "defaultAction": "get water from cooler",
     "weight": 100,
-    "canDrawOn": true
+    "canDrawOn": true,
+    "imageName": "watercooler.jpg"
   },
   "synonyms": [
     "watercooler",

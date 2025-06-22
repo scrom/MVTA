@@ -2,7 +2,7 @@
   "object": "location",
   "name": "lift-first-floor",
   "displayName": "Lift",
-  "description": "A metallic voice says 'First floor; Doors opening'.<br>You're in a lift on the first floor.<br>The cool blue-white of the LED lighting gives you a somewhat sickened pallor in the full mirror.<br>You try not to keep staring at yourself",
+  "description": "You're in a lift on the first floor.<br>A metallic voice says 'First floor; Doors opening'.<br>The cool blue-white of the LED lighting gives you a somewhat sickened pallor in the full mirror.<br>You try not to keep staring at yourself.",
   "attributes": {
     "imageName": "liftdoor-1.jpg"
   },

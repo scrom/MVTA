@@ -2,7 +2,7 @@
   "object": "location",
   "name": "lift-ground-floor",
   "displayName": "Lift",
-  "description": "The lift doors automatically close behind you. You're in the ground floor lift. It's quite dark in here and every now and again a disembodied voice chants something about electrical faults.<br>You contemplate pressing the alarm button but it'll only route to a call centre somewhere.",
+  "description": "You're in the ground floor lift.<br>The lift doors automatically close behind you...<br>It's quite dark in here and every now and again a disembodied voice chants something about electrical faults.<br>You contemplate pressing the alarm button but it'll only route to a call centre somewhere.",
   "attributes": {
     "imageName": "liftdoor.jpg"
   },
