@@ -13,8 +13,7 @@ test('can parse verb', () => {
       adverb: null,
       subject: 'artefact of little consequence',
       object: null,
-      preposition: null,
-      target: null
+      preposition: null
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -31,8 +30,7 @@ test('can parse verb using alias', () => {
       adverb: null,
       subject: 'artefact of little consequence',
       object: null,
-      preposition: null,
-      target: null
+      preposition: null
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -58,8 +56,7 @@ test('can parse string into relevant multiple objects via preposition', () => {
       adverb: null,
       subject: 'water',
       object: 'barbecue',
-      preposition: 'over',
-      target: null
+      preposition: 'over'
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -77,8 +74,7 @@ test('can parse object when preposition is at start', () => {
       adverb: null,
       subject: 'water',
       object: 'barbecue',
-      preposition: 'over',
-      target: null
+      preposition: 'over'
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -96,8 +92,7 @@ test('can parse object when preposition is 2 words at end', () => {
       adverb: null,
       subject: 'water',
       object: null,
-      preposition: 'on to',
-      target: null
+      preposition: 'on to'
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -114,8 +109,7 @@ test('can parse single object when preposition is 3 words at beginning', () => {
       adverb: null,
       subject: 'water',
       object: null,
-      preposition: 'on top of',
-      target: null
+      preposition: 'on top of'
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -132,8 +126,96 @@ test('can parse pair of objects with 2 word preposition', () => {
       adverb: null,
       subject: 'water',
       object: 'barbecue',
-      preposition: 'on to',
-      target: null
+      preposition: 'on to'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('what happens with a complex sentence?', () => {
+    const input = 'please carefully pour the water on to the smoking hot barbecue';
+    const expectedResult =     {
+      category: 'item_use',
+      originalVerb: 'pour',
+      originalInput: input,
+      action: 'pour',
+      adverb: 'carefully',
+      subject: 'water',
+      object: 'smoking hot barbecue',
+      preposition: 'on to'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('what happens with a complex sentence?', () => {
+    const input = 'please try very hard to carefully pour the water on to the smoking hot barbecue';
+    const expectedResult =     {
+      category: 'item_use',
+      originalVerb: 'try',
+      originalInput: input,
+      action: 'pour',
+      adverb: 'carefully',
+      subject: 'water',
+      object: 'smoking hot barbecue',
+      preposition: 'on to'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('what happens with a complex sentence?', () => {
+    const input = 'please carefully take the barbecue and put it quickly in to the swimming pool';
+    const expectedResult =  {
+      category: 'item_use',
+      originalVerb: 'take',
+      originalInput: input,
+      action: 'put',
+      adverb: 'quickly',
+      subject: 'it',
+      object: 'swimming pool',
+      preposition: 'in to'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('what happens with another complex sentence?', () => {
+    const input = 'wave to boy in the house and take a bowl';
+    const expectedResult =  {
+      category: 'inventory',
+      originalVerb: 'wave',
+      originalInput: input,
+      action: 'get',
+      adverb: null,
+      subject: "bowl",
+      object: null,
+      preposition: null
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('what happens with another complex sentence?', () => {
+    const input = 'put the bowl in the dishwasher';
+    const expectedResult =  {
+      category: 'item_use',
+      originalVerb: 'put',
+      originalInput: input,
+      action: 'put',
+      adverb: null,
+      subject: "bowl",
+      object: 'dishwasher',
+      preposition: 'in'
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);

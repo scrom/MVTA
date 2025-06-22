@@ -151,7 +151,15 @@
     "category": "interaction_physical",
     "aliases": []
   },
+  "move": {
+    "category": "interaction_physical",
+    "aliases": []
+  },
   "shove": {
+    "category": "interaction_physical",
+    "aliases": []
+  },
+  "wave": {
     "category": "interaction_physical",
     "aliases": []
   },

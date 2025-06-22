@@ -34,7 +34,7 @@ module.exports.LexerParser = function LexerParser() {
         const questions = ['who','what','why','where','when','how','which','whose'];
         const moreQuestions = ['do you', 'have you', 'do', 'have', "pardon", "sorry"];
         const modalVerbs = ['can', 'could', 'may', 'might', 'must', 'shall', 'should', 'will', 'would'];
-        const verbs = fm.readFile("verb-lexicon.json");  //add  'ignore','blank','squeeze','grasp','clutch','clasp','hold','smoosh', 'smear','squish', 'chirp', 'tweet', 'bark', 'meow', 'moo','growl'
+
         const locationPrepositions = [
             'in', 'into', 'in to', 'inside', //container or not has different context
             'onto', 'on to', 'on top of', 'on', // hook verb or object optional
@@ -55,6 +55,22 @@ module.exports.LexerParser = function LexerParser() {
         let allPrepositions = sharedPrepositions.concat(receivingPrepositions.concat(givingPrepositions.concat(locationPrepositions)));
         allPrepositions = Array.from(new Set(allPrepositions)); //remove duplicates.
         allPrepositions.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words greatest first
+        
+        const verbs = fm.readFile("verb-lexicon.json");  //add  'ignore','blank','squeeze','grasp','clutch','clasp','hold','smoosh', 'smear','squish', 'chirp', 'tweet', 'bark', 'meow', 'moo','growl'
+        const topLevelVerbs = Object.keys(verbs);
+        const allAliases = [];
+        for (const key of topLevelVerbs) {
+            const aliases = verbs[key].aliases || [];
+            if (aliases.length > 0) {
+                allAliases.push(...aliases);
+            };
+        };
+
+        let allVerbs = topLevelVerbs.concat(allAliases); //~400 verbs!
+            const emptyValueIndex = allVerbs.indexOf("");
+            if (emptyValueIndex >-1) {
+                allVerbs.splice(emptyValueIndex,1);
+            };
 
         //action string components
         var _inputString = "";
@@ -87,6 +103,8 @@ module.exports.LexerParser = function LexerParser() {
         self.extractAdverb = function(input) {
             let tokens = input.split(/\s+/)
             let rest = input;
+            //strip out pleasantries
+
             for (let i=tokens.length-1; i >=0 ;i--) {
                 //work backwards as we may splice if anything is null.
                 if (adverbs.includes(tokens[i])) {
@@ -110,6 +128,7 @@ module.exports.LexerParser = function LexerParser() {
             });
 
             const rest = tokens.join(' ');
+            let objects = [rest];
 
             let preposition = null;
             for (var i=0; i<=allPrepositions.length; i++) {              
@@ -129,7 +148,7 @@ module.exports.LexerParser = function LexerParser() {
                     break;
                 };
 
-                var objects = rest.split(' '+allPrepositions[i]+' '); //pad each side with spaces to avoid substring oddities - easier to understand than a regex
+                objects = rest.split(' '+allPrepositions[i]+' '); //pad each side with spaces to avoid substring oddities - easier to understand than a regex
                 if (objects != rest) { //split successful
                     //console.debug('split using "'+allPrepositions[i]+'".');
                     preposition = allPrepositions[i];                  
@@ -155,8 +174,8 @@ module.exports.LexerParser = function LexerParser() {
             //save values for next call
             //update stored nouns
             _nouns = objects;
-           _preposition = preposition;
-            return {objects, preposition, rest}
+            _preposition = preposition;
+            return {objects, preposition};
    
         };
 
@@ -172,13 +191,59 @@ module.exports.LexerParser = function LexerParser() {
 
         self.parseInput = function(input) {
             input = sanitiseString(input);
+            let rest = input;
             if (_inputString) {
                 //remember last input
                 _lastInputString = _inputString;
             };
             _inputString = input; //store for later
 
-            const tokens = input.split(/\s+/)
+            //extract adverb
+            const extractedAdverbObject = self.extractAdverb(rest)
+            const { adverb, remainder } = extractedAdverbObject;
+            rest = remainder;
+
+            //ideally find the position of the verb and dumnp everything to the left of it. 
+            const tokens = rest.split(/\s+/)
+
+            //find verbs... allVerbs
+            const inputVerbs = tokens.filter(function (value, index, array) {
+                return ((allVerbs.includes(value)))
+            });
+
+            //find position of each verb in token array and strip to left of them.
+            if (inputVerbs.length == 1) {
+                let verbIndex = tokens.indexOf(inputVerbs[0]);
+                tokens.splice(0,verbIndex)
+            } else {
+                //we have more than one potential verb...
+                if (inputVerbs.includes("go")) {
+                    let verbIndex = tokens.indexOf("go");
+                    tokens.splice(0,verbIndex);
+                } else if (["try", "attempt"].includes(inputVerbs[0])) {
+                    //take the next verb whatever that may be
+                    let verbIndex = tokens.indexOf(inputVerbs[1]);
+                    tokens.splice(0,verbIndex)                   
+                } else {
+                    //some prepositions (in/out) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
+                    if (["in", "out"].some((e) => inputVerbs.includes(e))) {
+                        let inputVerbIndex = inputVerbs.indexOf("in");
+                        if (inputVerbIndex >-1) {
+                            inputVerbs.splice(inputVerbIndex,1);
+                        };
+                        inputVerbIndex = inputVerbs.indexOf("out");
+                        if (inputVerbIndex >-1) {
+                            inputVerbs.splice(inputVerbIndex,1);
+                        };
+                    };
+                    console.warn("potential multiple verb parsing issue, taking last verb as action");
+                    let verbIndex = tokens.indexOf(inputVerbs[inputVerbs.length-1]);
+                    tokens.splice(0,verbIndex)      
+                };
+                //don't try to handle more than 3 inputVerbs.
+            };
+
+            //the verb we intend to use should now be the first token.
             const verb = self.normaliseVerb(tokens[0]);
             if (!verb) {
                 //@todo - if we don't have a recognised verb here, there's a chance we need to switch to dialogue, yes/no, please/thankyou, salutations, questions etc
@@ -187,27 +252,22 @@ module.exports.LexerParser = function LexerParser() {
                 _verb = verb;
             };
 
-            let rest = tokens.slice(1).join(' ');
+            rest = tokens.slice(1).join(' ');
             rest = self.removeStopWords(rest);
-
-            const extractedAdverbObject = self.extractAdverb(rest)
-            const { adverb, remainder } = extractedAdverbObject;
-            rest = remainder;
-
+            
+            //last step - split what's left by preposition to get objects   
             const extractedObjectsAndPrepositions = self.extractObjectsAndPrepositions(rest);
-            const { objects, preposition, rem } = extractedObjectsAndPrepositions;
-            rest = rem;
+            const { objects, preposition} = extractedObjectsAndPrepositions;
 
             return {
                 category: verbs[verb].category,
-                originalVerb: tokens[0],
+                originalVerb: inputVerbs[0],
                 originalInput: input,
                 action: verb,
                 adverb: adverb,
                 subject: objects[0] || null,
                 object: objects[1] || null,
-                preposition: preposition || null,
-                target: rest || null
+                preposition: preposition || null
             };
 
         };
