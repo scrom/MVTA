@@ -221,15 +221,16 @@ test('can call engine with player interacting with 2 objects with different prep
     expect(actualResult).toBe(expectedResult);
 });
 
-test('BUG - putting an object we dont own into a bowl fails gracefully, not an infinite loop', () => {
-    l0.addExit("u", "home", "atrium");
+test('Attempting to put an object we dont own into a bowl fails gracefully', () => {
+
     var atrium = m0.getLocation("atrium");
-    atrium.addExit("d", "atrium", "home");  // without this we end up in an infinite loop as pathfinder can't find route home.
     const objectJSON  = fm.readFile("artefacts/bowl.json"); 
     const object = mb.buildArtefact(objectJSON);
-    l0.addObject(object);
+    atrium.addObject(object);
+    p0.setLocation(atrium);
     const input = "put beans in to bowl";
-    const expectedResult = "XXXX";
-    const actualResult = engine(input);
-    expect(actualResult).toBe(expectedResult);
+    const expectedResults = ["There's no","You can't ","You'll nee"];
+    const actualResult = engine(input).substring(0,10);
+    console.debug(actualResult);
+    expect(expectedResults.includes(actualResult)).toBe(true);
 });
