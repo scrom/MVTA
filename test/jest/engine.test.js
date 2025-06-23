@@ -279,6 +279,27 @@ test('test 3 unknown verbs in a row triggers help', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
+
+test('test fail count reverts and restarts after successful action', () => {
+    const input = "skibidee an artefact of little consequence";
+    let expectedResult = "Sorry, I didn't quite understand you there.";
+    let actualResult = engine(input).substring(0,43);
+    expect(actualResult).toBe(expectedResult);
+
+    expectedResult = "Nothing happens. (No logic for \"get\")";
+    actualResult = engine("get bottle").substring(0,43);
+    expect(actualResult).toBe(expectedResult);
+
+    expectedResult = "Sorry, I didn't quite understand you there.";
+    actualResult = engine(input).substring(0,43);
+    expect(actualResult).toBe(expectedResult);
+
+    expectedResult = "It looks like you're struggling to be understood.<br>If you need some assistance, try typing <i>help</i>.";
+    actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+
 test('test initate dialogue with "say"', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
