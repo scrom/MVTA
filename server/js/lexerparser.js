@@ -200,6 +200,9 @@ module.exports.LexerParser = function LexerParser() {
             //ideally find the position of the verb and dumnp everything to the left of it. 
             const tokens = rest.split(/\s+/)
 
+            //@todo add handling in here for questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs
+            //mainly questions and modals
+
             //find verbs... allVerbs
             const inputVerbs = tokens.filter(function (value, index, array) {
                 return ((allVerbs.includes(value)))
@@ -258,7 +261,13 @@ module.exports.LexerParser = function LexerParser() {
                                 inputVerbs.splice(inputVerbIndex,1);
                             };
                         };
-                        console.warn("potential multiple verb parsing issue, taking last verb as action");
+                    
+                        //we may be back down to 1 verb now...
+                        if (inputVerbs.length == 1) {
+                            verbIndex = tokens.indexOf(inputVerbs[0]);
+                        } else {
+                            console.warn("potential multiple verb parsing issue, taking last verb as action");
+                        };
                     };
                 };
                 //don't try to handle more than 3 inputVerbs.
@@ -274,6 +283,13 @@ module.exports.LexerParser = function LexerParser() {
             };
             //verb will no be first token
             verb = self.normaliseVerb(tokens[0]);
+
+            if (verb) {
+                _inConversation = null;
+                if (player) {
+                    player.setLastCreatureSpokenTo();
+                };
+            };
 
             if (!verb) {
                 //if we don't have a recognised verb here, there's a chance we need to switch to dialogue, yes/no, please/thankyou, salutations, questions etc

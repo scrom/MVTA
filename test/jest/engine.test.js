@@ -306,6 +306,24 @@ test('test follow-on dialogue in active conversation', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
+
+test('test follow-on dialogue in active conversation', () => {
+    //this needs enhanced handling of questions and modal verbs in parser to work properly
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go(null, l0);
+    const firstInput = "say hello to aaron";
+
+    const expecteFirstResult = "Aaron says";
+    const actualFirstResult = engine(firstInput).substring(0,10);
+    expect(actualFirstResult).toBe(expecteFirstResult);
+
+    const input = "can you put my guitar in the toaster";
+    const expectedResult = "xxx";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
 test('test revert to actions from active conversation', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
@@ -326,4 +344,3 @@ test('test revert to actions from active conversation', () => {
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
-
