@@ -16,8 +16,7 @@ module.exports.LexerParser = function LexerParser() {
         const salutations = ["hello", "hi", "hey", "hiya", "ahoy", "good morning", "good afternoon", "good evening"];
         const goodbyes  =["bye", "good bye", "goodbye","seeya", "later","laters", "goodnight", "good night"]
         const noWords = ['n','no', 'nay', 'nope', 'narp', 'reject','rejected', 'rejection','deny','denied','refuse','refused', 'refusal','negative', 'negatory']
-        //original action.js stopWords = ["the", "some", "a", "an", "again"];
-        const stopWords = ["the", "some", "a", "an", "again", "are", "any", "there", "is", "are"];
+        const stopWords = ["the", "some", "a", "an", "again"];
         const commonTypos = ["fomr", "drpo", "destry", "definately"]
         const numerals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
         const firstPersonPronouns = ['i', 'me', 'my', 'mine', 'myself', 'we', 'us', 'our', 'ours', 'ourselves'];
@@ -211,57 +210,83 @@ module.exports.LexerParser = function LexerParser() {
                 return ((allVerbs.includes(value)))
             });
 
+            let verb = "";
+            let verbIndex = -1
+
             //find position of each verb in token array and strip to left of them.
             if (inputVerbs.length == 1) {
-                let verbIndex = tokens.indexOf(inputVerbs[0]);
-                tokens.splice(0,verbIndex)
+                verbIndex = tokens.indexOf(inputVerbs[0]);
             } else {
                 //we have more than one potential verb...
-                if (inputVerbs.includes("go")) {
-                    let verbIndex = tokens.indexOf("go");
-                    tokens.splice(0,verbIndex);
-                } else if (["try", "attempt"].includes(inputVerbs[0])) {
-                    //take the next verb whatever that may be
-                    let verbIndex = tokens.indexOf(inputVerbs[1]);
-                    tokens.splice(0,verbIndex)                   
-                } else {
-                    //some prepositions (in/out) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
-                    if (["in", "out"].some((e) => inputVerbs.includes(e))) {
-                        let inputVerbIndex = inputVerbs.indexOf("in");
-                        if (inputVerbIndex >-1) {
-                            inputVerbs.splice(inputVerbIndex,1);
+                //try all the verbs in reverse order, ditch any we don't know - if any left are dialogue, we'll use that.
+                let handledVerbs = 0;
+                let dialogueVerb = "";
+                for (let v=inputVerbs.length -1 ; v>=0; v--) {
+                    let testVerb = self.normaliseVerb(inputVerbs[v]);
+                    if (testVerb) {
+                        handledVerbs++;
+                        if (verbs[testVerb].category == "dialogue") {
+                            dialogueVerb = testVerb;
+                            verbIndex = tokens.indexOf(dialogueVerb);
+                            break;
                         };
-                        inputVerbIndex = inputVerbs.indexOf("out");
-                        if (inputVerbIndex >-1) {
-                            inputVerbs.splice(inputVerbIndex,1);
-                        };
+                    }  else {
+                        inputVerbs.splice(v,1); //remove unhandled verbs
                     };
-                    console.warn("potential multiple verb parsing issue, taking last verb as action");
-                    let verbIndex = tokens.indexOf(inputVerbs[inputVerbs.length-1]);
-                    tokens.splice(0,verbIndex)      
+                };
+
+                console.debug("Recognised Verb count: "+handledVerbs+", dialogue verb: "+dialogueVerb);
+
+                if (!dialogueVerb) {
+                    if (inputVerbs.includes("go")) {
+                        verbIndex = tokens.indexOf("go");
+                    } else if (["try", "attempt"].includes(inputVerbs[0])) {
+                        //take the next verb whatever that may be
+                        verbIndex = tokens.indexOf(inputVerbs[1]);                
+                    } else {
+                        //some prepositions (in/out) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
+                        if (["in", "out"].some((e) => inputVerbs.includes(e))) {
+                            let inputVerbIndex = inputVerbs.indexOf("in");
+                            if (inputVerbIndex >-1) {
+                                inputVerbs.splice(inputVerbIndex,1);
+                            };
+                            inputVerbIndex = inputVerbs.indexOf("out");
+                            if (inputVerbIndex >-1) {
+                                inputVerbs.splice(inputVerbIndex,1);
+                            };
+                        };
+                        console.warn("potential multiple verb parsing issue, taking last verb as action");
+                    };
                 };
                 //don't try to handle more than 3 inputVerbs.
             };
 
-            //the verb we intend to use should now be the first token.
-            const verb = self.normaliseVerb(tokens[0]);
-            if (!verb) {
-                //@todo - if we don't have a recognised verb here, there's a chance we need to switch to dialogue, yes/no, please/thankyou, salutations, questions etc
-                return { error: `Unknown verb: "${tokens[0]}"` };
-            } else {
-                _verb = verb;
+            if (verbIndex == -1) {
+                verbIndex = tokens.indexOf(inputVerbs[inputVerbs.length-1]);
             };
 
+            //splice tokens to thge verb we are using..
+            tokens.splice(0,verbIndex)   
+            //verb will no be first token
+            verb = self.normaliseVerb(tokens[0]);
+
+            if (!verb) {
+                return { error: `Unknown verb: "${tokens[0]}"` };
+                //@todo - if we don't have a recognised verb here, there's a chance we need to switch to dialogue, yes/no, please/thankyou, salutations, questions etc
+            };
+
+            _verb = verb;  
             rest = tokens.slice(1).join(' ');
+            console.log("rest: "+rest);
             rest = self.removeStopWords(rest);
             
             //last step - split what's left by preposition to get objects   
             const extractedObjectsAndPrepositions = self.extractObjectsAndPrepositions(rest);
-            const { objects, preposition} = extractedObjectsAndPrepositions;
+            let { objects, preposition} = extractedObjectsAndPrepositions;
 
             return {
                 category: verbs[verb].category,
-                originalVerb: inputVerbs[0],
+                originalVerb: inputVerbs[0] || null,
                 originalInput: input,
                 action: verb,
                 adverb: adverb,

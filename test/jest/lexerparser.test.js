@@ -292,3 +292,40 @@ test('check for confusion over subject and object', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+test('can handle "say"', () => {
+    //current parser will just see "collect a bottle"
+    const input = "say hi dave how are you please can you go and get me a bottle of water"; //use is a special case
+    const expectedResult =  {
+      category: 'dialogue',
+      originalVerb: "say",
+      originalInput: input,
+      action: 'say',
+      adverb: null,
+      subject: "hi dave how are you please can you go and get bottle of water",
+      object: null,
+      preposition: null
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('can handle other dialogue words', () => {
+    //current parser will just see "collect a bottle"
+    const input = "try really hard to persuade dave to go and get me a bottle of water and pick up some lemonade on the way back"; //use is a special case
+    const expectedResult =  {
+      category: 'dialogue',
+      originalVerb: "try",
+      originalInput: input,
+      action: 'persuade',
+      adverb: null,
+      subject: "dave",
+      object: "go and get bottle of water and pick up lemonade on way back",
+      preposition: "to"
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});

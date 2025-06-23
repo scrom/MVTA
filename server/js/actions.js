@@ -1,8 +1,11 @@
 // actions.js
   // To reference any of the functions in this file from within another function -  inside any function, we can call another function like: actions.help();
 module.exports.Actions = function Actions(parser) {
-  var self = this; //closure so we don't lose this reference in callbacks
-  var lp = parser; //so we can re-parse inputs when needed before returning to engine.
+  const self = this; //closure so we don't lose this reference in callbacks
+  const lp = parser; //so we can re-parse inputs when needed before returning to engine.
+  const dialogueModule = require('./dialogueparser.js');
+  const dp = new dialogueModule.DialogueParser();
+
   try{
   /*
   po = parsedObject
@@ -34,6 +37,9 @@ module.exports.Actions = function Actions(parser) {
 
         };
 
+        self.say = function (verb, player, map, po) {
+          return dp.parseDialogue(verb, player, map, po);
+        };
         self.null = function(verb, player, map, po) {
           var randomReplies = ["Can you try again?", "It's probably my fault for not listening to you properly.", "Can you try something else?", "I'm sensing that we have a communication problem here.", "Is everything ok?"];
           var randomIndex = Math.floor(Math.random() * randomReplies.length);
