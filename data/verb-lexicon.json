@@ -21,11 +21,16 @@
       "stare",
       "show",
       "look",
-      "lookat",
-      "search",
-      "inspect",
-      "investigate"
+      "lookat"
     ]
+  },
+  "search": {
+    "category": "searching",
+    "aliases": ["inspect", "investigate"]
+  },
+  "where": {
+    "category": "finding",
+    "aliases": ["hunt", "track", "find"]
   },
   "go": {
     "category": "movement",
@@ -236,7 +241,7 @@
     "aliases": ["hook"]
   },
   "combine": {
-    "category": "inventory",
+    "category": "item_use",
     "aliases": ["combine with", "add", "join", "mix"]
   },
   "pour": {

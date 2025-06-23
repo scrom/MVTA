@@ -290,7 +290,7 @@ test('test saying things out loud when no characters nearby', () => {
 });
 
 
-test('test follow-on dialogue in active conversation', () => {
+test('test follow-on dialogue in active conversation with find request', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
     object.go(null, l0);
@@ -307,7 +307,7 @@ test('test follow-on dialogue in active conversation', () => {
 });
 
 
-test('test follow-on dialogue in active conversation', () => {
+test('test follow-on dialogue in active conversation including other verbs', () => {
     //this needs enhanced handling of questions and modal verbs in parser to work properly
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);

@@ -134,6 +134,9 @@ module.exports.Actions = function Actions(parser) {
           };
           return player.examine(verb, po.subject, po.object, map, po.adverb, po.preposition);
         };
+        self.search = function (verb, player, map, po) {
+          return self.examine(verb, player, map, po);
+        };
         self.put = function (verb, player, map, po) {
           return player.put(verb, po.subject, po.preposition, po.object);
         };
