@@ -703,31 +703,15 @@
     "category": "manipulation",
     "aliases": []
   },
-  "pry": {
-    "category": "manipulation",
-    "aliases": []
-  },
-  "crack": {
-    "category": "manipulation",
-    "aliases": []
-  },
   "break": {
     "category": "manipulation",
-    "aliases": []
+    "aliases": ["crack", "force", "crack", "pry", "damage"]
   },
   "destroy": {
     "category": "manipulation",
     "aliases": [
       "destry"
     ]
-  },
-  "force": {
-    "category": "manipulation",
-    "aliases": []
-  },
-  "damage": {
-    "category": "manipulation",
-    "aliases": []
   },
   "broadcast": {
     "category": "communication_meta",
