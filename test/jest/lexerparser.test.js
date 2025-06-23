@@ -44,7 +44,7 @@ test('parsing unknown verb return custom action', () => {
       "adverb": null,
       "category": "system",
       "object": null,
-      "originalInput": "skibidee an artefact of little consequence",
+      "originalInput": input,
       "originalVerb": null,
       "preposition": null,
       "subject": "skibidee an artefact of little consequence",
@@ -536,7 +536,7 @@ test('greetings are regognised and handled', () => {
       "adverb": null,
       "category": "dialogue",
       "object": null,
-      "originalInput": "hi there dave how are you today",
+      "originalInput": input,
       "originalVerb": null,
       "preposition": null,
       "subject": "hi there dave how are you today",
@@ -555,7 +555,7 @@ test('greetings are regognised and handled', () => {
       "adverb": null,
       "category": "dialogue",
       "object": null,
-      "originalInput": "ahoy",
+      "originalInput": input,
       "originalVerb": null,
       "preposition": null,
       "subject": "ahoy",
@@ -573,7 +573,7 @@ test('greetings are regognised and handled', () => {
       "adverb": null,
       "category": "dialogue",
       "object": null,
-      "originalInput": "ahoy there",
+      "originalInput": input,
       "originalVerb": null,
       "preposition": null,
       "subject": "ahoy there",
@@ -592,7 +592,7 @@ test('greetings are regognised and handled', () => {
       "adverb": null,
       "category": "dialogue",
       "object": null,
-      "originalInput": "say ahoy there",
+      "originalInput": input,
       "originalVerb": 'say',
       "preposition": null,
       "subject": "ahoy there",
@@ -610,7 +610,7 @@ test('greetings are regognised and handled', () => {
       "adverb": null,
       "category": "dialogue",
       "object": null,
-      "originalInput": "say hi there dave how are you today",
+      "originalInput": input,
       "originalVerb": 'say',
       "preposition": null,
       "subject": "hi there dave how are you today",
@@ -628,10 +628,104 @@ test('have a... rest regognised and handled', () => {
       "adverb": null,
       "category": "resting",
       "object": null,
-      "originalInput": "have a rest",
+      "originalInput": input,
       "originalVerb": 'rest',
       "preposition": null,
       "subject": null,
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('put down x', () => {
+    const input = "put down bottle";
+
+    const expectedResult = {
+      "action": "put",
+      "adverb": null,
+      "category": "item_use",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": 'put',
+      "preposition": "down",
+      "subject": "bottle",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('put x down', () => {
+    const input = "put bottle down";
+
+    const expectedResult = {
+      "action": "put",
+      "adverb": null,
+      "category": "item_use",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": 'put',
+      "preposition": "down",
+      "subject": "bottle",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('put x out', () => {
+    const input = "put candle out";
+
+    const expectedResult = {
+      "action": "put",
+      "adverb": null,
+      "category": "item_use",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": 'put',
+      "preposition": "out",
+      "subject": "candle",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('put out x', () => {
+    const input = "put out candle";
+
+    const expectedResult = {
+      "action": "put",
+      "adverb": null,
+      "category": "item_use",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": 'put',
+      "preposition": "out",
+      "subject": "candle",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('put x in y', () => {
+    const input = "put candle in bottle";
+
+    const expectedResult = {
+      "action": "put",
+      "adverb": null,
+      "category": "item_use",
+      "object": "bottle",
+      "originalInput": input,
+      "originalVerb": 'put',
+      "preposition": "in",
+      "subject": "candle",
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
