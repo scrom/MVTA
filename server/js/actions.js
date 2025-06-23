@@ -42,7 +42,8 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.say = function (verb, player, map, po) {
-          return dp.parseDialogue(verb, player, map, po);
+          return player.say(verb, po.subject, po.object, map)
+          //return dp.parseDialogue(verb, player, map, po);
         };
         self.null = function(verb, player, map, po) {
           const randomReplies = ["Can you try again?", "It's probably my fault for not listening to you properly.", "Can you try something else?", "I'm sensing that we have a communication problem here.", "Is everything ok?"];

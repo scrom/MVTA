@@ -34,7 +34,7 @@ module.exports.DialogueParser = function DialogueParser(lexerParser) {
         };
 
         self.parseDialogue = function(action, player, map, parsedObject) {
-            input = sanitiseString(parsedObject.input);
+            input = sanitiseString(parsedObject.originalInput);
             let rest = input;
             if (_inputString) {
                 //remember last input
@@ -55,18 +55,7 @@ module.exports.DialogueParser = function DialogueParser(lexerParser) {
             //extract Questions
             //extract goodbyes
             //extract platitudes
-            //extract requests - which would confert to another action
-
-            return {
-                category: "dialogue",
-                originalVerb: null,
-                originalInput: input,
-                action: verb || "say",
-                adverb: null,
-                subject: objects[0] || null, //the thing we're talking to
-                object: objects[1] || null, //what we are saying (which could be an actions object *or* a string)
-                preposition: preposition || null
-            };
+            //extract requests - which would convert to another action
 
         };
 

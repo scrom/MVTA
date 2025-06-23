@@ -75,7 +75,8 @@ module.exports.LexerParser = function LexerParser() {
         var _object = ""; //Object: - noun that receives the action of the verb. In the sentence "The dog chased the ball," "ball" is the object because it is being acted upon by the verb "chased". 
 
         //saved state:
-        var _lastInputString = "";
+        var _lastInputString = null;
+        var _inConversation = null;
 
         const sanitiseString = function(aString) {
             return aString.toLowerCase().substring(0,255).replace(/[^a-z0-9 +-/%]+/g,""); //same as used for client but includes "/" and "%" as well
@@ -203,7 +204,7 @@ module.exports.LexerParser = function LexerParser() {
                 return ((allVerbs.includes(value)))
             });
 
-            let verb = "";
+            let verb = null;
             let verbIndex = -1
 
             //find position of each verb in token array and strip to left of them.
@@ -272,17 +273,40 @@ module.exports.LexerParser = function LexerParser() {
             verb = self.normaliseVerb(tokens[0]);
 
             if (!verb) {
-                return { error: `Unknown verb: "${tokens[0]}"`, originalInput: input };
-                //@todo - if we don't have a recognised verb here, there's a chance we need to switch to dialogue, yes/no, please/thankyou, salutations, questions etc
+                //if we don't have a recognised verb here, there's a chance we need to switch to dialogue, yes/no, please/thankyou, salutations, questions etc
+                //use last verb if in active cnversation
+                let lastVerbUsed = "";
+                if (player) {
+                    lastVerbUsed = player.getLastVerbUsed();                
+                    if (verbs[lastVerbUsed].category == "dialogue") {
+                        _inConversation = player.getLastCreatureSpokenTo();
+                        verb = lastVerbUsed;
+                    } else {
+                        _inConversation = null;
+                        player.setLastCreatureSpokenTo();
+                    };
+                };
+                
+            };
+
+            //not previously in a conversation 
+            if (!verb) {
+               return { error: `Unknown verb: "${tokens[0]}"`, originalInput: input };
             };
 
             _verb = verb;  
+            if (player) { player.setLastVerbUsed(_verb); };
             rest = tokens.slice(1).join(' ');
             rest = self.removeStopWords(rest);
             
-            //last step - split what's left by preposition to get objects   
+            //split what's left by preposition to get objects   
             const extractedObjectsAndPrepositions = self.extractObjectsAndPrepositions(rest);
             let { objects, preposition} = extractedObjectsAndPrepositions;
+
+            if (_inConversation) {
+                objects[0] = input;
+                objects[1] = _inConversation;
+            };
 
             return {
                 category: verbs[verb].category,

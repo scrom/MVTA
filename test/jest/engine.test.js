@@ -252,3 +252,30 @@ test('test "use" verb with an item that returns a new verb based action', () => 
     expect(actualResult).toBe(expectedResult);
 });
 
+test('test initate dialogue with "say', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    l0.addObject(object);
+    const input = "say hello to aaron";
+    const expectedResult = "Aaron says";
+    const actualResult = engine(input).substring(0,10);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test follow-on dialogue in active conversation', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go(null, l0);
+    const firstInput = "say hello to aaron";
+
+    const expecteFirstResult = "Aaron says";
+    const actualFirstResult = engine(firstInput).substring(0,10);
+    expect(actualFirstResult).toBe(expecteFirstResult);
+
+    const input = "can you find my guitar";
+    const expectedResult = "You ask Aaron to find";
+    const actualResult = engine(input).substring(0,21);
+    expect(actualResult).toBe(expectedResult);
+});
+
+
