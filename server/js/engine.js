@@ -17,7 +17,23 @@ function createEngine(player, map) {
       return `Nothing happens. (No logic for "${action}")`;
     }
 
-    const result = handler(action, player, map, parsedObject);
+    let result = {};
+
+    if (action != "stats") {
+      //explicitly test for false - supports stub testability          
+      if (_player.gameIsActive() == false) {
+        result = a.processResponse ("$inactive$", player, map, parsedObject, 0);
+        return result.response;
+      };
+                
+      //explicitly test for true - supports stub testability          
+      if (_player.isDead() == true) {
+        result = a.processResponse ("$dead$", player, map, parsedObject, 0);
+        return result.response;
+      };
+    };
+
+    result = handler(action, player, map, parsedObject);
     return result.response;
   };
 }
