@@ -137,6 +137,9 @@ module.exports.Actions = function Actions(parser) {
         self.search = function (verb, player, map, po) {
           return self.examine(verb, player, map, po);
         };
+        self.find = function (verb, player, map, po) {
+          return player.hunt(verb, po.subject, map);
+        }
         self.put = function (verb, player, map, po) {
           return player.put(verb, po.subject, po.preposition, po.object);
         };

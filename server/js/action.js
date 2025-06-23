@@ -554,7 +554,6 @@ exports.Action = function Action(player, map, fileManager) {
                             description = _player.examine(_verb, _object0, null, _map);
                         };
                         break;  
-//////Conversion to new engine rached here
                     case 'where':    
                     case 'hunt':                               
                     case 'find': 
@@ -578,6 +577,7 @@ exports.Action = function Action(player, map, fileManager) {
                         if (!(_object0)) { _object0 = _object1 };
                         description = _player.follow(_verb, _object0, map);
                         break;
+//////Conversion to new engine reached here
                     case 'rest':
                     case 'sit':
                     case 'zz':

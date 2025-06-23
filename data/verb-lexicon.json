@@ -28,9 +28,13 @@
     "category": "searching",
     "aliases": ["inspect", "investigate"]
   },
-  "where": {
+  "find": {
     "category": "finding",
-    "aliases": ["hunt", "track", "find"]
+    "aliases": ["hunt", "track", "where"]
+  },
+  "follow" {
+    "category": "tracking",
+    "aliases": ["chase", "pursue", "track", "trail"]
   },
   "go": {
     "category": "movement",
@@ -801,28 +805,16 @@
     "category": "system",
     "aliases": ["g"]
   },
-  "rest": {
-    "category": "resting",
-    "aliases": ["z"]
-  },
-  "sit": {
-    "category": "resting",
-    "aliases": []
-  },
-  "zz": {
-    "category": "resting",
-    "aliases": []
-  },
   "sleep": {
     "category": "resting",
-    "aliases": ["zzz"]
+    "aliases": ["nap", "zzz"]
   },
-  "nap": {
+  "rest": {
     "category": "resting",
-    "aliases": ["zz"]
+    "aliases": ["sit", "zz"]
   },
   "wait": {
     "category": "resting",
-    "aliases": []
+    "aliases": ["z"]
   }
 }
