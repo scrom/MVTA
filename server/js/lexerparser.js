@@ -236,23 +236,14 @@ module.exports.LexerParser = function LexerParser() {
                         //take the next verb whatever that may be
                         verbIndex = tokens.indexOf(inputVerbs[1]);                
                     } else {
-                        //some prepositions (in/out/up/down) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
-                        if (["in", "out", "up", "down"].some((e) => inputVerbs.includes(e))) {
-                            let inputVerbIndex = inputVerbs.indexOf("in");
-                            if (inputVerbIndex >-1) {
-                                inputVerbs.splice(inputVerbIndex,1);
-                            };
-                            inputVerbIndex = inputVerbs.indexOf("out");
-                            if (inputVerbIndex >-1) {
-                                inputVerbs.splice(inputVerbIndex,1);
-                            };
-                            inputVerbIndex = inputVerbs.indexOf("up");
-                            if (inputVerbIndex >-1) {
-                                inputVerbs.splice(inputVerbIndex,1);
-                            };
-                            inputVerbIndex = inputVerbs.indexOf("down");
-                            if (inputVerbIndex >-1) {
-                                inputVerbs.splice(inputVerbIndex,1);
+                        //some prepositions and even nouns (in/out/up/down/water) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
+                        let ignoreVerbs = ["in", "out", "up", "down", "water", "on", "off", "fire"];
+                        if (ignoreVerbs.some((e) => inputVerbs.includes(e))) {
+                            for (i = 0; i < ignoreVerbs.length; i++) {
+                                let inputVerbIndex = inputVerbs.indexOf(ignoreVerbs[i]);
+                                if (inputVerbIndex >-1) {
+                                    inputVerbs.splice(inputVerbIndex,1);
+                                };
                             };
                         };
                     

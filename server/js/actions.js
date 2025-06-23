@@ -73,7 +73,7 @@ module.exports.Actions = function Actions(parser) {
             };    
                           
             //replace verb but keep original object
-            return self.reconstructInputAndRecallSelftWithNewVerb(response, player, map, po, replaceAll);  
+            return self.reconstructInputAndRecallSelfWithNewVerb(response, player, map, po, replaceAll);  
           };
 
           if (response.includes("?")) {
@@ -88,7 +88,7 @@ module.exports.Actions = function Actions(parser) {
           return {response: response, ticks: ticks}
         };
 
-        self.reconstructInputAndRecallSelftWithNewVerb = function(verb, player, map, po, replaceAll) {
+        self.reconstructInputAndRecallSelfWithNewVerb = function(verb, player, map, po, replaceAll) {
           //reconstruct sentence without "try/attempt" - second verb usually ends up as part of subject...
           console.debug ("Input: "+ po.originalInput);
           console.debug ("Subject: "+po.subject);
@@ -154,7 +154,7 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.try = function(verb, player, map, po) {
-          return self.reconstructInputAndRecallSelftWithNewVerb(verb, player, map, po)
+          return self.reconstructInputAndRecallSelfWithNewVerb(verb, player, map, po)
         };
 
         self.use = function (verb, player, map, po) {
@@ -267,6 +267,9 @@ module.exports.Actions = function Actions(parser) {
         };
         self.empty = function (verb, player, map, po) {
           return self.processResponse(player.empty(verb, po.subject, po.preposition, po.object), player, map, po ,2);
+        };
+        self.water = function (verb, player, map, po) {
+          return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
         self.take = function (verb, player, map, po) {
           //player.take(_verb, _object0, _object1);

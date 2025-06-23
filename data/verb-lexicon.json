@@ -28,6 +28,30 @@
       "lookat"
     ]
   },
+  "on": {
+    "category": "item_use",
+    "aliases": []
+  },
+  "off": {
+    "category": "item_use",
+    "aliases": []
+  },
+  "switch": {
+    "category": "item_use",
+    "aliases": []
+  },
+  "turn": {
+    "category": "item_use",
+    "aliases": []
+  },
+  "heat": {
+    "category": "item_use",
+    "aliases": ["cook", "burn", "braise", "roast", "scorch", "flame", "char", "grill", "toast", "heat up", "warm", "warm up"]
+  },
+  "cool": {
+    "category": "item_use",
+    "aliases": ["chill", "ice", "cool down"]
+  },
   "search": {
     "category": "searching",
     "aliases": ["inspect", "investigate"]
@@ -264,6 +288,10 @@
     "category": "item_use",
     "aliases": []
   },
+  "water": {
+    "category": "item_use",
+    "aliases": []
+  },
   "fill": {
     "category": "item_use",
     "aliases": []
@@ -282,7 +310,6 @@
     "category": "item_use",
     "aliases": ["present", "hand", "offer", "feed"]
   },
-
   "throw": {
     "category": "item_use",
     "aliases": ["chuck", "hurl","yeet","lob"]

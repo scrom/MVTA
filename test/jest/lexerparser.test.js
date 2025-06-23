@@ -109,12 +109,12 @@ test('can parse object when preposition is 2 words at end', () => {
 });
 
 test('can parse single object when preposition is 3 words at beginning', () => {
-    const input = 'pour on top of water';
+    const input = 'on top of water';
     const expectedResult =     {
-      category: 'item_use',
-      originalVerb: 'pour',
+      category: 'system',
+      originalVerb: null,
       originalInput: input,
-      action: 'pour',
+      action: 'customaction',
       adverb: null,
       subject: 'water',
       object: null,
@@ -726,6 +726,134 @@ test('put x in y', () => {
       "originalVerb": 'put',
       "preposition": "in",
       "subject": "candle",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('water plants', () => {
+    const input = "water plants";
+
+    const expectedResult = {
+      "action": "water",
+      "adverb": null,
+      "category": "item_use",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "water",
+      "preposition": null,
+      "subject": "plants",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('water plants', () => {
+    const input = "water plants with gatorade";
+
+    const expectedResult = {
+      "action": "water",
+      "adverb": null,
+      "category": "item_use",
+      "object": "gatorade",
+      "originalInput": input,
+      "originalVerb": "water",
+      "preposition": "with",
+      "subject": "plants",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('water plants', () => {
+    const input = "water plants with can full of gatorade";
+
+    const expectedResult = {
+      "action": "water",
+      "adverb": null,
+      "category": "item_use",
+      "object": "can full of gatorade",
+      "originalInput": input,
+      "originalVerb": "water",
+      "preposition": "with",
+      "subject": "plants",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('make sure we can still handle water as a noun as well as a verb', () => {
+    const input = "drink water";
+
+    const expectedResult = {
+      "action": "drink",
+      "adverb": null,
+      "category": "food_drink",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "drink",
+      "preposition": null,
+      "subject": "water",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('make sure we can still handle water as a noun as well as a verb', () => {
+    const input = "throw holy water at demon";
+
+    const expectedResult = {
+      "action": "throw",
+      "adverb": null,
+      "category": "item_use",
+      "object": "demon",
+      "originalInput": input,
+      "originalVerb": "throw",
+      "preposition": "at",
+      "subject": "holy water",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('make sure we can still handle water as a noun as well as a verb', () => {
+    const input = "cool down plants with water";
+
+    const expectedResult = {
+      "action": "cool",
+      "adverb": null,
+      "category": "item_use",
+      "object": "water",
+      "originalInput": input,
+      "originalVerb": "cool",
+      "preposition": "with",
+      "subject": "down plants",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('more fun with nouns that are also verbs', () => {
+    const input = "please throw the water over the fire";
+
+    const expectedResult = {
+      "action": "throw",
+      "adverb": null,
+      "category": "item_use",
+      "object": "fire",
+      "originalInput": input,
+      "originalVerb": "throw",
+      "preposition": "over",
+      "subject": "water",
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
