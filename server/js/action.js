@@ -637,7 +637,7 @@ exports.Action = function Action(player, map, fileManager) {
                         if (tools.positions.indexOf(_splitWord) > -1) {
                             //put or hide an item on/under/behind x
                             _ticks = 3;
-                            description = _player.position(_verb, _object0, _object1, _splitWord, tools.positions);
+                            description = _player.put(_verb, _object0, _splitWord, _object1);
                             break;
                         };
                     case 'attach':

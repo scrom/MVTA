@@ -238,7 +238,15 @@
   },
   "put": {
     "category": "item_use",
-    "aliases": ["place", "position", "install", "insert"]
+    "aliases": ["install", "insert"]
+  },
+  "hide": {    
+    "category": "item_use",
+    "aliases": ["stash"]
+  },
+  "place": {    
+    "category": "item_use",
+    "aliases": ["position", "balance"]
   },
   "attach": {
     "category": "item_use",

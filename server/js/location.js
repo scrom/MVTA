@@ -659,6 +659,7 @@ exports.Location = function Location(name, displayName, description, attributes)
                         anObjectName = "floor"
                         sceneryAttributes.subType = "floor";
                         sceneryAttributes.synonyms = ["floor", "ground", "floors", "grounds", "feet"];
+                        sceneryAttributes.weight = 999;
                         description = "You look down. Yep, that's the ground beneath your feet."
                         sceneryAttributes.canDrawOn = true;
                         break;
@@ -667,6 +668,7 @@ exports.Location = function Location(name, displayName, description, attributes)
                         anObjectName = "wall"
                         sceneryAttributes.subType = "wall";
                         sceneryAttributes.synonyms = ["wall", "walls"];
+                        sceneryAttributes.weight = 999;
                         description = "Hmm. Walls. Interesting."
                         sceneryAttributes.canDrawOn = true;
                         break;
@@ -681,6 +683,7 @@ exports.Location = function Location(name, displayName, description, attributes)
                         anObjectName = "picture"
                         sceneryAttributes.subType = "art";
                         sceneryAttributes.synonyms = ["picture", "pictures", "art", "arts", "pic", "pics", "artwork", "artworks"];
+                        sceneryAttributes.weight = 2;
                         description = "Very generic artwork. Just think, somebody somewhere might actually make a living producing stuff like this."
                         sceneryAttributes.canDrawOn = true;
                         break;
@@ -690,6 +693,7 @@ exports.Location = function Location(name, displayName, description, attributes)
                         anObjectName = "plant"
                         sceneryAttributes.subType = "plant";
                         sceneryAttributes.synonyms = ["plant", "plants", "vegetation", "tree", "trees"];
+                        sceneryAttributes.weight = 50;
                         if (self.getType() == "indoor") {
                             description = "A few plants always brighten up the space. Fairly generic, but pleasant enough.";
                             sceneryAttributes.synonyms = sceneryAttributes.synonyms.concat(["indoor plant", "potted plant", "pot plant", "leaves", "greenery"]);

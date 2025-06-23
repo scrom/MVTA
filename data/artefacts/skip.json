@@ -5,7 +5,8 @@
     "detailedDescription": "It's full of rubbish.<br>It looks like a great place to hide things you don't want found!",
     "attributes": {
         "weight": 400,
-        "carryWeight": 120,
+        "carryWeight": 180,
+        "type": "container",        
         "imageName": "skip.jpg",
         "customAction": "climb",
         "defaultResult": "You clamber around in the skip.<br>After putting your hand in something slimy and nearly impaling yourself on a broken chair you decide to climb back out.",

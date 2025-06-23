@@ -203,7 +203,7 @@ test('can call engine with player interacting with 2 objects', () => {
     l0.addObject(object);
     l0.addObject(subject);
     const input = "put pops in to bowl";
-    const expectedResult = "You put some coco pops in the bowl.<br>$imagebowl.jpg/$image";
+    const expectedResult = "You put some coco pops into the bowl.<br>$imagebowl.jpg/$image";
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
@@ -216,7 +216,7 @@ test('can call engine with player interacting with 2 objects with different prep
     l0.addObject(object);
     l0.addObject(subject);
     const input = "put pops into bowl";
-    const expectedResult = "You put some coco pops in the bowl.<br>$imagebowl.jpg/$image";
+    const expectedResult = "You put some coco pops into the bowl.<br>$imagebowl.jpg/$image";
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
@@ -420,6 +420,33 @@ test('test "sleep"/"nap" verb', () => {
     p0.increaseTimeSinceResting(55);
     const input = "nap";
     const expectedResult = "You sleep for a while.<br>";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test "hide"/"stash" *in* verb', () => {
+    const objectJSON  = fm.readFile("artefacts/bowl.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const object2JSON  = fm.readFile("artefacts/skip.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    l0.addObject(object2);
+    const input = "stash bowl in skip";
+    const expectedResult = "That's a bit obvious. You'll need to hide it somewhere else.";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "hide"/"stash" *under* verb', () => {
+    const objectJSON  = fm.readFile("artefacts/bowl.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const object2JSON  = fm.readFile("artefacts/hookah.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    l0.addObject(object2);
+    const input = "stash bowl under hookah";
+    const expectedResult = "You hide the bowl under the ornate hookah pipe.<br>";
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });

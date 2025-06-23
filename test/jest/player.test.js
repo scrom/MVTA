@@ -1069,7 +1069,7 @@ test('cannot put object in closed container', () => {
 });
 
 test('can put object in open container', () => {
-    var expectedResult = "You put the slab of sugary goodness in the container.<br>";
+    var expectedResult = "You put the slab of sugary goodness into the container.<br>";
     p0.open('open','container');
     var actualResult = p0.put('put','cake', "in", 'container');
     console.debug("Expected: "+expectedResult);
@@ -1204,7 +1204,7 @@ test('cant put object in item that doesnt exist', () => {
 
 test('can put object in non-container item with carry weight', () => {
     //p0.get('get', food.getName());
-    var expectedResult = "You put the slab of sugary goodness in the artefact of little consequence.<br>";
+    var expectedResult = "You put the slab of sugary goodness into the artefact of little consequence.<br>";
     var actualResult = p0.put('put','cake', "in", 'artefact');
     console.debug("Expected: "+expectedResult);
     console.debug("Actual  : "+actualResult);
@@ -1214,7 +1214,7 @@ test('can put object in non-container item with carry weight', () => {
 test('can put object in broken non-container item with carry weight', () => {
     p0.get('get', food.getName());
     p0.breakOrDestroy('break','glass');
-    var expectedResult = "You put your cake in the drinking glass.<br>";
+    var expectedResult = "You put your cake into the drinking glass.<br>";
     var actualResult = p0.put('put','cake', "in", 'glass');
     console.debug("Expected: "+expectedResult);
     console.debug("Actual  : "+actualResult);

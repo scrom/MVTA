@@ -10,6 +10,7 @@
         {"verbs": ["imagine"], "message": "You briefly close your eyes and picture a door to a magical world full of love, rainbows, unicorns, and daisies.<br>Then you snap back to reality <i>('Oop there goes gravity')</i>.<br>You waver for a moment before remembering that you're still stuck in this office with a job and need to pay your rent."}    
         ],        
         "weight": 151,
+        "type": "container",
         "carryWeight": 25,
         "canOpen": true,
         "lockable": true,

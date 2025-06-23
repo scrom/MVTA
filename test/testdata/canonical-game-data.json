@@ -5913,6 +5913,7 @@
                 "description": "floor",
                 "detailedDescription": "Shiny and clean.",
                 "attributes": {
+                    "weight": 999,
                     "type": "scenery",
                     "customAction": [
                         "pee",
@@ -6383,6 +6384,7 @@
                 "description": "floor",
                 "detailedDescription": "Shiny and clean.",
                 "attributes": {
+                    "weight": 999,
                     "type": "scenery",
                     "customAction": [
                         "pee",
@@ -6964,6 +6966,7 @@
                 "description": "floor",
                 "detailedDescription": "Shiny and clean.",
                 "attributes": {
+                    "weight": 999,
                     "type": "scenery",
                     "customAction": [
                         "pee",
@@ -7248,6 +7251,7 @@
                 "description": "floor",
                 "detailedDescription": "Shiny and clean.",
                 "attributes": {
+                    "weight": 999,
                     "type": "scenery",
                     "customAction": [
                         "pee",
@@ -7721,6 +7725,7 @@
                 "description": "office carpet",
                 "detailedDescription": "It's bright green. Not really the colour of the sea floor but it lightens the place up a bit.",
                 "attributes": {
+                    "weight": 999,
                     "type": "scenery",
                     "customAction": [
                         "pee",
@@ -7850,6 +7855,7 @@
                     "extendedInventoryDescription": "It's full of ",
                     "weight": 151,
                     "carryWeight": 25,
+                    "type": "scenery",
                     "holdsLiquid": true,
                     "isBreakable": true,
                     "canOpen": true,
@@ -8955,6 +8961,7 @@
                 "attributes": {
                     "weight": 100,
                     "carryWeight": 5,
+                    "type": "scenery",
                     "hideDeliveryDescription": true,
                     "customAction": "wash",
                     "defaultResult": "You rinse your hands in the sink.",
@@ -9303,6 +9310,7 @@
                 "attributes": {
                     "weight": 100,
                     "carryWeight": 5,
+                    "type": "scenery",
                     "hideDeliveryDescription": true,
                     "customAction": "wash",
                     "defaultResult": "You rinse your hands in the sink.",
@@ -9497,6 +9505,7 @@
                     "extendedInventoryDescription": "It's full of ",
                     "weight": 151,
                     "carryWeight": 25,
+                    "type": "scenery",
                     "holdsLiquid": true,
                     "isBreakable": true,
                     "canOpen": true,
@@ -11297,7 +11306,7 @@
                                     "detailedDescription": "A tangle of twisted, smouldering metal, plastic, broken glass and bodies.",
                                     "attributes": {
                                         "weight": 1500,
-                                        "carryWeight": 95,
+                                        "carryWeight": 200,
                                         "plural": true,
                                         "imageName": "wreckage.jpg",
                                         "smell": "The whole area smells like a combination of burned plastic and barbecued hair."
@@ -15595,6 +15604,7 @@
                     "defaultAction": "crack",
                     "weight": 151,
                     "carryWeight": 25,
+                    "type": "container",
                     "canOpen": true,
                     "lockable": true,
                     "locked": true,
@@ -15648,7 +15658,9 @@
                 "detailedDescription": "It's the traditional array of pigeon holes you see in any post room.<br>Funny how these have survived into the 21st century paperless office.",
                 "attributes": {
                     "extendedInventoryDescription": "Thumbing through the piles of uncollected letters, you find $inventory.",
+                    "weight": 400,
                     "carryWeight": 3,
+                    "type": "container",
                     "plural": true
                 },
                 "synonyms": [
@@ -16419,7 +16431,8 @@
                 "detailedDescription": "It's full of rubbish.<br>It looks like a great place to hide things you don't want found!",
                 "attributes": {
                     "weight": 400,
-                    "carryWeight": 120,
+                    "carryWeight": 180,
+                    "type": "container",
                     "customAction": "climb",
                     "defaultResult": "You clamber around in the skip.<br>After putting your hand in something slimy and nearly impaling yourself on a broken chair you decide to climb back out.",
                     "imageName": "skip.jpg",
@@ -17242,6 +17255,7 @@
                 "description": "floor",
                 "detailedDescription": "Shiny and clean.",
                 "attributes": {
+                    "weight": 999,
                     "type": "scenery",
                     "customAction": [
                         "pee",
@@ -18473,6 +18487,7 @@
                 "description": "floor",
                 "detailedDescription": "Shiny and clean.",
                 "attributes": {
+                    "weight": 999,
                     "type": "scenery",
                     "customAction": [
                         "pee",
@@ -21168,6 +21183,7 @@
                 "description": "office carpet",
                 "detailedDescription": "On the surface it's just a plain office carpet but it's a bit prickly.",
                 "attributes": {
+                    "weight": 999,
                     "type": "scenery",
                     "customAction": [
                         "pee",

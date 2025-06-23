@@ -2358,141 +2358,12 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             };
         };
 
-        /*Allow player to position an object relative to another */
-        self.position = function(verb, artefactName, receiverName, position){
-                var on = true;
-                var positionName = "on";
-                var under = false;
-                var behind = false;
-                //first 5 positions are all "on"
-                if (position) {
-                    var index = tools.positions.indexOf(position);
-                    if (index >=tools.onIndex) {
-                        on = false;
-                        if (position == "behind") {
-                            behind = true;
-                            positionName = "behind";
-                        } else {
-                            under = true;
-                            positionName = "under";
-                        };
-                    };
-                };
-
-                var resultString = "";
-
-                if (tools.stringIsEmpty(artefactName)){ 
-                    //player is attempting to hide self
-                    return "I don't think hiding yourself away will accomplish anything, sorry.";
-                };
-                if (tools.stringIsEmpty(receiverName)){ return verb+" "+artefactName+" where?";};
-
-                var artefact = getObjectFromPlayerOrLocation(artefactName);
-                if (!(artefact)) {return notFoundMessage(artefactName);};
-
-                if (!(artefact.isCollectable())) {return  "Sorry, "+artefact.getPrefix().toLowerCase()+" can't be picked up.";};
-
-                if (on && verb == "hide") {
-                    return "You're welcome to <i>put</i> "+artefact.getSuffix()+" "+position+" there but I'm afraid "+artefact.getSuffix()+"'ll still be in plain sight.";
-                };
-
-                //get receiver if it exists
-                var receiver = getObjectFromPlayerOrLocation(receiverName);
-                if (!(receiver)) {
-                    return notFoundMessage(receiverName);
-                };
-
-                if (receiver.getType() == "creature") {
-                    if (!(receiver.isDead())) {
-                        //@todo if animal, attempt without disturbing them, if unfriendly - hostile response, if friendly - decrease affinity
-                        if (receiver.getSubType() == "animal") {
-                            receiver.decreaseAffinity(1,false);
-                            if (receiver.isHostile() || receiver.willFlee()) {
-                                return receiver.fightOrFlight();
-                            };
-                        } else {
-                            return  "I don't think "+receiver.getDescriptivePrefix().toLowerCase()+" going to appreciate that."; 
-                        };
-                    };
-                };
-
-                if (artefact.isLiquid() || artefact.isPowder()) {
-                    if (artefact.combinesWith(receiver, true) && on) {
-                        return self.put(verb, artefactName, position, receiverName);
-                    };
-                    var artefactChargesRemaining = artefact.consume();
-                    if (artefactChargesRemaining == 0) { removeObjectFromPlayerOrLocation(artefactName);};
-                    if (receiver.getType() != "creature"  && on && artefact.isLiquid()) {
-                        receiver.addLiquid(artefact.getName());
-                    };
-                    if (artefact.getName() == "blood" && on) {                  
-                        return "Hmm. You're a bit sick aren't you.<br>You pour "+artefact.getName()+" over "+receiver.getDisplayName()+".";
-                    } else {
-                        return "It seems a bit wasteful but it's your call...<br>You pour "+artefact.getName()+" "+position+" "+receiver.getDisplayName()+".";
-                    };
-                };   
-
-                if ((verb == "hide"||verb == "balance") && _currentLocation.liveCreaturesExist()) { 
-                    if (receiver.getSubType() != "animal" || _currentLocation.countCreatures() > 1) {
-                        return "You're being watched. Try again when it's a bit quieter around here.";
-                    };
-                };
-                
-                //check receiver can position item (container or not)
-                if (receiver.isLiquid()||receiver.isPowder()) {return "Nope, I don't think that'll work, sorry.";};
-                if (receiver.isDestroyed()){return "There's not enough of "+receiver.getDisplayName()+" to "+verb+" anything "+position+" "+receiver.getSuffix()+".";};
-                if (receiver.getWeight() < artefact.getWeight()) { return artefact.getDescriptivePrefix()+" too big to "+verb+" "+position+" "+receiver.getDisplayName()+".";};
-                
-                //can only hide small objects under fixed items but not under scenery.
-                if (!(receiver.isCollectable()) && artefact.getWeight()>1) {              
-                    if (under) {
-                         return "You can't fit "+artefact.getSuffix()+" "+position+" "+receiver.getDisplayName()+".";
-                    };
-                    if (!(receiver.getType() == "door") && behind) {
-                        return "You can't fit "+artefact.getSuffix()+" "+position+" "+receiver.getDisplayName()+".";
-                    };
-                };
-
-                if (receiver.getType() == "scenery" || artefact.getType() == "scenery") {
-                    return "I'd rather you didn't mess with the scenery too much right now.<br>Thanks.";
-                };
-
-                //we'll only get this far if there is an object to give and a valid receiver - note the object *could* be a live creature!
-                if (!(receiver.canCarry(artefact, positionName))) { return  "Sorry, "+receiver.getDisplayName()+" doesn't have room for "+artefact.getSuffix()+" at the moment.";};
-
-                var collectedArtefact = removeObjectFromPlayerOrLocation(artefactName);
-                if (!(collectedArtefact)) { return  "Sorry, "+artefact.getPrefix().toLowerCase()+" can't be picked up.";};
-
-                //put the x in the y
-                var receiverDisplayNameString = receiver.getDisplayName();
-                if (_inventory.check(receiver.getName())) {receiverDisplayNameString = "your "+receiver.getName();};
-
-                var artefactDisplayNameString = collectedArtefact.getDisplayName();
-                if (_inventory.check(collectedArtefact.getName())) {artefactDisplayNameString = "your "+collectedArtefact.getName();};
-
-                resultString = "You "+verb+" "+artefactDisplayNameString;
-                resultString += " "+position+" ";              
-                resultString += receiverDisplayNameString+".<br>";
-
-                var receiveResult = receiver.position(collectedArtefact, positionName);
-                //if receiving failed...
-                if (!(receiver.getInventoryObject().check(collectedArtefact.getName()))) {
-                    resultString += receiveResult;
-                    return resultString;
-                };
-
-                //did we just hide item?
-                if (!on) { 
-                    //putting something behind or under something else.
-                    collectedArtefact.hide();
-                };
-
-                return resultString;
-
-            };
-
-        /*Allow player to put something in an object */
+    /*Allow player to put something in/on/under an object */
     self.put = function(verb, artefactName, splitword, receiverName, requiredContainer, artefact, receiver){
+        //player.put(verb, po.subject, po.preposition, po.object);
+            if (splitword == "down") { return self.drop(verb, artefactName, _map);};
+            if (splitword == "out") { return self.turn(verb, artefactName, splitword);};
+
             var resultString = "";
             var artefactPreviouslyCollected = false;
             var collectedArtefact;
@@ -2503,6 +2374,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 if (tools.stringIsEmpty(artefactName)) { return tools.initCap(verb) + " what?"; };
                 if (tools.stringIsEmpty(receiverName)) { return tools.initCap(verb) + " " + artefactName + " where?"; };
                 if (artefactName == "all") { return "Sorry, you'll need to be more specific."; };
+                if (verb == "hide" && tools.stringIsEmpty(artefactName)) {return "I don't think hiding yourself away will accomplish anything, sorry.";}
                                 
                 if (verb == "collect" && (!artefact)) {
                     //try location first if collecting and don't already have it
@@ -2519,7 +2391,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 artefactName = artefact.getName();
             };
 
-
             if (!receiver) {
                 //get receiver if it exists and we don't already have one.
                 receiver = getObjectFromPlayerOrLocation(receiverName);
@@ -2533,11 +2404,16 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (receiver.getType() == "creature") {
                 if (receiver.isDead()) {
                     return  "You're not really qualified as a taxidermist are you? Please stop interfering with corpses.";  
+                } else if (receiver.getSubType() == "animal") {
+                    receiver.decreaseAffinity(1,false);
+                    if (receiver.isHostile() || receiver.willFlee()) {
+                        return receiver.fightOrFlight();
+                    };
                 } else {
                     return  "It's probably better to 'give' "+artefact.getDisplayName()+" to "+receiver.getSuffix()+"."; 
                 };
             };
-            
+
             //we only need to do all this if we hadn't previously collected it...
             if (!collectedArtefact) {
                 if (artefact.getSubType() == "intangible") {
@@ -2553,9 +2429,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     return "You try in vain to move " + artefact.getDisplayName() + " to where you want it but just end up tired and annoyed."
                 };
             };
-
-            if (verb == "hide" && _currentLocation.liveCreaturesExist()) { return "You're being watched. Try again when it's a bit quieter around here.";};
-            if (verb == "hide" && receiver.getType() == "container") { return "That's a bit obvious. You'll need to hide "+artefact.getSuffix()+" somewhere else.";};
 
             //if objects combine together...
             if (artefact.combinesWith(receiver, true)) {
@@ -2579,11 +2452,61 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             } else {
                 if (verb == "combine") {return "Combining "+artefactName+" and "+receiver.getName()+" won't make anything new.";};
             };
+
+            if (receiver.getSubType() == "intangible") {
+                return tools.initCap(receiver.getDisplayName()) + " isn't really something you can do much with." +
+                        "<br>You try anyway. After a while, you just feel tired and foolish.";
+            };   
+
+            if (artefact.getType() == "scenery") {
+                return tools.initCap(receiver.getDisplayName()) + " is just scenery. You're not going to accomplish anything by doing that.";
+            };
                 
             //check receiver can carry item (container or not)
-            //@todo - ensure artefact weight doesn't include positioned items
-            if (!(receiver.canContain(artefact))) {
+            //split words that are also "put" positions. first 0-4 are "on", 5 is above, 6-10 are below/behind, 
+            //we now have canSupport and canHide
+            //hide = below/behind, 
+            //support = on
+            //contain = in
+            let position = "in";
 
+            if (tools.positions.indexOf(splitword) == -1) {
+                position = "in";
+             } else if (tools.positions.indexOf(splitword) <= 4) {
+                position = "on";
+             } else if (tools.positions.indexOf(splitword) <= 5) {
+                position = "above";
+            } else if (tools.positions.indexOf(splitword) <= 10) {
+                position = "hidden";
+            };
+
+            if (position == "above") {
+                return "You'll need something to hang "+ artefact.getSuffix() +" from."
+            };
+
+            if (position == "on") {
+                 if (!receiver.canSupport(artefact)) {
+                    return "Unfortunately "+receiver.getDisplayName()+" can't hold "+artefact.getDisplayName()+".";
+                 };
+            };
+
+            if (position == "hidden" || verb == "hide") {        
+                if (_currentLocation.liveCreaturesExist()) { return "You're being watched. Try again when it's a bit quieter around here.";};
+                if (receiver.getType() == "container") { return "That's a bit obvious. You'll need to hide "+artefact.getSuffix()+" somewhere else.";};
+                if (!receiver.canHide(artefact)) {
+
+                    //can only hide small objects under fixed items but not under scenery.
+                    if (!(receiver.isCollectable()) && artefact.getWeight()>2) {              
+                        return "You can't fit "+artefact.getSuffix()+" "+splitword+" "+receiver.getDisplayName()+".";
+                    };
+                    //can't hide liquids or things that are too big
+                    return "Try as you might, to can't find any way to hide "+artefact.getDisplayName()+" "+splitword+" "+receiver.getDisplayName()+".";
+                };
+
+                if (position == "on") {return "You're welcome to <i>put</i> "+artefact.getSuffix()+" "+position+" there but I'm afraid "+artefact.getSuffix()+"'ll still be in plain sight." };;
+            };            
+
+            if (position == "in" && !(receiver.canContain(artefact))) {
                 //is it already there?
                 if (receiver.getObject(artefactName)) {
                     if (verb == "hide") {
@@ -2635,10 +2558,13 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                         };
                         return putResult;
                     };
-                };
+                };                
+                
+                return  "You try and try but can't find a satisfactory way to make "+artefact.getSuffix()+" fit."; 
+            };
 
-                //put into container has not been possible...
-                if (artefact.isLiquid() || artefact.isPowder()) {
+            //doing odd things with liquids and powders...
+            if (position == "on" && (artefact.isLiquid() || artefact.isPowder())) {
                     //if receiver is liquid or powder it would have combined at this point. Therefore only "waste" if adding to a solid.
                     if (!receiver.isLiquid() && !receiver.isPowder()) {
                         //@todo - should really trap if the liquid/powder was *not* in a container prior to this
@@ -2649,43 +2575,34 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                         };
                         if (artefactChargesRemaining == 0) { removeObjectFromPlayerOrLocation(artefactName); };
                         if (receiver.syn("floor")) {
-                            _currentLocation.addLiquid(artefactName)
+                            _currentLocation.addLiquid(artefactName);
                         } else {
                             receiver.addLiquid(artefactName);
                         };
                         
                         if (artefactName == "blood") {
-                            return "Hmm. You're a bit sick aren't you.<br>You pour " + artefactName + " " + splitword + " " + receiver.getDisplayName() + ".";
+                            return "Hmm. You're a bit sick aren't you.<br>You pour " + artefactName + " over " + receiver.getDisplayName() + ".";
                         } else {
-                            return "$fail$It seems a bit wasteful if you ask me but it's your call...<br>You pour " + artefactName + " " + splitword + " " + receiver.getDisplayName() + ".";
+                            return "$fail$It seems a bit wasteful if you ask me but it's your call...<br>You pour " + artefactName + " over " + receiver.getDisplayName() + ".";
                         };
                     };
-                };                   
-                
-                if (receiver.getSubType() == "intangible") {
-                    return tools.initCap(receiver.getDisplayName()) + " isn't really something you can do much with." +
-                        "<br>You try anyway. After a while, you just feel tired and foolish.";
-                };              
-                if (artefact.getType() == "scenery") {
-                    return tools.initCap(receiver.getDisplayName()) + " is just scenery. You're not going to accomplish anything by doing that.";
-                };
-                return  "You try and try but can't find a satisfactory way to make "+artefact.getSuffix()+" fit."; 
-            };
+            };   
 
-
-            //we'll only get this far if there is an object to give and a valid receiver - note the object *could* be a live creature!
-            if (receiver.isLocked()) { return  "Sorry, "+receiver.getDescriptivePrefix().toLowerCase()+" locked.";};
-            if (!(receiver.isOpen())) { return  "Sorry, "+receiver.getDescriptivePrefix().toLowerCase()+" closed.";};
-            //@todo - ensure artefact weight doesn't include positioned items
-            if (!(receiver.canCarry(artefact))) { return  "Sorry, "+receiver.getDisplayName()+" can't carry "+artefact.getSuffix()+". "+tools.initCap(artefact.getDescriptivePrefix())+" too heavy for "+receiver.getSuffix()+" at the moment.";};
+            if (position == "in") {
+                //we'll only get this far if there is an object to give and a valid receiver - note the object *could* be a live creature!
+                if (receiver.isLocked()) { return  "Sorry, "+receiver.getDescriptivePrefix().toLowerCase()+" locked.";};
+                if (!(receiver.isOpen())) { return  "Sorry, "+receiver.getDescriptivePrefix().toLowerCase()+" closed.";};
+                //@todo - ensure artefact weight doesn't include positioned items
+                if (!(receiver.canCarry(artefact))) { return  "Sorry, "+receiver.getDisplayName()+" can't carry "+artefact.getSuffix()+". "+tools.initCap(artefact.getDescriptivePrefix())+" too heavy for "+receiver.getSuffix()+" at the moment.";};
+                    
+                //we know they *can* carry it...
+                if (!(artefact.isCollectable())) { return "Sorry, " + artefact.getSuffix() + " can't be picked up."; };
                 
-            //we know they *can* carry it...
-            if (!(artefact.isCollectable())) { return "Sorry, " + artefact.getSuffix() + " can't be picked up."; };
-            
-            if (artefact.isComponentOf(receiver.getName())) {
-                //check the component isn't broken.
-                if (!artefact.isIntact()) {
-                    return "It looks like " + artefact.getDisplayName() + " has seen a little too much action.<br>You'll need to find a way to <i>repair</i> " + artefact.getSuffix() + " before you can " + verb + " " + artefact.getSuffix() + " in there.";
+                if (artefact.isComponentOf(receiver.getName())) {
+                    //check the component isn't broken.
+                    if (!artefact.isIntact()) {
+                        return "It looks like " + artefact.getDisplayName() + " has seen a little too much action.<br>You'll need to find a way to <i>repair</i> " + artefact.getSuffix() + " before you can " + verb + " " + artefact.getSuffix() + " in there.";
+                    };
                 };
             };
 
@@ -2731,12 +2648,10 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     };
                 };
                 //remove item from where it currently resides
-
                 originalInventory.remove(artefactName, false);
             };
             
-
-            //put the x in the y
+            //put the x in/on/under the y
             var receiverDisplayNameString = receiver.getDisplayName();
             if (_inventory.check(receiver.getName())) {
                 receiverDisplayNameString = "your " + receiver.getName();
@@ -2756,15 +2671,24 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 } else {
                     resultString += " in "; 
                 };
-            } else if (verb == "collect" ||verb == "pour" || verb == "install" || verb == "insert"){
+            } else if (position == "in" && (verb == "put" || verb == "place" || verb == "collect" ||verb == "pour" || verb == "install" || verb == "insert")){
                 resultString += " into "; 
+            } else if (position == "on" || verb == "balance"){
+                resultString += " onto "; 
             } else {
-                resultString += " in ";    
+                resultString += " "+splitword+" ";    
             };               
             resultString += receiverDisplayNameString+".<br>";
             
             var collectedArtefactWeight = collectedArtefact.getWeight();
-            var receiveResult = receiver.receive(collectedArtefact, _map, self, false);
+            var receiveResult = ""
+            if (position == "in") {
+                receiveResult = receiver.receive(collectedArtefact, _map, self, false);
+            } else if (position == "on") {
+                receiveResult = receiver.position(collectedArtefact, position);
+            } else {
+                 receiveResult = receiver.position(collectedArtefact, splitword);
+            };
 
             //if receiving failed (or combined with something else)...
             if (!(receiver.getInventoryObject().check(collectedArtefact.getName()))) {
@@ -2831,12 +2755,11 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                         resultString += "<br>"+receiver.repair(self);                 
                     };
                 };
-            } else if (verb == "hide") { //can only hide if not a component
+            } else if (verb == "hide" || position == "hidden") { //can only hide if not a component
                 collectedArtefact.hide();
             };
             
             return resultString;
-
         };
 
 

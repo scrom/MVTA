@@ -4444,6 +4444,21 @@ exports.Creature = function Creature(name, description, detailedDescription, att
         self.hasLiquid = function(liquidName) {
             return false;
         };
+ 
+        self.canSupport = function(anObject) {
+            if (!self.isDead()) { return false; };
+            if (self.getWeight() <= anObject.getWeight()); { return false; }; //object is too big/heavy
+
+            return true;
+        };
+
+        self.canHide = function(anObject) {
+            if (!self.isDead()) { return false; };
+            if (self.getWeight() > 200) { return false; }; //far too heavy
+            if (self.getWeight() <= anObject.getWeight()); { return false; }; //object is too big/heavy
+
+            return true;
+        };
 
         self.canContain = function(anObject) {
             //broken objects can't contain anything

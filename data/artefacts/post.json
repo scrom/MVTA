@@ -5,6 +5,8 @@
   "detailedDescription": "It's the traditional array of pigeon holes you see in any post room.<br>Funny how these have survived into the 21st century paperless office.",
   "attributes": {
     "extendedInventoryDescription": "Thumbing through the piles of uncollected letters, you find $inventory.",
+    "type": "container",
+    "weight": 400,
     "carryWeight": 3,
     "plural": true
   },

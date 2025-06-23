@@ -7,6 +7,7 @@
     "extendedInventoryDescription": "It's full of ",
     "weight": 151,
     "carryWeight": 25,
+    "type": "scenery",
     "imageName": "fridge.jpg", 
     "holdsLiquid": true,
     "isBreakable": true,

@@ -1905,12 +1905,33 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             return deliveredItem;
         };
 
+        self.canSupport = function(anObject) {
+            if (self.isDestroyed()) { return false; };
+            if (self.isBroken() && anObject.isSolid()) { return false; };
+            if (!self.isSolid()) { return false; };
+            if (self.getType() == "scenery" && anObject.isSolid()){ return false; };
+            if (anObject.getWeight() > self.getWeight()) { return false; }; //object is too big/heavy
+
+            return true;
+        };
+
+        self.canHide = function(anObject) {
+            if (self.isDestroyed()) { return false; };
+            if (!self.isSolid()) { return false; };
+            if (!anObject.isSolid()) { return false; }; //can't hide liquids and powders.
+            if (self.getType() == "scenery"){ return false; };
+            if (!self.isCollectable() || (Number(self.getWeight()) > 200)) { return false; }; //far too heavy
+            if (anObject.getWeight() > self.getWeight()) { return false; }; //object is too big/heavy
+
+            return true;
+        };
+
         self.canContain = function(anObject) {
             //broken containers can't contain anything
-            if (self.isDestroyed()) {return false;};
+            if (self.isDestroyed()) { return false; };
             if (self.getType() == "container" && self.isBroken()) { return false; };
             if (self.getSubType() == "bottle" && anObject.isSolid()) { return false; };
-            if ((anObject.isLiquid()||anObject.isPowder()) && (!(self.holdsLiquid()))) {return false;};
+            if ((anObject.isLiquid()||anObject.isPowder()) && (!(self.holdsLiquid()))) { return false; };
             return _inventory.canContain(anObject, self.getName());
         };
 

@@ -6,6 +6,7 @@
   "attributes": {
     "weight": 100,
     "carryWeight": 5,
+    "type": "scenery",
     "imageName": "kitchensink.jpg", 
     "customAction": "wash",
     "hideDeliveryDescription": true,

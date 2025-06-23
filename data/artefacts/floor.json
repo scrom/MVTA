@@ -5,6 +5,7 @@
 "detailedDescription": "Shiny and clean.",
 "attributes": {
     "type": "scenery",
+    "weight": 999,
     "customAction": [
     "pee",
     "urinate",

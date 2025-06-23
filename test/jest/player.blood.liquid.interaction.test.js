@@ -210,7 +210,7 @@ describe('Player Blood Liquid Interaction', () => {
         inv.add(bottle);
         p0.get("collect", "blood");
 
-        const expected = "Hmm. You're a bit sick aren't you.<br>You pour blood on the floor.";
+        const expected = "Hmm. You're a bit sick aren't you.<br>You pour blood over the floor.";
         const actual = p0.put("pour", "blood", "on", "floor");
         console.debug("expected:" + expected);
         console.debug("actual:" + actual);

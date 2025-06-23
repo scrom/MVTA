@@ -59,16 +59,6 @@ test('where is action', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-test('position action', () => {
-    const actionString = "balance a bucket of water on top of the door";
-    a.setActionString(actionString); 
-    a.convertActionToElements(actionString);
-
-    const expectedResult = 'function: position, args[0]:balance, args[1]:bucket of water, args[2]:door, args[3]:on top of, args[4]:<Array>';
-    const actualResult = a.performPlayerAction();
-    expect(actualResult).toBe(expectedResult);
-});
-
 test('move into action', () => {
     const actionString = "move fish into bowl";
     const expectedResult = 'function: put, args[0]:put, args[1]:fish, args[2]:into, args[3]:bowl';
