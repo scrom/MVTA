@@ -619,3 +619,21 @@ test('greetings are regognised and handled', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+test('have a... rest regognised and handled', () => {
+    const input = "have a rest";
+
+    const expectedResult = {
+      "action": "rest",
+      "adverb": null,
+      "category": "resting",
+      "object": null,
+      "originalInput": "have a rest",
+      "originalVerb": 'rest',
+      "preposition": null,
+      "subject": null,
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
