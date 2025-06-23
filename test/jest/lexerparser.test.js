@@ -186,7 +186,6 @@ test('what happens with a complex sentence?', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('what happens with another complex sentence?', () => {
     const input = 'wave to boy in the house and take a bowl';
     const expectedResult =  {
@@ -294,8 +293,7 @@ test('check for confusion over subject and object', () => {
 });
 
 test('can handle "say"', () => {
-    //current parser will just see "collect a bottle"
-    const input = "say hi dave how are you please can you go and get me a bottle of water"; //use is a special case
+    const input = "say hi dave how are you please can you go and get me a bottle of water"; 
     const expectedResult =  {
       category: 'dialogue',
       originalVerb: "say",
@@ -313,8 +311,7 @@ test('can handle "say"', () => {
 
 
 test('can handle other dialogue words', () => {
-    //current parser will just see "collect a bottle"
-    const input = "try really hard to persuade dave to go and get me a bottle of water and pick up some lemonade on the way back"; //use is a special case
+    const input = "try really hard to persuade dave to go and get me a bottle of water and pick up some lemonade on the way back"; 
     const expectedResult =  {
       category: 'dialogue',
       originalVerb: "try",
@@ -324,6 +321,198 @@ test('can handle other dialogue words', () => {
       subject: "dave",
       object: "go and get bottle of water and pick up lemonade on way back",
       preposition: "to"
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('can handle "in" as a direction', () => {
+    const input = "try to go in the front door and push over the lampshade"; 
+    const expectedResult =  {
+      category: 'movement',
+      originalVerb: "try",
+      originalInput: input,
+      action: 'go',
+      adverb: null,
+      subject: "front door and push over lampshade", //we have no context on object names so player part of game will need to identify object from this and decide what to do with the remainder. "push pop" could be a valid object for example
+      object: null,
+      preposition: "in"
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('what does "it" mean in a follow up sentence - fail case?', () => {
+    //when previous sentence has 2 objects we don't know which to choose
+    const firstInput = 'please carefully pour the water on to the smoking hot barbecue';
+    lp.parseInput(firstInput);
+    const input = "put it in the bin";
+
+    const expectedResult = {
+      category: 'item_use',
+      originalVerb: 'put',
+      originalInput: input,
+      action: 'put',
+      adverb: null,
+      subject: 'it',
+      object: 'bin',
+      preposition: 'in'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('ensure we dont lose "up"/"down"', () => {
+    const input = 'up';
+
+    const expectedResult = {
+      category: 'movement',
+      originalVerb: 'up',
+      originalInput: input,
+      action: 'up',
+      adverb: null,
+      subject: null,
+      object: null,
+      preposition: null
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('ensure we dont lose "up"/"down"', () => {
+    const input = 'go up';
+
+    const expectedResult = {
+      category: 'movement',
+      originalVerb: 'go',
+      originalInput: input,
+      action: 'go',
+      adverb: null,
+      subject: 'up',
+      object: null,
+      preposition: null
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('ensure we dont lose "up"/"down"', () => {
+    const input = 'go up the staircase';
+    //this will need some handling by player - it's the equivalent of "go object"
+    const expectedResult = {
+      category: 'movement',
+      originalVerb: 'go',
+      originalInput: input,
+      action: 'go',
+      adverb: null,
+      subject: 'staircase',
+      object: null,
+      preposition: 'up'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('ensure we dont lose "in"/"out"', () => {
+    const input = 'go in';
+
+    const expectedResult = {
+      category: 'movement',
+      originalVerb: 'go',
+      originalInput: input,
+      action: 'go',
+      adverb: null,
+      subject: 'in',
+      object: null,
+      preposition: null
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('ensure we dont lose "in"/"out"', () => {
+    const input = 'go in house';
+
+    const expectedResult = {
+      category: 'movement',
+      originalVerb: 'go',
+      originalInput: input,
+      action: 'go',
+      adverb: null,
+      subject: 'house',
+      object: null,
+      preposition: "in"
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('ensure we dont lose "in"/"out"', () => {
+    const input = 'in';
+
+    const expectedResult = {
+      category: 'movement',
+      originalVerb: 'in',
+      originalInput: input,
+      action: 'enter',
+      adverb: null,
+      subject: null,
+      object: null,
+      preposition: null
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('can we handle "pick up"', () => {
+    const input = 'pick up the smoking hot barbecue';
+
+    const expectedResult = {
+      category: 'inventory',
+      originalVerb: 'pick',
+      originalInput: input,
+      action: 'get',
+      adverb: null,
+      subject: 'smoking hot barbecue',
+      object: null,
+      preposition: 'up'
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('what does "it" mean in a follow up sentence - fail case?', () => {
+    //when previous sentence has 1 object we *do* know which to choose
+    const firstInput = 'pick up the smoking hot barbecue';
+    lp.parseInput(firstInput);
+    const input = "put it in the bin";
+
+    const expectedResult = {
+      category: 'item_use',
+      originalVerb: 'put',
+      originalInput: input,
+      action: 'put',
+      adverb: null,
+      subject: 'smoking hot barbecue',
+      object: 'bin',
+      preposition: 'in'
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);

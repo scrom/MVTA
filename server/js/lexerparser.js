@@ -11,13 +11,7 @@ module.exports.LexerParser = function LexerParser() {
 
         //grammar dictionary:
         const unhandledWordsAndConjunctions = ['and', 'then', 'than', 'or', 'but', 'because', 'coz','cause','cuz', 'therefore', 'while', 'whilst', 'thing','oh'];
-        const yesWords = ['y','yes','yup','yeh','yep','aye','yeah', 'yarp','ok','okay','okey','kay','sure','absolutely', 'certainly', 'definitely','exactly', 'indeed', 'right','totally', 'totes', 'true','truth','great','excellent','marvelous','fantastic','affirmed', 'confirmed','confirmation','affirmative'];
-        const politeWords = ['please', 'thankyou', "thanks", 'tx', 'thx','thanx','fanks','fanx',"cheers", "sorry", "apologies"];
-        const salutations = ["hello", "hi", "hey", "hiya", "ahoy", "good morning", "good afternoon", "good evening"];
-        const goodbyes  =["bye", "good bye", "goodbye","seeya", "later","laters", "goodnight", "good night"]
-        const noWords = ['n','no', 'nay', 'nope', 'narp', 'reject','rejected', 'rejection','deny','denied','refuse','refused', 'refusal','negative', 'negatory']
         const stopWords = ["the", "some", "a", "an", "again"];
-        const commonTypos = ["fomr", "drpo", "destry", "definately"]
         const numerals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
         const firstPersonPronouns = ['i', 'me', 'my', 'mine', 'myself', 'we', 'us', 'our', 'ours', 'ourselves'];
         const secondPersonPronouns = ['your', 'yours', 'yourself', 'yourselves'];
@@ -30,11 +24,9 @@ module.exports.LexerParser = function LexerParser() {
             'meticulously', 'noisily', 'precisely', 'quietly', 'quietly', 'sadly', 'searchingly', 'silently',
             'silently', 'slowly', 'softly', 'strategically', 'tactically', 'thoroughly', 'tightly', 'quickly'
         ]; //not split words but we need to trim these out and *occasionally* handle them.
-        const questions = ['who','what','why','where','when','how','which','whose'];
-        const moreQuestions = ['do you', 'have you', 'do', 'have', "pardon", "sorry"];
-        const modalVerbs = ['can', 'could', 'may', 'might', 'must', 'shall', 'should', 'will', 'would'];
 
         const locationPrepositions = [
+            'up', 'down', //pick up put down
             'in', 'into', 'in to', 'inside', //container or not has different context
             'onto', 'on to', 'on top of', 'on', // hook verb or object optional
             'off of', 'off', // hook verb or object optional
@@ -157,15 +149,15 @@ module.exports.LexerParser = function LexerParser() {
 
             //If current input object is "it", we use the last object instead.
             //work out where last noun will belong 
-            for (let n=1;n<objects.length; n++) {
-                if (objects[n] == 'it' || objects[n] == 'them') {
+            for (let n=0;n<objects.length; n++) {
+                if (objects[n] === "it" || objects[n] === "them") {
                     if (_nouns.length == 1) {
                         // - get bottle, put it in box - vs - get box, put bottle in it 
                         objects[n] = _nouns[0];
                     } if (_nouns.length == 2); {
                         // - get bottle from box - put it in car // put bottle in box, put it in car
                         //we need to interpret verb *and* preposition
-                        console.debug("Complex preposition handling not yet implemented: _nouns:"+_nouns+" objects: "+objects+" input: "+input);
+                        console.warn("Complex preposition handling not yet implemented: _nouns:"+_nouns+" objects: "+objects+" input: "+input);
                     };
                 };
             };
@@ -188,7 +180,8 @@ module.exports.LexerParser = function LexerParser() {
             return tokens.join(' ');
         };
 
-        self.parseInput = function(input) {
+        self.parseInput = function(input, player, map) {
+            //we take in player and map as we may need additional context and want to store state
             input = sanitiseString(input);
             let rest = input;
             if (_inputString) {
@@ -235,7 +228,7 @@ module.exports.LexerParser = function LexerParser() {
                     };
                 };
 
-                console.debug("Recognised Verb count: "+handledVerbs+", dialogue verb: "+dialogueVerb);
+                //console.debug("Recognised Verb count: "+handledVerbs+", dialogue verb: "+dialogueVerb);
 
                 if (!dialogueVerb) {
                     if (inputVerbs.includes("go")) {
@@ -244,13 +237,21 @@ module.exports.LexerParser = function LexerParser() {
                         //take the next verb whatever that may be
                         verbIndex = tokens.indexOf(inputVerbs[1]);                
                     } else {
-                        //some prepositions (in/out) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
-                        if (["in", "out"].some((e) => inputVerbs.includes(e))) {
+                        //some prepositions (in/out/up/down) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
+                        if (["in", "out", "up", "down"].some((e) => inputVerbs.includes(e))) {
                             let inputVerbIndex = inputVerbs.indexOf("in");
                             if (inputVerbIndex >-1) {
                                 inputVerbs.splice(inputVerbIndex,1);
                             };
                             inputVerbIndex = inputVerbs.indexOf("out");
+                            if (inputVerbIndex >-1) {
+                                inputVerbs.splice(inputVerbIndex,1);
+                            };
+                            inputVerbIndex = inputVerbs.indexOf("up");
+                            if (inputVerbIndex >-1) {
+                                inputVerbs.splice(inputVerbIndex,1);
+                            };
+                            inputVerbIndex = inputVerbs.indexOf("down");
                             if (inputVerbIndex >-1) {
                                 inputVerbs.splice(inputVerbIndex,1);
                             };
@@ -277,7 +278,6 @@ module.exports.LexerParser = function LexerParser() {
 
             _verb = verb;  
             rest = tokens.slice(1).join(' ');
-            console.log("rest: "+rest);
             rest = self.removeStopWords(rest);
             
             //last step - split what's left by preposition to get objects   

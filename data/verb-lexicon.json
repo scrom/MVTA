@@ -89,11 +89,35 @@
   },
   "enter": {
     "category": "movement",
-    "aliases": ["in"]
+    "aliases": ["in", "i"]
   },
   "leave": {
     "category": "movement",
-    "aliases": ["depart", "out", "exit"]
+    "aliases": ["depart", "out", "exit", "o"]
+  },
+  "up": {
+    "category": "movement",
+    "aliases": ["u"]
+  },
+  "down": {
+    "category": "movement",
+    "aliases": ["d"]
+  },
+  "north": {
+    "category": "movement",
+    "aliases": ["n"]
+  },
+  "south": {
+    "category": "movement",
+    "aliases": ["s"]
+  },
+  "east": {
+    "category": "movement",
+    "aliases": ["e"]
+  },
+  "west": {
+    "category": "movement",
+    "aliases": ["w"]
   },
   "teleport": {
     "category": "magic",
@@ -368,7 +392,7 @@
   },
   "get": {
     "category": "inventory",
-    "aliases": ["take", "grab","pick","collect"]
+    "aliases": ["take", "grab","pick","collect", "pick up"]
   },
   "remove": {
     "category": "inventory",

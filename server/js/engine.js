@@ -7,7 +7,7 @@ a = new actionsModule.Actions(lp);
 function createEngine(player, map) {
   return function handle(input) {
 
-    const parsedObject = lp.parseInput(input);
+    const parsedObject = lp.parseInput(input, player, map);
     if (parsedObject.error) return parsedObject.error;
 
     const {action} = parsedObject;
