@@ -21,8 +21,7 @@ module.exports.Actions = function Actions(parser) {
         adverb: adverb,
         subject: objects[0] || null,
         object: objects[1] || null,
-        preposition: preposition || null,
-        target: rest || null
+        preposition: preposition || null
   */
 
         self.processResponse = function (response, player, map, po, ticks) {
@@ -274,6 +273,12 @@ module.exports.Actions = function Actions(parser) {
             //_player.drop(_verb, _object0, _map);
             return self.processResponse(player.drop(verb, po.subject, po.object), player, map, po ,1);
           };
+        };
+        self.sleep  = function (verb, player, map, po) {
+          return self.processResponse(player.rest(po.action, 25, map), player, map, po ,1);
+        };        
+        self.rest  = function (verb, player, map, po) {
+          return self.processResponse(player.rest(po.action, 7, map), player, map, po ,1);
         };
         self.wait = function (verb, player, map, po) {
           return self.processResponse(player.wait(1, map), player, map, po ,1);

@@ -391,3 +391,35 @@ test('test revert to actions from active conversation', () => {
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test "wait" verb', () => {
+    const objectJSON  = fm.readFile("artefacts/hammock.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "wait";
+    const expectedResult = "Time passes... ...slowly.<br>";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "rest"/"sit" verb', () => {
+    const objectJSON  = fm.readFile("artefacts/hammock.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    p0.increaseTimeSinceResting(55);
+    const input = "sit";
+    const expectedResult = "You rest for a while.<br>";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "sleep"/"nap" verb', () => {
+    const objectJSON  = fm.readFile("artefacts/hammock.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    p0.increaseTimeSinceResting(55);
+    const input = "nap";
+    const expectedResult = "You sleep for a while.<br>";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
