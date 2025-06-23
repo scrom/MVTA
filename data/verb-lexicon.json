@@ -245,7 +245,7 @@
     "aliases": ["hook"]
   },
   "combine": {
-    "category": "item_use",
+    "category": "inventory",
     "aliases": ["combine with", "add", "join", "mix"]
   },
   "pour": {
