@@ -26,6 +26,14 @@ module.exports.Actions = function Actions(parser) {
   */
 
         self.processResponse = function (response, player, map, po, ticks) {
+          if (response.includes("$inactive$")) {
+            response = response.replace("$inactive$", "Thanks for playing.<br>There's nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.");
+            return {response: response, ticks: 0};
+          };
+          if (response.includes("$dead$")) {
+            response = response.replace("$dead$", "You're dead. Game over.<br>There's nothing more you can do here.<br><br>You either need to <i>quit</i> and restart a game or <i>load</i> a previously saved game.");
+            return {response: response, ticks: 0};
+          };
           if (po) {
             if (po.category != "dialogue") {
               player.setLastCreatureSpokenTo("");
