@@ -282,6 +282,13 @@ test('test initate dialogue with open salutation when only one creature present'
     expect(actualResult).toBe(expectedResult);
 });
 
+test('test saying things out loud when no characters nearby', () => {
+    const input = "ahoy there";
+    const expectedResult = "Aaron says";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
 
 test('test follow-on dialogue in active conversation', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 

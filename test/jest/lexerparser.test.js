@@ -519,7 +519,7 @@ test('what does "it" mean in a follow up sentence - fail case?', () => {
 });
 
 
-test('gretings are regognised and handled', () => {
+test('greetings are regognised and handled', () => {
     const input = "hi there dave how are you today";
 
     const expectedResult = {
@@ -530,7 +530,81 @@ test('gretings are regognised and handled', () => {
       "originalInput": "hi there dave how are you today",
       "originalVerb": null,
       "preposition": null,
-      "subject": "there dave how are you today",
+      "subject": "hi there dave how are you today",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('greetings are regognised and handled', () => {
+    const input = "ahoy";
+
+    const expectedResult = {
+      "action": "say",
+      "adverb": null,
+      "category": "dialogue",
+      "object": null,
+      "originalInput": "ahoy",
+      "originalVerb": null,
+      "preposition": null,
+      "subject": "ahoy",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('greetings are regognised and handled', () => {
+    const input = "ahoy there";
+
+    const expectedResult = {
+      "action": "say",
+      "adverb": null,
+      "category": "dialogue",
+      "object": null,
+      "originalInput": "ahoy there",
+      "originalVerb": null,
+      "preposition": null,
+      "subject": "ahoy there",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('greetings are regognised and handled', () => {
+    const input = "say ahoy there";
+
+    const expectedResult = {
+      "action": "say",
+      "adverb": null,
+      "category": "dialogue",
+      "object": null,
+      "originalInput": "ahoy there",
+      "originalVerb": 'say',
+      "preposition": null,
+      "subject": "ahoy there",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('greetings are regognised and handled', () => {
+    const input = "say hi there dave how are you today";
+
+    const expectedResult = {
+      "action": "say",
+      "adverb": null,
+      "category": "dialogue",
+      "object": null,
+      "originalInput": "say hi there dave how are you today",
+      "originalVerb": 'say',
+      "preposition": null,
+      "subject": "hi there dave how are you today",
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
