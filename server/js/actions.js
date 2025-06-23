@@ -25,9 +25,13 @@ module.exports.Actions = function Actions(parser) {
         target: rest || null
   */
 
-        self.processResponse = function (response, ticks) {
+        self.processResponse = function (response, ticks, po) {
           if (tools.stringIsEmpty(response)) {
-            return self.null()
+            if (po) {
+              return self.null(null, null, null, po);
+            } else {
+              return self.null()
+            };
           };
           if (response.includes("$fail$")) {
             response = response.replace("$fail$", "");
@@ -116,7 +120,15 @@ module.exports.Actions = function Actions(parser) {
           };
           const randomReplies = ["Can you try again?", "It's probably my fault for not listening to you properly.", "Can you try something else?", "I'm sensing that we have a communication problem here.", "Is everything ok?"];
           let randomIndex = Math.floor(Math.random() * randomReplies.length);
-          return  self.processResponse("$fail$Sorry, I didn't hear you there. " + randomReplies[randomIndex],0);
+          let notUnderstood = "hear"
+          if (po) {
+            if (po.originalInput) {
+              if (!(tools.stringIsEmpty(po.originalInput))) {
+                notUnderstood = "quite understand";
+              };
+            };
+          };
+          return  self.processResponse("$fail$Sorry, I didn't "+notUnderstood+" you there. " + randomReplies[randomIndex],0);
         };
 
         self.customaction = function(verb, player, map, po) {
@@ -128,7 +140,7 @@ module.exports.Actions = function Actions(parser) {
             };
           };
 
-          return self.processResponse(result,1);
+          return self.processResponse(result,1, po);
         };
 
         self.try = function(verb, player, map, po) {

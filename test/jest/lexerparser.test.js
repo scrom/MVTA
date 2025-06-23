@@ -37,9 +37,18 @@ test('can parse verb using alias', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-test('cannot parse unknown verb', () => {
+test('parsing unknown verb return custom action', () => {
     const input = 'skibidee an artefact of little consequence';
-    const expectedResult = {"error": "Unknown verb: \"skibidee\"", "originalInput": "skibidee an artefact of little consequence"};
+    const expectedResult = {
+      "action": "customaction",
+      "adverb": null,
+      "category": "system",
+      "object": null,
+      "originalInput": "skibidee an artefact of little consequence",
+      "originalVerb": null,
+      "preposition": null,
+      "subject": "skibidee an artefact of little consequence",
+    };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);

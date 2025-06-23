@@ -252,6 +252,13 @@ test('test "use" verb with an item that returns a new verb based action', () => 
     expect(actualResult).toBe(expectedResult);
 });
 
+test('test unknown verbs attempt custom action and fail gracefully', () => {
+    const input = "skibidee an artefact of little consequence";
+    const expectedResult = "Sorry, I didn't quite understand you there.";
+    const actualResult = engine(input).substring(0,43);
+    expect(actualResult).toBe(expectedResult);
+});
+
 test('test initate dialogue with "say"', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
