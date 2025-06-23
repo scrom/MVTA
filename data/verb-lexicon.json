@@ -290,7 +290,7 @@
   },
   "water": {
     "category": "item_use",
-    "aliases": []
+    "aliases": ["spray", "squirt", "douse", "quench"]
   },
   "fill": {
     "category": "item_use",

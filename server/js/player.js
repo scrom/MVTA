@@ -2362,6 +2362,20 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
         //player.put(verb, po.subject, po.preposition, po.object);
             if (splitword == "down") { return self.drop(verb, artefactName, _map);};
             if (splitword == "out") { return self.turn(verb, artefactName, splitword);};
+            
+            if (["spray","douse", "quench", "squirt", "water"].includes(verb)) {
+                verb = "pour";
+                if (artefactName && receiverName && splitword == "with") {
+                    //water X with Y
+                    let tempArtefactName = artefactName;
+                    artefactName = receiverName;
+                    receiverName = tempArtefactName;
+                } else {
+                    receiverName = artefactName;
+                    artefactName = "water";
+                    splitword = "over";
+                };
+            };
 
             var resultString = "";
             var artefactPreviouslyCollected = false;
@@ -2430,6 +2444,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             };
 
             //if objects combine together...
+            //@todo - the "true" here enforces cross-check that both objects combine - would be useful to have a "reverse check" as well.
             if (artefact.combinesWith(receiver, true)) {
                 return self.combine(artefact, receiver)                   
             };

@@ -450,7 +450,6 @@ test('test "hide"/"stash" *under* verb', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-
 test('test "empty" verb', () => {
     const objectJSON  = fm.readFile("artefacts/hammock.json"); 
     const object = mb.buildArtefact(objectJSON);
@@ -460,5 +459,39 @@ test('test "empty" verb', () => {
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test "water" verb', () => {
+    const objectJSON  = fm.readFile("artefacts/tomato-plants.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const object2JSON  = fm.readFile("artefacts/vial.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    l0.addObject(object2);
+    const object3JSON  = fm.readFile("artefacts/water.json"); 
+    const object3 = mb.buildArtefact(object3JSON);
+    object2.receive(object3);
+    const input = "water plants";
+    const expectedResult = "You add the water to the tomato plants to produce healthy tomato plants.$imagehealthytomatoplants.jpg/$image";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "water" verb - alternate sentence structure', () => {
+    const objectJSON  = fm.readFile("artefacts/tomato-plants.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const object2JSON  = fm.readFile("artefacts/vial.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    l0.addObject(object2);
+    const object3JSON  = fm.readFile("artefacts/water.json"); 
+    const object3 = mb.buildArtefact(object3JSON);
+    object2.receive(object3);
+    const input = "spray tomato plants with water";
+    const expectedResult = "You add the water to the tomato plants to produce healthy tomato plants.$imagehealthytomatoplants.jpg/$image";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+
 
 //@todo - handle "have a break" - break as a verb with nothing else == rest
