@@ -17,8 +17,8 @@ function createEngine(player, map) {
       return `Nothing happens. (No logic for "${action}")`;
     }
 
-    
-    return handler(action, player, map, parsedObject);
+    const result = handler(action, player, map, parsedObject);
+    return result.response;
   };
 }
 

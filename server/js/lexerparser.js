@@ -10,8 +10,17 @@ module.exports.LexerParser = function LexerParser() {
         const fm = new fileManagerModule.FileManager(true, dataFolder);
 
         //grammar dictionary:
+        const salutations = ["hello", "hi", "hey", "hiya", "ahoy", "good morning", "good afternoon", "good evening"];
+        const yesWords = ['y','yes','yup','yeh','yep','aye','yeah', 'yarp','ok','okay','okey','kay','sure','absolutely', 'certainly', 'definitely','exactly', 'indeed', 'right','totally', 'totes', 'true','truth','great','excellent','marvelous','fantastic','affirmed', 'confirmed','confirmation','affirmative'];
+        const politeWords = ['please', 'thankyou', "thanks", 'tx', 'thx','thanx','fanks','fanx',"cheers", "sorry", "apologies"];
+        const goodbyes  =["bye", "good bye", "goodbye","seeya", "later","laters", "goodnight", "good night"]
+        const noWords = ['n','no', 'nay', 'nope', 'narp', 'reject','rejected', 'rejection','deny','denied','refuse','refused', 'refusal','negative', 'negatory']
+
+        const questions = ['who','what','why','where','when','how','which','whose'];
+        const moreQuestions = ['do you', 'have you', 'do', 'have', "pardon", "sorry"];
+        const modalVerbs = ['can', 'could', 'may', 'might', 'must', 'shall', 'should', 'will', 'would'];
+
         const unhandledWordsAndConjunctions = ['and', 'then', 'than', 'or', 'but', 'because', 'coz','cause','cuz', 'therefore', 'while', 'whilst', 'thing','oh'];
-        const salutations = ["hello", "hi", "hey", "hiya", "ahoy", "good morning", "good afternoon", "good evening", "good"];
         const stopWords = ["the", "some", "a", "an", "again"];
         const numerals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
         const firstPersonPronouns = ['i', 'me', 'my', 'mine', 'myself', 'we', 'us', 'our', 'ours', 'ourselves'];
@@ -78,10 +87,15 @@ module.exports.LexerParser = function LexerParser() {
         //saved state:
         var _lastInputString = null;
         var _inConversation = null;
+        var _awaitingPlayerAnswer = false;
 
         const sanitiseString = function(aString) {
             return aString.toLowerCase().substring(0,255).replace(/[^a-z0-9 +-/%]+/g,""); //same as used for client but includes "/" and "%" as well
         };
+
+        self.setAwaitingPlayerAnswer = function(bool) {
+            _awaitingPlayerAnswer = bool;
+        }; 
 
         self.normaliseVerb = function (word) {
             word = sanitiseString(word);
@@ -182,33 +196,13 @@ module.exports.LexerParser = function LexerParser() {
             return tokens.join(' ');
         };
 
-        self.parseInput = function(input, player, map) {
-            //we take in player and map as we may need additional context and want to store state
-            input = sanitiseString(input);
-            let rest = input;
-            if (_inputString) {
-                //remember last input
-                _lastInputString = _inputString;
-            };
-            _inputString = input; //store for later
-
-            //extract adverb
-            const extractedAdverbObject = self.extractAdverb(rest)
-            const { adverb, remainder } = extractedAdverbObject;
-            rest = remainder;
-
-            //ideally find the position of the verb and dumnp everything to the left of it. 
-            const tokens = rest.split(/\s+/)
-
-            //@todo add handling in here for questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs
-            //mainly questions and modals
-
+        self.locateMostRelevantVerb = function(tokens) {
+            
             //find verbs... allVerbs
             const inputVerbs = tokens.filter(function (value, index, array) {
                 return ((allVerbs.includes(value)))
             });
 
-            let verb = null;
             let verbIndex = -1
 
             //find position of each verb in token array and strip to left of them.
@@ -277,22 +271,61 @@ module.exports.LexerParser = function LexerParser() {
                 verbIndex = tokens.indexOf(inputVerbs[inputVerbs.length-1]);
             };
 
-            //splice tokens to the verb we are using.
+            return {inputVerbs, verbIndex};
+        };
+
+        self.parseInput = function(input, player, map) {
+            //we take in player and map as we may need additional context and want to store state
+            input = sanitiseString(input);
+            let rest = input;
+            if (_inputString) {
+                //remember last input
+                _lastInputString = _inputString;
+            };
+            _inputString = input; //store for later
+
+            //extract adverb
+            const extractedAdverbObject = self.extractAdverb(rest)
+            const { adverb, remainder } = extractedAdverbObject;
+            rest = remainder;
+
+            //find the position of the most relevant verb. 
+            const tokens = rest.split(/\s+/)
+            const {inputVerbs, verbIndex} = self.locateMostRelevantVerb(tokens);
+            let verb = "";
+
+            //@todo add handling in here for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
+            if (_inConversation) {
+                if (
+                    (yesWords.some((e) => input.startsWith(e))) ||
+                    (politeWords.some((e) => input.startsWith(e))) ||
+                    (goodbyes.some((e) => input.startsWith(e))) ||
+                    (noWords.some((e) => input.startsWith(e))) ||
+                    (questions.some((e) => input.startsWith(e))) ||
+                    (moreQuestions.some((e) => input.startsWith(e))) ||
+                    (modalVerbs.some((e) => input.startsWith(e)))
+                ) {
+                    verbIndex = -1; //keep talking
+                    verb = "say";
+                };
+            };
+
+            //splice tokens to the verb we are using. (dump everything to the left of selected verb)
             if (verbIndex >-1) {
                 tokens.splice(0,verbIndex)   
-            };
-            //verb will no be first token
-            verb = self.normaliseVerb(tokens[0]);
+                //verb will now be first token
+                verb = self.normaliseVerb(tokens[0]);
 
-            if (verb) {
-                _inConversation = null;
-                if (player) {
-                    player.setLastCreatureSpokenTo();
+                if (verb) {
+                    _inConversation = null;
+                    if (player) {
+                        player.setLastCreatureSpokenTo();
+                    };
                 };
             };
 
             if (!verb) {
-                //if we don't have a recognised verb here, there's a chance we need to switch to dialogue, yes/no, please/thankyou, salutations, questions etc
+                //if we don't have a recognised verb here, there's a chance we are dealing with yes/no, please/thankyou, salutations, questions etc
                 //use last verb if in active cnversation
                 let lastVerbUsed = "";
                 if (player) {
@@ -315,9 +348,10 @@ module.exports.LexerParser = function LexerParser() {
                 
             };
 
-            //not previously in a conversation 
+            //not in a conversation 
             if (!verb) {
-               return { error: `Unknown verb: "${tokens[0]}"`, originalInput: input };
+                //could be a custom action!
+                verb = "customaction"
             };
 
             _verb = verb;  

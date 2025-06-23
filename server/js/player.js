@@ -1129,14 +1129,14 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             return resultString;
         };
         
-        self.customAction = function (verb, artefactName) {
+        self.customAction = function (verb, artefactName, receiverName) {
             if (artefactName == undefined || artefactName == "" || artefactName == null) {
                 return null; //treat this as not understood
             };
             var artefact = getObjectFromPlayerOrLocation(artefactName, verb);
             if (!(artefact)) {return null;}; //treat this as not understood too
             if (artefact.checkCustomAction(verb)) {
-                return artefact.performCustomAction(verb);
+                return artefact.performCustomAction(verb, _map, self);
             };
 
             return null;              
@@ -1196,9 +1196,9 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 var goInOrOut = _currentLocation.getExitInOrOutByDestinationName(artefactName);
                 if (goInOrOut) { return goInOrOut;};
                 if (_currentLocation.getName().indexOf(artefactName) >-1) {
-                    return "I think you're already using the "+artefactName+". Can you be more specific?"+"$result";
+                    return "I think you're already using the "+artefactName+". Can you be more specific?"+"$result$";
                 };
-                return notFoundMessage(artefactName)+"$result";
+                return notFoundMessage(artefactName)+"$result$";
             };
 
             //if we define a custom result, return that. Otherwise perform default action.
@@ -2770,7 +2770,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (!(receiver.getInventoryObject().check(collectedArtefact.getName()))) {
                 if (receiveResult.indexOf("$fail$") > -1) {
                     if (!artefactPreviouslyCollected) {
-                        //if artefact was passed in, the caller will clean up the $fail
+                        //if artefact was passed in, the caller will clean up the $fail$
                         receiveResult = receiveResult.replace("$fail$","");
                     };
                     
@@ -3611,29 +3611,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
         };
 
         self.examine = function(verb, artefactName, containerName, map, adverb, preposition) {
-            let _ticks = 2 //@todo ticks are for action, not here!
-            //trap a few junk words - will return "look" with no object. 
-            var junkWords = ["exits", "objects", "artefacts", "creatures", "artifacts"]
-            if (junkWords.indexOf(artefactName) > -1) { artefactName = null; };
-            if (!artefactName && !containerName) {
-                _ticks = 1;
-            };
-
-            if (artefactName == "inventory" || artefactName == "inv") {
-                _ticks = 0
-                return self.describeInventory();
-            };
-
-            if (verb == "search") {return self.search(verb, artefactName, adverb, preposition);};
-
-            var positionIndex = tools.positions.indexOf(preposition);
-            var searchAdverbs = ["closely", "carefully", "carefuly", "thoroughly", "meticulously"];
-            if ((positionIndex > 3) ||(searchAdverbs.includes(adverb))) {
-                //support "look under", "look behind" and "look in" etc.
-                 _ticks = tools.baseTickSize*3; //search takes longer
-                return self.search(verb, artefactName, adverb, preposition);
-            };
-
             var resultString = "";
             //console.debug("Examine: "+artefactName+","+containerName)
             var newMissions = [];

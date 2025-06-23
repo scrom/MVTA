@@ -56,8 +56,8 @@ var self = module.exports = {
                             if (_customAction[a].verbs) {
                                 if (_customAction[a].verbs.includes(verb)) {
                                     let result = self.processCustomAction(map, _customAction[a], player);
-                                    if (!(result.includes("$action") || result.includes("$result"))) {
-                                        result += "$result";
+                                    if (!(result.includes("$action") || result.includes("$result$"))) {
+                                        result += "$result$";
                                     }
                                     return result //_customAction[a]; 
                                     break;
@@ -72,7 +72,7 @@ var self = module.exports = {
                         if (result.includes("$action")) {return result;}; //we're redirecting to an alternate verb
 
                         //if we're *not* redirecting to an alternate verb
-                        return result + "$result";
+                        return result + "$result$";
                     } else {return result}; //returning object
                 };
 

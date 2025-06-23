@@ -1326,13 +1326,13 @@ exports.Action = function Action(player, map, fileManager) {
                             //just in case it comes back undefined.
                             newVerb = "";
                         };
-                        if (newVerb.indexOf("$result") > -1) {
+                        if (newVerb.indexOf("$result$") > -1) {
                             //we got a custom result back
-                            description = newVerb.replace("$result","");
+                            description = newVerb.replace("$result$","");
                         } else {
                             if (newVerb.indexOf("$action") > -1) {
                                 //strip out any instances of $action
-                                //we already don't have $result so has to be an action already
+                                //we already don't have $result$ so has to be an action already
                                 newVerb = newVerb.replace("$action","").trim();
                             };
 
@@ -1573,7 +1573,7 @@ exports.Action = function Action(player, map, fileManager) {
                     return self.processAction(_actionString);
 
                 } else { 
-                    description = description.replace("$result", ""); 
+                    description = description.replace("$result$", ""); 
                 };
             };
 

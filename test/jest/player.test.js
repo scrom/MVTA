@@ -220,7 +220,7 @@ test('can shake object with custom action', () => {
     box.receive(a1);
     l0.addObject(box);
     p0.get('get', box.getName());
-    var expectedResult = "You shake the box. The box emits a strange groaning noise$result";
+    var expectedResult = "You shake the box. The box emits a strange groaning noise$result$";
     var actualResult = p0.shake('shake', box.getName());
 
     console.debug("Expected: " + expectedResult);
@@ -657,7 +657,7 @@ test('cannot drink venom', () => {
     var venomData = { file: "venom" };
     var venom = mb.buildArtefact(venomData);
     l0.addObject(venom);
-    var expectedResult = "That's a remarkably sensible idea but it won't do you much good. Zombieism is transferred through the blood stream, not the digestive system.$result";
+    var expectedResult = "That's a remarkably sensible idea but it won't do you much good. Zombieism is transferred through the blood stream, not the digestive system.$result$";
     var actualResult = p0.drink('drink', 'venom');
     console.debug("Expected: " + expectedResult);
     console.debug("Actual  : " + actualResult);
@@ -1711,7 +1711,7 @@ test('player can play guitar', () => {
 
     p0.get("get", "guitar");
 
-    var expectedResult = "You attempt to strum a few notes but virtual music doesn't seem to be your forte.<br>$result"; 
+    var expectedResult = "You attempt to strum a few notes but virtual music doesn't seem to be your forte.<br>$result$"; 
     var actualResult = p0.play("play", "guitar");
     console.debug("Expected: "+expectedResult);
     console.debug("Actual  : "+actualResult);
@@ -1729,7 +1729,7 @@ test('player cannot play broken guitar', () => {
     p0.get("get", "guitar");
     p0.breakOrDestroy("break", "guitar");
 
-    var expectedResult = "I think the only fun anyone is likely to have with this now is <i>burn</i>ing or <i>throw</i>ing what's left of it.<br>$result"; 
+    var expectedResult = "I think the only fun anyone is likely to have with this now is <i>burn</i>ing or <i>throw</i>ing what's left of it.<br>$result$"; 
     var actualResult = p0.play("play", "guitar");
     console.debug("Expected: "+expectedResult);
     console.debug("Actual  : "+actualResult);

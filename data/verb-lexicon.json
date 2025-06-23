@@ -1,4 +1,8 @@
 {
+  "customaction": {
+    "category": "system",
+    "aliases": [""]
+  },
   "null": {
     "category": "system",
     "aliases": [""]

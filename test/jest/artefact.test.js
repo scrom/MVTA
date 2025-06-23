@@ -369,7 +369,7 @@ describe('Artefact Tests', () => {
         const p0 = new player.Player({carryWeight:25},null,null);
         const inv = p0.getInventoryObject();
         inv.add(comic);
-        const expectedResult = "You read the book with charred pages.<br>Normal person has bad experience, becomes superhero. Rich person has bereavment, becomes evil genuis nemesis.<br>The usual.<br>Even in its current state, this one looks rare so it could be worth something.$result";
+        const expectedResult = "You read the book with charred pages.<br>Normal person has bad experience, becomes superhero. Rich person has bereavment, becomes evil genuis nemesis.<br>The usual.<br>Even in its current state, this one looks rare so it could be worth something.$result$";
         const actualResult = p0.read("read", "comic");
         expect(actualResult).toBe(expectedResult);
     });
