@@ -39,7 +39,7 @@ test('can parse verb using alias', () => {
 
 test('cannot parse unknown verb', () => {
     const input = 'skibidee an artefact of little consequence';
-    const expectedResult = {"error": "Unknown verb: \"skibidee\""};
+    const expectedResult = {"error": "Unknown verb: \"skibidee\"", "originalInput": "skibidee an artefact of little consequence"};
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
@@ -497,7 +497,6 @@ test('can we handle "pick up"', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('what does "it" mean in a follow up sentence - fail case?', () => {
     //when previous sentence has 1 object we *do* know which to choose
     const firstInput = 'pick up the smoking hot barbecue';
@@ -518,3 +517,18 @@ test('what does "it" mean in a follow up sentence - fail case?', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+
+test('gretings', () => {
+    //these will not be handled directly by parser and need reprocessing as potential dialogue.
+    const input = "hi there";
+
+    const expectedResult = {
+      "error": "Unknown verb: \"hi\"",
+      "originalInput": "hi there"
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+

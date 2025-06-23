@@ -8,7 +8,7 @@ function createEngine(player, map) {
   return function handle(input) {
 
     const parsedObject = lp.parseInput(input, player, map);
-    if (parsedObject.error) return parsedObject.error;
+    if (parsedObject.error) return parsedObject.error; //we will want to try dialogue here
 
     const {action} = parsedObject;
     const handler = a[action];

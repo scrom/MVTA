@@ -272,7 +272,7 @@ module.exports.LexerParser = function LexerParser() {
             verb = self.normaliseVerb(tokens[0]);
 
             if (!verb) {
-                return { error: `Unknown verb: "${tokens[0]}"` };
+                return { error: `Unknown verb: "${tokens[0]}"`, originalInput: input };
                 //@todo - if we don't have a recognised verb here, there's a chance we need to switch to dialogue, yes/no, please/thankyou, salutations, questions etc
             };
 
