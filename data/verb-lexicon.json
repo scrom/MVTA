@@ -32,7 +32,7 @@
     "category": "finding",
     "aliases": ["hunt", "track", "where"]
   },
-  "follow" {
+  "follow": {
     "category": "tracking",
     "aliases": ["chase", "pursue", "track", "trail"]
   },

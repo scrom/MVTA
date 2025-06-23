@@ -139,7 +139,10 @@ module.exports.Actions = function Actions(parser) {
         };
         self.find = function (verb, player, map, po) {
           return player.hunt(verb, po.subject, map);
-        }
+        };
+        self.follow = function() {
+          return player.follow(verb, po.subject, map);
+        };
         self.put = function (verb, player, map, po) {
           return player.put(verb, po.subject, po.preposition, po.object);
         };
