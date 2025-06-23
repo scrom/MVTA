@@ -188,7 +188,7 @@ test('test "look under" gets the right words', () => {
 });
 
 
-test('test "search" ets the right words', () => {
+test('test "search" gets the right words', () => {
     const input = "search floor";
     const expectedResult = "You search the floor and discover nothing new.";
     const actualResult = engine(input);
@@ -256,6 +256,26 @@ test('test unknown verbs attempt custom action and fail gracefully', () => {
     const input = "skibidee an artefact of little consequence";
     const expectedResult = "Sorry, I didn't quite understand you there.";
     const actualResult = engine(input).substring(0,43);
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test 3 unknown verbs in a row triggers help', () => {
+    const input = "skibidee an artefact of little consequence";
+    let expectedResult = "Sorry, I didn't quite understand you there.";
+    let actualResult = engine(input).substring(0,43);
+    expect(actualResult).toBe(expectedResult);
+
+    expectedResult = "It looks like you're struggling to be understood.<br>If you need some assistance, try typing <i>help</i>.";
+    actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+
+    expectedResult = "Sorry, I didn't quite understand you there.";
+    actualResult = engine(input).substring(0,43);
+    expect(actualResult).toBe(expectedResult);
+
+    expectedResult = "<br> I accept basic commands to move e.g. <i>'north','south','up','in'</i>";
+    actualResult = engine(input).substring(0,74);
     expect(actualResult).toBe(expectedResult);
 });
 

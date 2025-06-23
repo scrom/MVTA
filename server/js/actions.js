@@ -111,12 +111,12 @@ module.exports.Actions = function Actions(parser) {
 
         self.null = function(verb, player, map, po) {
           //console.debug("fail count: "+_failCount);
-          if (_failCount >3) {
+          if (_failCount >3) { //help on 4 or more fails
             _verb = "help";
             _failCount = 0;
             return self.help(verb, player, map, po);
           };
-          if (_failCount >1) {
+          if (_failCount == 2) { //hint on second failure
             return self.processResponse("$fail$It looks like you're struggling to be understood.<br>If you need some assistance, try typing <i>help</i>.", player, map, po, 0);
           };
           const randomReplies = ["Can you try again?", "It's probably my fault for not listening to you properly.", "Can you try something else?", "I'm sensing that we have a communication problem here.", "Is everything ok?"];
