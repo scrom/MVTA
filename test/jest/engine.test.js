@@ -255,7 +255,7 @@ test('test "use" verb with an item that returns a new verb based action', () => 
 test('test initate dialogue with "say"', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    l0.addObject(object);
+    object.go(null, l0);
     const input = "say hello to aaron";
     const expectedResult = "Aaron says";
     const actualResult = engine(input).substring(0,10);
@@ -265,17 +265,17 @@ test('test initate dialogue with "say"', () => {
 test('test initate dialogue with salutation to creature', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    l0.addObject(object);
+    object.go(null, l0);
     const input = "hiya aaron";
-    const expectedResult = "Aaron says";
-    const actualResult = engine(input).substring(0,10);
+    const expectedResult = "He says"; //note, prefix is picked up 
+    const actualResult = engine(input).substring(0,7);
     expect(actualResult).toBe(expectedResult);
 });
 
 test('test initate dialogue with open salutation when only one creature present', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    l0.addObject(object);
+    object.go(null, l0);
     const input = "ahoy";
     const expectedResult = "Aaron says";
     const actualResult = engine(input).substring(0,10);
@@ -284,7 +284,7 @@ test('test initate dialogue with open salutation when only one creature present'
 
 test('test saying things out loud when no characters nearby', () => {
     const input = "ahoy there";
-    const expectedResult = "Aaron says";
+    const expectedResult = "'ahoy there'<br>";
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
@@ -306,4 +306,24 @@ test('test follow-on dialogue in active conversation', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
+test('test revert to actions from active conversation', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go(null, l0);
+
+    const object2JSON  = fm.readFile("artefacts/guitar.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    l0.addObject(object2);
+
+    const firstInput = "say hello to aaron";
+
+    const expecteFirstResult = "Aaron says";
+    const actualFirstResult = engine(firstInput).substring(0,10);
+    expect(actualFirstResult).toBe(expecteFirstResult);
+
+    const input = "examine guitar";
+    const expectedResult = "The strings are a bit tatty but it's mostly in tune.<br>It's worth about £10.00.$imageguitar.jpg/$image";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
 

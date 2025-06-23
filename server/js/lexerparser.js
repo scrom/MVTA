@@ -268,8 +268,10 @@ module.exports.LexerParser = function LexerParser() {
                 verbIndex = tokens.indexOf(inputVerbs[inputVerbs.length-1]);
             };
 
-            //splice tokens to thge verb we are using..
-            tokens.splice(0,verbIndex)   
+            //splice tokens to the verb we are using.
+            if (verbIndex >-1) {
+                tokens.splice(0,verbIndex)   
+            };
             //verb will no be first token
             verb = self.normaliseVerb(tokens[0]);
 
@@ -304,8 +306,11 @@ module.exports.LexerParser = function LexerParser() {
 
             _verb = verb;  
             if (player) { player.setLastVerbUsed(_verb); };
-            rest = tokens.slice(1).join(' ');
-            rest = self.removeStopWords(rest);
+            if (verbIndex >-1) {
+                //only do this if we had an original verb match, otherwise it's all dialogue
+                rest = tokens.slice(1).join(' ');
+                rest = self.removeStopWords(rest);
+            };
             
             //split what's left by preposition to get objects   
             const extractedObjectsAndPrepositions = self.extractObjectsAndPrepositions(rest);

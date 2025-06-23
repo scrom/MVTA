@@ -583,7 +583,7 @@ test('greetings are regognised and handled', () => {
       "adverb": null,
       "category": "dialogue",
       "object": null,
-      "originalInput": "ahoy there",
+      "originalInput": "say ahoy there",
       "originalVerb": 'say',
       "preposition": null,
       "subject": "ahoy there",
