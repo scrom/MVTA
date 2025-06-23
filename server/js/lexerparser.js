@@ -293,7 +293,11 @@ module.exports.LexerParser = function LexerParser() {
             const tokens = rest.split(/\s+/)
             const {inputVerbs, verbIndex} = self.locateMostRelevantVerb(tokens);
             let verb = "";
+            let verbInd = verbIndex;
 
+            if (player) {
+                _inConversation = player.getLastCreatureSpokenTo();
+            };
             //@todo add handling in here for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
             if (_inConversation) {
                 if (
@@ -305,18 +309,18 @@ module.exports.LexerParser = function LexerParser() {
                     (moreQuestions.some((e) => input.startsWith(e))) ||
                     (modalVerbs.some((e) => input.startsWith(e)))
                 ) {
-                    verbIndex = -1; //keep talking
+                    verbInd = -1; //keep talking
                     verb = "say";
                 };
             };
 
             //splice tokens to the verb we are using. (dump everything to the left of selected verb)
-            if (verbIndex >-1) {
-                tokens.splice(0,verbIndex)   
+            if (verbInd >-1) {
+                tokens.splice(0,verbInd)   
                 //verb will now be first token
                 verb = self.normaliseVerb(tokens[0]);
 
-                if (verb) {
+                if (verb && verbs[verb].category != "dialogue") {
                     _inConversation = null;
                     if (player) {
                         player.setLastCreatureSpokenTo();
@@ -326,13 +330,12 @@ module.exports.LexerParser = function LexerParser() {
 
             if (!verb) {
                 //if we don't have a recognised verb here, there's a chance we are dealing with yes/no, please/thankyou, salutations, questions etc
-                //use last verb if in active cnversation
+                //use last verb if in active conversation
                 let lastVerbUsed = "";
                 if (player) {
                     lastVerbUsed = player.getLastVerbUsed(); 
                     if (lastVerbUsed) {            
                         if (verbs[lastVerbUsed].category == "dialogue") {
-                            _inConversation = player.getLastCreatureSpokenTo();
                             verb = lastVerbUsed;
                         } else {
                             _inConversation = null;
@@ -356,7 +359,7 @@ module.exports.LexerParser = function LexerParser() {
 
             _verb = verb;  
             if (player) { player.setLastVerbUsed(_verb); };
-            if (verbIndex >-1) {
+            if (verbInd >-1) {
                 //only do this if we had an original verb match, otherwise it's all dialogue
                 rest = tokens.slice(1).join(' ');
                 rest = self.removeStopWords(rest);

@@ -315,7 +315,6 @@ test('test follow-on dialogue in active conversation with find request', () => {
 
 
 test('test follow-on dialogue in active conversation including other verbs', () => {
-    //this needs enhanced handling of questions and modal verbs in parser to work properly
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
     object.go(null, l0);
@@ -326,8 +325,8 @@ test('test follow-on dialogue in active conversation including other verbs', () 
     expect(actualFirstResult).toBe(expecteFirstResult);
 
     const input = "can you put my guitar in the toaster";
-    const expectedResult = "xxx";
-    const actualResult = engine(input);
+    const expectedResult = "Aaron says";
+    const actualResult = engine(input).substring(0,10);
     expect(actualResult).toBe(expectedResult);
 });
 

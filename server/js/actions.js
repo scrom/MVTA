@@ -25,13 +25,14 @@ module.exports.Actions = function Actions(parser) {
         target: rest || null
   */
 
-        self.processResponse = function (response, ticks, po) {
-          if (tools.stringIsEmpty(response)) {
-            if (po) {
-              return self.null(null, null, null, po);
-            } else {
-              return self.null()
+        self.processResponse = function (response, player, map, po, ticks) {
+          if (po) {
+            if (po.category != "dialogue") {
+              player.setLastCreatureSpokenTo("");
             };
+          }
+          if (tools.stringIsEmpty(response)) {
+            return self.null(null, player, map, po);
           };
           if (response.includes("$fail$")) {
             response = response.replace("$fail$", "");
@@ -104,7 +105,7 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.say = function (verb, player, map, po) {
-          return self.processResponse(player.say(verb, po.subject, po.object, map),1);
+          return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
           //return dp.parseDialogue(verb, player, map, po);
         };
 
@@ -116,7 +117,7 @@ module.exports.Actions = function Actions(parser) {
             return self.help(verb, player, map, po);
           };
           if (_failCount >1) {
-            return self.processResponse("$fail$It looks like you're struggling to be understood.<br>If you need some assistance, try typing <i>help</i>.",0);
+            return self.processResponse("$fail$It looks like you're struggling to be understood.<br>If you need some assistance, try typing <i>help</i>.", player, map, po, 0);
           };
           const randomReplies = ["Can you try again?", "It's probably my fault for not listening to you properly.", "Can you try something else?", "I'm sensing that we have a communication problem here.", "Is everything ok?"];
           let randomIndex = Math.floor(Math.random() * randomReplies.length);
@@ -128,7 +129,7 @@ module.exports.Actions = function Actions(parser) {
               };
             };
           };
-          return  self.processResponse("$fail$Sorry, I didn't "+notUnderstood+" you there. " + randomReplies[randomIndex],0);
+          return  self.processResponse("$fail$Sorry, I didn't "+notUnderstood+" you there. " + randomReplies[randomIndex], player, map, po, 0);
         };
 
         self.customaction = function(verb, player, map, po) {
@@ -140,7 +141,7 @@ module.exports.Actions = function Actions(parser) {
             };
           };
 
-          return self.processResponse(result,1, po);
+          return self.processResponse(result, player, map, po, 1);
         };
 
         self.try = function(verb, player, map, po) {
@@ -151,15 +152,15 @@ module.exports.Actions = function Actions(parser) {
           let actionResult = player.use(verb, po.subject);
           if (actionResult) { actionResult = actionResult.trim(); }
           else { actionResult = ""; }; //just in case it comes back undefined.
-          return self.processResponse(actionResult,1);
+          return self.processResponse(actionResult, player, map, po,1);
         };
         
         self.cheat = function(verb, player, map, po) {
-           return self.processResponse("Hmmm. I'm sure I heard about some cheat codes somewhere...<br><br>...Nope, I must have imagined it.<br>Looks like it's just you and your brain for now.",1);
+           return self.processResponse("Hmmm. I'm sure I heard about some cheat codes somewhere...<br><br>...Nope, I must have imagined it.<br>Looks like it's just you and your brain for now.", player, map, po,1);
         };
 
         self.eat = function(verb, player, map, po) {
-          return  self.processResponse(player.eat(po.originalVerb, po.subject),1);
+          return  self.processResponse(player.eat(po.originalVerb, po.subject), player, map, po,1);
         };
 
         self.help = function(verb, player, map, po) {
@@ -173,35 +174,35 @@ module.exports.Actions = function Actions(parser) {
                   "In many cases, your positive or negative interactions within the game may impact how others respond to you, use this knowledge wisely.<br>" +
                   "<br>You can save your progress by entering <i>'save'</i>.<br>You can return to a previously saved point from <i>this</i> session by simply typing <i>restore</i><br>You can load a previously saved game by entering '<i>load filename-x</i>' (where <i>filename-x</i> is the name of your previously saved game file.)<br>" +
                   "If you've really had enough of playing, you can enter <i>quit</i> to exit the game (without saving).<br>"
-                  ,0);
+                  ,player, map, po ,0);
         };
 
         self.map = function (verb, player, map, po) {
-          return  self.processResponse("Oh dear, are you lost? This is a text adventure you know.<br>Time to get some graph paper, a pencil and start drawing!",0);
+          return  self.processResponse("Oh dear, are you lost? This is a text adventure you know.<br>Time to get some graph paper, a pencil and start drawing!", player, map, po ,0);
         };
 
         self.health  = function (verb, player, map, po) {
-          return  self.processResponse(player.health(po.subject),0);
+          return  self.processResponse(player.health(po.subject), player, map, po ,0);
         };
 
         self.heal  = function (verb, player, map, po) {
-          return  self.processResponse(player.healCharacter(po.subject),2);
+          return  self.processResponse(player.healCharacter(po.subject), player, map, po ,2);
         };
 
         self.stats = function (verb, player, map, po) {
-          return  self.processResponse(player.stats(map),0);
+          return  self.processResponse(player.stats(map), player, map, po ,0);
         };
 
         self.status  = function (verb, player, map, po){
-          return  self.processResponse(player.status(map.getMaxScore()),0);
+          return  self.processResponse(player.status(map.getMaxScore()), player, map, po ,0);
         };
 
         self.visits  = function (verb, player, map, po) {
-          return  self.processResponse(player.getVisits(),0);
+          return  self.processResponse(player.getVisits(), player, map, po ,0);
         };
 
         self.inventory  = function (verb, player, map, po) {
-          return  self.processResponse(player.describeInventory(),1);
+          return  self.processResponse(player.describeInventory(), player, map, po ,1);
         };
 
         self.examine  = function (verb, player, map, po) {
@@ -234,38 +235,38 @@ module.exports.Actions = function Actions(parser) {
               return self.search(verb, player, map, po);
           };
 
-          return self.processResponse(player.examine(verb, po.subject, po.object, map, po.adverb, po.preposition),actionTicks);
+          return self.processResponse(player.examine(verb, po.subject, po.object, map, po.adverb, po.preposition), player, map, po ,actionTicks);
         };
 
         self.search = function (verb, player, map, po) {
-          return self.processResponse(player.search(verb, po.subject, po.adverb, po.preposition),3)
+          return self.processResponse(player.search(verb, po.subject, po.adverb, po.preposition), player, map, po ,3)
         };
         self.find = function (verb, player, map, po) {
-          return self.processResponse(player.hunt(verb, po.subject, map),2);
+          return self.processResponse(player.hunt(verb, po.subject, map), player, map, po ,2);
         };
         self.follow = function() {
-          return self.processResponse(player.follow(verb, po.subject, map),1);
+          return self.processResponse(player.follow(verb, po.subject, map), player, map, po ,1);
         };
         self.put = function (verb, player, map, po) {
-          return self.processResponse(player.put(verb, po.subject, po.preposition, po.object),1);
+          return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
         self.take = function (verb, player, map, po) {
           //player.take(_verb, _object0, _object1);
-          return self.processResponse(player.take(verb, po.subject, po.object),1);
+          return self.processResponse(player.take(verb, po.subject, po.object), player, map, po ,1);
         };
         self.throw  = function (verb, player, map, po) {
           //player.hit (_verb, _object1, _object0);
           if (po.preposition === "at" && po.object != null) {
-            return self.processResponse(player.hit(verb, po.subject, po.object),1);
+            return self.processResponse(player.hit(verb, po.subject, po.object), player, map, po ,1);
           } else if (po.preposition === "in" && po.object != null) {
-            return self.processResponse(player.put(verb, po.subject, po.preposition, po.object),1);
+            return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);
           } else {
             //_player.drop(_verb, _object0, _map);
-            return self.processResponse(player.drop(verb, po.subject, po.object),1);
+            return self.processResponse(player.drop(verb, po.subject, po.object), player, map, po ,1);
           };
         };
         self.wait = function (verb, player, map, po) {
-          return self.processResponse(player.wait(1, map),1);
+          return self.processResponse(player.wait(1, map), player, map, po ,1);
         };
   }  catch(err) {
 	    console.error('Unable to create Actions object: '+err.stack);
