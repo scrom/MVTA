@@ -252,7 +252,7 @@ test('test "use" verb with an item that returns a new verb based action', () => 
     expect(actualResult).toBe(expectedResult);
 });
 
-test('test initate dialogue with "say', () => {
+test('test initate dialogue with "say"', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
     l0.addObject(object);
@@ -261,6 +261,27 @@ test('test initate dialogue with "say', () => {
     const actualResult = engine(input).substring(0,10);
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test initate dialogue with salutation to creature', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    l0.addObject(object);
+    const input = "hiya aaron";
+    const expectedResult = "Aaron says";
+    const actualResult = engine(input).substring(0,10);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test initate dialogue with open salutation when only one creature present', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    l0.addObject(object);
+    const input = "ahoy";
+    const expectedResult = "Aaron says";
+    const actualResult = engine(input).substring(0,10);
+    expect(actualResult).toBe(expectedResult);
+});
+
 
 test('test follow-on dialogue in active conversation', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 

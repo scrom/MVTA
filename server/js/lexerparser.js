@@ -11,6 +11,7 @@ module.exports.LexerParser = function LexerParser() {
 
         //grammar dictionary:
         const unhandledWordsAndConjunctions = ['and', 'then', 'than', 'or', 'but', 'because', 'coz','cause','cuz', 'therefore', 'while', 'whilst', 'thing','oh'];
+        const salutations = ["hello", "hi", "hey", "hiya", "ahoy", "good morning", "good afternoon", "good evening", "good"];
         const stopWords = ["the", "some", "a", "an", "again"];
         const numerals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
         const firstPersonPronouns = ['i', 'me', 'my', 'mine', 'myself', 'we', 'us', 'our', 'ours', 'ourselves'];
@@ -277,14 +278,21 @@ module.exports.LexerParser = function LexerParser() {
                 //use last verb if in active cnversation
                 let lastVerbUsed = "";
                 if (player) {
-                    lastVerbUsed = player.getLastVerbUsed();                
-                    if (verbs[lastVerbUsed].category == "dialogue") {
-                        _inConversation = player.getLastCreatureSpokenTo();
-                        verb = lastVerbUsed;
-                    } else {
-                        _inConversation = null;
-                        player.setLastCreatureSpokenTo();
+                    lastVerbUsed = player.getLastVerbUsed(); 
+                    if (lastVerbUsed) {            
+                        if (verbs[lastVerbUsed].category == "dialogue") {
+                            _inConversation = player.getLastCreatureSpokenTo();
+                            verb = lastVerbUsed;
+                        } else {
+                            _inConversation = null;
+                            player.setLastCreatureSpokenTo();
+                        };
                     };
+                };
+
+                //are we greeting?
+                if (salutations.some((e) => tokens.includes(e))) { //will only match single words
+                    verb = "say";
                 };
                 
             };

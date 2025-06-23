@@ -519,26 +519,18 @@ test('what does "it" mean in a follow up sentence - fail case?', () => {
 });
 
 
-test('gretings', () => {
-    //these will not be handled directly by parser and need reprocessing as potential dialogue.
-    const input = "hi there";
+test('gretings are regognised and handled', () => {
+    const input = "hi there dave how are you today";
 
     const expectedResult = {
-      "error": "Unknown verb: \"hi\"",
-      "originalInput": "hi there"
-    };
-    const actualResult = lp.parseInput(input);
-    console.log(actualResult);
-    expect(actualResult).toStrictEqual(expectedResult);
-});
-
-test('gretings', () => {
-    //these will not be handled directly by parser and need reprocessing as potential dialogue.
-    const input = "hi there";
-
-    const expectedResult = {
-      "error": "Unknown verb: \"hi\"",
-      "originalInput": "hi there"
+      "action": "say",
+      "adverb": null,
+      "category": "dialogue",
+      "object": null,
+      "originalInput": "hi there dave how are you today",
+      "originalVerb": null,
+      "preposition": null,
+      "subject": "there dave how are you today",
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
