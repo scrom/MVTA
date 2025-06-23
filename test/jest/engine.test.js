@@ -424,7 +424,6 @@ test('test "sleep"/"nap" verb', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-
 test('test "hide"/"stash" *in* verb', () => {
     const objectJSON  = fm.readFile("artefacts/bowl.json"); 
     const object = mb.buildArtefact(objectJSON);
@@ -447,6 +446,17 @@ test('test "hide"/"stash" *under* verb', () => {
     l0.addObject(object2);
     const input = "stash bowl under hookah";
     const expectedResult = "You hide the bowl under the ornate hookah pipe.<br>";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test "empty" verb', () => {
+    const objectJSON  = fm.readFile("artefacts/hammock.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "empty hammock";
+    const expectedResult = "There's nothing to empty out of it.";
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });

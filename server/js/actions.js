@@ -265,6 +265,9 @@ module.exports.Actions = function Actions(parser) {
         self.place = function (verb, player, map, po) {
           return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
+        self.empty = function (verb, player, map, po) {
+          return self.processResponse(player.empty(verb, po.subject, po.preposition, po.object), player, map, po ,2);
+        };
         self.take = function (verb, player, map, po) {
           //player.take(_verb, _object0, _object1);
           return self.processResponse(player.take(verb, po.subject, po.object), player, map, po ,1);

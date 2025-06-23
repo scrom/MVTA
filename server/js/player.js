@@ -216,8 +216,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             };
 
             //once the objects are in their new homes, we can remove them from the old.
-            //this resolves array index splicing issues (splicing an array being iterated over causes odd results)
-
+            //this resolves array index splicing issues (splicing an array being iterated over causes odd results unless working backward)
             if (contents.length == 0) {return "";}; //if no contents, nothing to remove.
             
             for (var i=0; i<contents.length;i++) {
@@ -1616,7 +1615,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
             var resultString = emptyContentsOfContainer(artefactName);
 
-            if (resultString == "") {return "It doesn't look like there was anything to "+verb+" out there.";};
+            if (resultString == "") {return "There's nothing to "+verb+" out of "+artefact.getSuffix()+".";};
 
             return "You "+verb+" "+artefact.getDisplayName()+"."+resultString;
         };

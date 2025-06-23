@@ -596,7 +596,6 @@ exports.Action = function Action(player, map, fileManager) {
                         description = _player.wait(1, map); //wait count, not ticks
                         break;
                     case 'have':
-//////Conversion to new engine reached here
                         if (_object0 == "break" || _object0 == "rest") {
                             _ticks = 7; //most ticks are handled within rest routine but last one should cause a full game tick
                             description = _player.rest("rest", 7, _map);
@@ -661,6 +660,7 @@ exports.Action = function Action(player, map, fileManager) {
                         _ticks = 1;
                         description = _player.empty(_verb, _object0, _splitWord, _object1);
                         break;
+//////Conversion to new engine reached here
                     case 'water':
                         //either "water plant" or "water plant with milk"
                         //in future, "water horse" would translate to feed water to horse"
