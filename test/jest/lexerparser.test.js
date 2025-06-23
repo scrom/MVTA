@@ -532,3 +532,15 @@ test('gretings', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
+test('gretings', () => {
+    //these will not be handled directly by parser and need reprocessing as potential dialogue.
+    const input = "hi there";
+
+    const expectedResult = {
+      "error": "Unknown verb: \"hi\"",
+      "originalInput": "hi there"
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});

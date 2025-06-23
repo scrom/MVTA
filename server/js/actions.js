@@ -20,7 +20,7 @@ module.exports.Actions = function Actions(parser) {
         target: rest || null
   */
 
-        self.reconstructInputAndRecallSelftWithNewVerb = function(verb, player, map, po) {
+        self.reconstructInputAndRecallSelftWithNewVerb = function(verb, player, map, po, replaceAll) {
           //reconstruct sentence without "try/attempt" - second verb usually ends up as part of subject...
           console.debug ("Input: "+ po.originalInput);
           console.debug ("Subject: "+po.subject);
@@ -28,7 +28,11 @@ module.exports.Actions = function Actions(parser) {
           console.debug ("Preposition: "+po.preposition);
           console.debug ("Adverb: "+po.adverb);
 
-          let newParsedInput = lp.parseInput(po.adverb+" "+po.subject+" "+po.preposition+" "+po.object)
+          let newInputString ="";
+          if (replaceAll) {newInputString = verb; } 
+          else { newInputString = po.adverb+" "+po.subject+" "+po.preposition+" "+po.object; };
+
+          let newParsedInput = lp.parseInput(newInputString);
           if (newParsedInput.error) { return newParsedInput.error; };
           const {action} = newParsedInput;
           const handler = self[action];
@@ -41,12 +45,40 @@ module.exports.Actions = function Actions(parser) {
           return dp.parseDialogue(verb, player, map, po);
         };
         self.null = function(verb, player, map, po) {
-          var randomReplies = ["Can you try again?", "It's probably my fault for not listening to you properly.", "Can you try something else?", "I'm sensing that we have a communication problem here.", "Is everything ok?"];
-          var randomIndex = Math.floor(Math.random() * randomReplies.length);
+          const randomReplies = ["Can you try again?", "It's probably my fault for not listening to you properly.", "Can you try something else?", "I'm sensing that we have a communication problem here.", "Is everything ok?"];
+          let randomIndex = Math.floor(Math.random() * randomReplies.length);
           return "Sorry, I didn't hear you there. " + randomReplies[randomIndex];
         };
         self.try = function(verb, player, map, po) {
           return self.reconstructInputAndRecallSelftWithNewVerb(verb, player, map, po)
+        };
+
+        self.use = function (verb, player, map, po) {
+          let actionResult = player.use(verb, po.subject);
+          if (actionResult) { actionResult = actionResult.trim(); }
+          else { actionResult = ""; }; //just in case it comes back undefined.
+                        
+          if (actionResult.includes("$result")) {
+            //we got a custom result back
+            return actionResult.replace("$result","");
+          } else {
+            if (actionResult.includes("$action")) {
+              //strip out any instances of $action
+              //we already don't have $result so has to be an action already
+              actionResult = actionResult.replace("$action","").trim();
+            };
+                  
+            if (actionResult == 'use') {actionResult = 'examine'}; //avoid infinite loop
+
+            let replaceAll = false;
+            //if default action is more than just a single word verb, overwrite the entire original action.
+            if (actionResult.includes(" ")) {
+              replaceAll = true;
+            };    
+                        
+            //replace verb but keep original object
+            return self.reconstructInputAndRecallSelftWithNewVerb(actionResult, player, map, po, replaceAll);
+          };
         };
         
         self.cheat = function(verb, player, map, po) {

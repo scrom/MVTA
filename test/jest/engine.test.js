@@ -241,3 +241,14 @@ test('test "try/attempt" verb with a nonexistent object', () => {
     console.debug(actualResult);
     expect(expectedResults.includes(actualResult)).toBe(true);
 });
+
+test('test "use" verb with an item that returns a new verb based action', () => {
+    const objectJSON  = fm.readFile("artefacts/guitar.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "use guitar";
+    const expectedResult = "You attempt to strum a few notes but virtual music doesn't seem to be your forte.<br>";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
