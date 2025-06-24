@@ -660,7 +660,6 @@ exports.Action = function Action(player, map, fileManager) {
                         _ticks = 1;
                         description = _player.empty(_verb, _object0, _splitWord, _object1);
                         break;
-//////Conversion to new engine reached here
                     case 'water':
                         //either "water plant" or "water plant with milk"
                         //in future, "water horse" would translate to feed water to horse"
@@ -672,16 +671,13 @@ exports.Action = function Action(player, map, fileManager) {
                         _object1 = tempObject; //actual object to be watered
                         description = _player.put(_verb, _object0, "over", _object1);
                         break;
+//////Conversion to new engine reached here
                     case 'offer':
                     case 'give':
                     case 'present':                   
                     case 'hand':
                     case 'feed': //give food or drink to creature (if specific food not specified, use lowest value)
-                        if (_splitWord == "with" && _verb == "feed") {
-                            description = _player.give(_verb, _object1, _object0);
-                        } else {
-                            description = _player.give(_verb, _object0, _object1);
-                        };
+                            description = _player.give(_verb, _object0, _splitWord, _object1);
                         break;
                     case 'throw':
                     case 'chuck':

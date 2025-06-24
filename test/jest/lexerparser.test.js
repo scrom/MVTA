@@ -859,3 +859,41 @@ test('more fun with nouns that are also verbs', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+
+test('feeding - x with y', () => {
+    const input = "feed cat with cake";
+
+    const expectedResult = {
+      "action": "feed",
+      "adverb": null,
+      "category": "item_use",
+      "object": "cake",
+      "originalInput": input,
+      "originalVerb": "feed",
+      "preposition": "with",
+      "subject": "cat",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('feeding - x with y', () => {
+    const input = "feed cake to cat";
+
+    const expectedResult = {
+      "action": "feed",
+      "adverb": null,
+      "category": "item_use",
+      "object": "cat",
+      "originalInput": input,
+      "originalVerb": "feed",
+      "preposition": "to",
+      "subject": "cake",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});

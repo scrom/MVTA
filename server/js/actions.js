@@ -271,6 +271,14 @@ module.exports.Actions = function Actions(parser) {
         self.water = function (verb, player, map, po) {
           return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
+        self.give = function (verb, player, map, po) {
+          //player.take(_verb, _object0, _object1);
+          return self.processResponse(player.give(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+        };        
+        self.feed = function (verb, player, map, po) {
+          //player.take(_verb, _object0, _object1);
+          return self.processResponse(player.give(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+        };  
         self.take = function (verb, player, map, po) {
           //player.take(_verb, _object0, _object1);
           return self.processResponse(player.take(verb, po.subject, po.object), player, map, po ,1);

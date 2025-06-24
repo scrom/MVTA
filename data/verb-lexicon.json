@@ -308,7 +308,11 @@
   },
   "give": {
     "category": "item_use",
-    "aliases": ["present", "hand", "offer", "feed"]
+    "aliases": ["present", "hand", "offer"]
+  },
+  "feed": {
+    "category": "item_use",
+    "aliases": []
   },
   "throw": {
     "category": "item_use",

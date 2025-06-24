@@ -48,9 +48,9 @@ module.exports.LexerParser = function LexerParser() {
             'across', 'in front of', 'through'
         ];
 
-        const givingPrepositions = ['to', 'for', 'with', 'onto', 'on', 'on to', 'toward', 'towards'];
-        const receivingPrepositions = ['from', 'by', 'at', 'in', 'out', 'out of', 'with',];
-        const sharedPrepositions = ['by', 'at', 'in', 'into', 'in to'];
+        const givingPrepositions = ['to', 'for', 'onto', 'on', 'on to', 'toward', 'towards'];
+        const receivingPrepositions = ['from', 'by', 'at', 'in', 'out', 'out of'];
+        const sharedPrepositions = ['by', 'at', 'in', 'into', 'in to', 'with'];
 
         //collate prepositions and sort by number of words - important for when we try to split later.
         let allPrepositions = sharedPrepositions.concat(receivingPrepositions.concat(givingPrepositions.concat(locationPrepositions)));
@@ -237,7 +237,7 @@ module.exports.LexerParser = function LexerParser() {
                         verbIndex = tokens.indexOf(inputVerbs[1]);                
                     } else {
                         //some prepositions and even nouns (in/out/up/down/water) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
-                        let ignoreVerbs = ["in", "out", "up", "down", "water", "on", "off", "fire"];
+                        let ignoreVerbs = ["in", "out", "up", "down", "water", "on", "off", "fire", "ice"];
                         if (ignoreVerbs.some((e) => inputVerbs.includes(e))) {
                             for (i = 0; i < ignoreVerbs.length; i++) {
                                 let inputVerbIndex = inputVerbs.indexOf(ignoreVerbs[i]);

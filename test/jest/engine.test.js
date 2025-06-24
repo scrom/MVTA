@@ -492,6 +492,44 @@ test('test "water" verb - alternate sentence structure', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
+test('test "feed" verb - sentence structure 1', () => {
+    const objectJSON  = fm.readFile("creatures/cat.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    l0.addObject(object2);
+    const input = "feed cat";
+    const expectedResult = "It sniffs at the 99 flake ice cream, makes a disgruntled snort and turns away.<br>You leave it on the ground in case it comes back later.$imageice-cream.jpg/$image";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "feed" verb - sentence structure 2', () => {
+    const objectJSON  = fm.readFile("creatures/cat.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    l0.addObject(object2);
+    const input = "feed ice cream to cat";
+    const expectedResult = "It sniffs at the 99 flake ice cream, makes a disgruntled snort and turns away.<br>You leave it on the ground in case it comes back later.$imageice-cream.jpg/$image";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "feed" verb - sentence structure 1', () => {
+    const objectJSON  = fm.readFile("creatures/cat.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    l0.addObject(object2);
+    const input = "feed cat with ice cream";
+    const expectedResult = "It sniffs at the 99 flake ice cream, makes a disgruntled snort and turns away.<br>You leave it on the ground in case it comes back later.$imageice-cream.jpg/$image";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
 
 
 //@todo - handle "have a break" - break as a verb with nothing else == rest

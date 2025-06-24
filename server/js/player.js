@@ -2869,13 +2869,18 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 //above this line - artefact interactions
 //Below this line - a large block of creature interactions
         /*Allow player to give an object to a recipient*/
-        self.give = function(verb, artefactName, receiverName){
+        self.give = function(verb, artefactName, splitWord, receiverName){
 
             if (tools.stringIsEmpty(artefactName)){ return tools.initCap(verb)+" what?";};
-
             var artefact;
-            if (tools.stringIsEmpty(receiverName)){ 
-                if (verb == "feed") {
+
+            if (verb == "feed") {
+                if (splitWord == "with" && receiverName) {
+                    //reverse artefact and receiver - e.g. "feed horse with oats" vs "feed oats to horse" vs "feed horse"
+                    let tempName = artefactName;
+                    artefactName = receiverName;
+                    receiverName = tempName;
+                } else if (tools.stringIsEmpty(receiverName)) {
                     receiverName = artefactName;
                     artefact = _inventory.getObjectByType("food");
                     if (!artefact) {
@@ -2883,9 +2888,11 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     };
                     if (!artefact) { return "You don't have any food to give.";};
                     artefactName = artefact.getName();
-                } else {
-                    return verb+" "+artefactName+" to what or whom?";
                 };
+            };
+
+            if (tools.stringIsEmpty(receiverName)){ 
+                return verb+" "+artefactName+" to what or whom?";
             };
 
             if (!artefact) {
@@ -2904,7 +2911,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (receiver.getType() != "creature") {
                 return  "Whilst "+receiver.getDisplayName()+", deep in "+receiver.getPossessiveSuffix()+" inanimate psyche would love to receive your kind gift. It feels inappropriate to do so. Try <i>'put'</i> or <i>'add'</i> instead."; 
             };
-
 
             //we'll only get this far if there is an object to give and a valid receiver - note the object *could* be a live or dead creature!
             if (verb == "feed" && artefact.getType() != "food" && artefact.getType() != "creature") {return "I don't think that's a reasonable thing to do.";};

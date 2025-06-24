@@ -92,7 +92,7 @@ afterEach(() => {
 test('player can give an item from inventory to a creature', () => {
     p0.get('get', food.getName());
     const expectedResult = 'The creature takes a slab of sugary goodness.';
-    const actualResult = p0.give('give','cake', c0.getName());
+    const actualResult = p0.give('give','cake', 'to', c0.getName());
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -100,7 +100,7 @@ test('player can give a high affinity item to a friendly creature', () => {
     l0.addObject(a1);
     p0.get(a1.getName());
     const expectedResult = "The creature takes a box.";
-    const actualResult = p0.give('give',a1.getName(), c0.getName());
+    const actualResult = p0.give('give',a1.getName(), 'to', c0.getName());
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -108,7 +108,7 @@ test('player cannot give a high affinity item to an unfriendly creature', () => 
     l0.addObject(a1);
     p0.get(a1.getName());
     const expectedResult = "It's not willing to accept gifts from you at the moment.";
-    const actualResult = p0.give('give',a1.getName(), c1.getName());
+    const actualResult = p0.give('give',a1.getName(), 'to', c1.getName());
     expect(actualResult).toBe(expectedResult);
 });
 

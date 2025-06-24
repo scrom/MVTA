@@ -3501,7 +3501,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             artefactName = artefactName.replace("the ", " ");
                             artefactName = artefactName.replace("this ", " ");
                             artefactName = artefactName.trim();
-                            return player.give("offer", artefactName, self.getName());
+                            return player.give("offer", artefactName, "to", self.getName());
                         };
                         console.warn("*** Unhandled player speech (point 2) - first Word:'" + firstWord + "', remainder:'" + remainderString + "', original:'" + originalSpeech + "'");                        
                         return tools.initCap(self.getFirstName())+" says 'Interesting. You've said something I don't know how to deal with at the moment.'<br>'I'm sure Simon will fix that soon though.'";
@@ -3585,7 +3585,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             response+=tools.imgTag(self)+"<br>";
 
             if (requestedObject) {
-                response += player.give("give", requestedObject, self.getName())+"<br>";
+                response += player.give("give", requestedObject, "to", self.getName())+"<br>";
             };
 
             return  response;

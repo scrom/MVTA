@@ -111,7 +111,7 @@ test('convertActionToElements parses verb and objects correctly', () => {
     a.convertActionToElements("give apple to teacher");
     // _verb, _object0, _object1 are private, but we can test via performPlayerAction stub
     // Since stub returns function: give, args[0]:apple, args[1]:teacher, args[2]:<Object>
-    expect(a.performPlayerAction()).toBe("function: give, args[0]:give, args[1]:apple, args[2]:teacher");
+    expect(a.performPlayerAction()).toBe("function: give, args[0]:give, args[1]:apple, args[2]:to, args[3]:teacher");
 });
 
 test('catchPlayerNotUnderstood returns random apology', () => {
