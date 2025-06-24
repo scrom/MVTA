@@ -2417,13 +2417,17 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (receiver.getType() == "creature") {
                 if (receiver.isDead()) {
                     return  "You're not really qualified as a taxidermist are you? Please stop interfering with corpses.";  
-                } else if (receiver.getSubType() == "animal") {
+                };
+                
+                if (receiver.getSubType() == "animal") {
                     receiver.decreaseAffinity(1,false);
                     if (receiver.isHostile() || receiver.willFlee()) {
                         return receiver.fightOrFlight();
+                    } else {
+                        return "I don't think "+receiver.getFirstName()+" appreciates you doing that."
                     };
                 } else {
-                    return  "It's probably better to 'give' "+artefact.getDisplayName()+" to "+receiver.getSuffix()+"."; 
+                    return  "It's probably better to <i>'give'</i> "+artefact.getDisplayName()+" to "+receiver.getSuffix()+"."; 
                 };
             };
 
@@ -4897,21 +4901,18 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             var weaponName = weapon.getDisplayName();
 
             //need to validate that artefact is a weapon (or at least is mobile)
-            if (!(weapon.isCollectable())) {
-                resultString =  "You attack "+ receiverDisplayName+". Unfortunately you can't move "+ weaponName +" to use as a weapon.<br>";
-                if (receiver.getType() == "creature") {
-                    resultString += tools.initCap(receiver.getPrefix())+ " retaliates. ";
-                    resultString += receiver.hit(self,0.2); //return 20% damage
+            //and will do some damage
+            if (!(weapon.isCollectable()) || weapon.getAttackStrength()<1) {
+                resultString = "You attack "+ receiverDisplayName+". Unfortunately ";
+                if (!weapon.isCollectable()) {
+                    resultString += "you can't move "+ weaponName +" to use as a weapon.<br>";
+                } else {
+                    resultString += weaponName +" is useless as a weapon.<br>";
+                    resultString += weapon.bash();
                 };
-                return resultString;
-            };
 
-            //need to validate that weapon will do some damage
-            if (weapon.getAttackStrength()<1) {
-                resultString = "You attack "+ receiverDisplayName+". Unfortunately "+ weaponName +" is useless as a weapon.<br>";
-                resultString += weapon.bash();
                 if (receiver.getType() == "creature") {
-                    resultString += tools.initCap(receiver.getPrefix())+ " retaliates. ";
+                    resultString += tools.initCap(receiver.getFirstName())+ " retaliates. ";
                     resultString += receiver.hit(self,0.2); //return 20% damage
                 };
                 return resultString;
@@ -4938,21 +4939,23 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             //get initial damage level
             var damagePoints = weapon.getAttackStrength() + (_baseAttackStrength/2);
 
-            if (tools.throwVerbs.includes(verb)) {
-                //has the potential to do a lot of damage - limit somewhat by weight...
+            if (tools.throwVerbs.includes(verb) || verb == "drop") {
+                //has the potential to do a lot of extra damage - limit somewhat by weight...
                 //@todoimprove wieght limiting to max a player can currently carry (if they aren#t already carrying item)
                 var weaponWeight = weapon.getWeight();
                 if (weaponWeight > (_inventory.getCarryWeight() / 2)) {
                     weaponWeight = _inventory.getCarryWeight() / 2;
                 };
-                if (_baseAttackStrength < 0) {
+                let throwModifier = 2;
+                let damageBonusPenalty = 1
+                if (verb == "drop") {throwModifier = 1;}; //less powerful
+                if (_baseAttackStrength <= 1) {
                     //damage penalty
-                    penaltyMultiplier = -2;
-                    damagePoints += weaponWeight * ((_baseAttackStrength/2) / penaltyMultiplier);      
-                } else {
-                    damagePoints += weaponWeight * (_baseAttackStrength / 2);  //could be a big hit still!   
+                    damageBonusPenalty = 0.8
                 };
                 
+                damagePoints += ((weaponWeight*throwModifier) + (_baseAttackStrength*weaponWeight/2)) * damageBonusPenalty;      
+
                 if (_inventory.check(weapon.getName())) {
                     _inventory.remove(weapon.getName());
                     _currentLocation.addObject(weapon);
@@ -4960,15 +4963,15 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 weapon.bash(); //we'll bash it a second time later!
             };
 
-            //alter strength/damage if bleeding or nearly dying.
+            //alter power/damage if bleeding or nearly dying.
             if (self.healthPercent() <=5) {
                 //double damage for dying blow if they can get one in!! "critical hit"
                 damagePoints = damagePoints*2
             } else if (self.healthPercent() <=10) {
-                //50% strength
+                //50% power
                 damagePoints = damagePoints*0.5
             } else if (_bleeding) {
-                //80% strength
+                //80% power
                 damagePoints = damagePoints*0.8
             };
 

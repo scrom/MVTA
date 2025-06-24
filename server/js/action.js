@@ -671,7 +671,6 @@ exports.Action = function Action(player, map, fileManager) {
                         _object1 = tempObject; //actual object to be watered
                         description = _player.put(_verb, _object0, "over", _object1);
                         break;
-//////Conversion to new engine reached here
                     case 'offer':
                     case 'give':
                     case 'present':                   
@@ -716,6 +715,7 @@ exports.Action = function Action(player, map, fileManager) {
                         //    description += _player.hit(_verb,_object1,_object0);
                         //};
                         break;
+//////Conversion to new engine reached here
                     case 'move':
                         //"move" may be either navigation or moving an item...
 

@@ -518,7 +518,7 @@ test('test "feed" verb - sentence structure 2', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-test('test "feed" verb - sentence structure 1', () => {
+test('test "feed" verb - sentence structure 3', () => {
     const objectJSON  = fm.readFile("creatures/cat.json"); 
     const object = mb.buildCreature(objectJSON);
     object.go("", l0);
@@ -531,5 +531,26 @@ test('test "feed" verb - sentence structure 1', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
+test('test "drop" verb', () => {
+    const objectJSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "drop ice cream";
+    const expectedResult = "You drop the 99 flake ice cream. ";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
 
+test('test "drop onto" verb', () => {
+    const objectJSON  = fm.readFile("creatures/cat.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    p0.acceptItem(object2);
+    const input = "drop ice cream onto the cat";
+    const expectedResult = "I don't think the cat appreciates you doing that.";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
 //@todo - handle "have a break" - break as a verb with nothing else == rest

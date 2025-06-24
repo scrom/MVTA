@@ -879,7 +879,6 @@ test('feeding - x with y', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('feeding - x with y', () => {
     const input = "feed cake to cat";
 
@@ -892,6 +891,25 @@ test('feeding - x with y', () => {
       "originalVerb": "feed",
       "preposition": "to",
       "subject": "cake",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('throwing', () => {
+    const input = "throw teddybear in to the bin";
+
+    const expectedResult = {
+      "action": "throw",
+      "adverb": null,
+      "category": "item_use",
+      "object": "bin",
+      "originalInput": input,
+      "originalVerb": "throw",
+      "preposition": "in to",
+      "subject": "teddybear",
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);

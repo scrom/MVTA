@@ -272,25 +272,27 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
         self.give = function (verb, player, map, po) {
-          //player.take(_verb, _object0, _object1);
           return self.processResponse(player.give(verb, po.subject, po.preposition, po.object), player, map, po ,1);
         };        
         self.feed = function (verb, player, map, po) {
-          //player.take(_verb, _object0, _object1);
-          return self.processResponse(player.give(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+          return self.processResponse(player.give(verb, po.subject, po.preposition, po.object), player, map, po ,2);
         };  
         self.take = function (verb, player, map, po) {
-          //player.take(_verb, _object0, _object1);
           return self.processResponse(player.take(verb, po.subject, po.object), player, map, po ,1);
         };
         self.throw  = function (verb, player, map, po) {
-          //player.hit (_verb, _object1, _object0);
           if (po.preposition === "at" && po.object != null) {
             return self.processResponse(player.hit(verb, po.subject, po.object), player, map, po ,1);
-          } else if (po.preposition === "in" && po.object != null) {
+          } else if (["in", "into", "in to", "inside", 'onto', 'on to', 'on top of', 'on'].includes(po.preposition) && po.object != null) {
             return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);
           } else {
-            //_player.drop(_verb, _object0, _map);
+            return self.processResponse(player.drop(verb, po.subject, po.object), player, map, po ,1);
+          };
+        };
+        self.drop = function (verb, player, map, po) {
+          if (["in", "into", "in to", "inside", 'onto', 'on to', 'on top of', 'on'].includes(po.preposition) && po.object != null) {
+            return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+          } else {
             return self.processResponse(player.drop(verb, po.subject, po.object), player, map, po ,1);
           };
         };
