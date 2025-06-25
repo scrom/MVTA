@@ -384,11 +384,11 @@ test('ensure we dont lose "up"/"down"', () => {
       category: 'movement',
       originalVerb: 'up',
       originalInput: input,
-      action: 'up',
+      action: 'go',
       adverb: null,
       subject: null,
       object: null,
-      preposition: null
+      preposition: "up"
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -404,9 +404,9 @@ test('ensure we dont lose "up"/"down"', () => {
       originalInput: input,
       action: 'go',
       adverb: null,
-      subject: 'up',
+      subject: null,
       object: null,
-      preposition: null
+      preposition: "up"
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -441,9 +441,9 @@ test('ensure we dont lose "in"/"out"', () => {
       originalInput: input,
       action: 'go',
       adverb: null,
-      subject: 'in',
+      subject: null,
       object: null,
-      preposition: null
+      preposition: "in"
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -921,13 +921,13 @@ test('directions - head west to kitchen', () => {
     const input = "head west to kitchen";
 
     const expectedResult = {
-      "action": "west",
+      "action": "go",
       "adverb": null,
       "category": "movement",
       "object": null,
       "originalInput": input,
       "originalVerb": "head",
-      "preposition": "to",
+      "preposition": "west",
       "subject": "kitchen",
     };
     const actualResult = lp.parseInput(input);
@@ -946,8 +946,8 @@ test('directions - go north', () => {
       "object": null,
       "originalInput": input,
       "originalVerb": "go",
-      "preposition": null,
-      "subject": "north",
+      "preposition": "north",
+      "subject": null,
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
@@ -959,13 +959,13 @@ test('directions - e', () => {
     const input = "e";
 
     const expectedResult = {
-      "action": "east",
+      "action": "go",
       "adverb": null,
       "category": "movement",
       "object": null,
       "originalInput": input,
       "originalVerb": "e",
-      "preposition": null,
+      "preposition": "east",
       "subject": null,
     };
     const actualResult = lp.parseInput(input);
@@ -978,13 +978,13 @@ test('directions - up', () => {
     const input = "up";
 
     const expectedResult = {
-      "action": "up",
+      "action": "go",
       "adverb": null,
       "category": "movement",
       "object": null,
       "originalInput": input,
       "originalVerb": "up",
-      "preposition": null,
+      "preposition": "up",
       "subject": null,
     };
     const actualResult = lp.parseInput(input);
@@ -1048,6 +1048,24 @@ test('directions - climb tree', () => {
 });
 
 
+test('directions - crawl in', () => {
+    const input = "crawl in";
+
+    const expectedResult = {
+      "action": "crawl",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "crawl",
+      "preposition": "in",
+      "subject": null,
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
 test('directions - climb down ladder', () => {
     const input = "climb down ladder";
 
@@ -1066,8 +1084,7 @@ test('directions - climb down ladder', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
-test('directions - climb down ladder', () => {
+test('directions - swim across lake', () => {
     const input = "swim across lake";
 
     const expectedResult = {
@@ -1084,7 +1101,6 @@ test('directions - climb down ladder', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('give - as a request', () => {
     const input = "please give me your ice cream";

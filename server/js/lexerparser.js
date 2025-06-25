@@ -75,7 +75,6 @@ module.exports.LexerParser = function LexerParser() {
 
         //action string components
         var _inputString = "";
-        var _verb = "";
         var _direction = "";
         var _splitWord = "";
         var _adverb = "";
@@ -358,9 +357,7 @@ module.exports.LexerParser = function LexerParser() {
                 verb = "customaction"
             };
 
-            _verb = verb;  
-            if (player) { player.setLastVerbUsed(_verb); };
-            if (verbInd >-1) {
+            if (verbInd >= 0) {
                 //only do this if we had an original verb match, otherwise it's all dialogue
                 rest = tokens.slice(1).join(' ');
                 rest = self.removeStopWords(rest);
@@ -374,6 +371,32 @@ module.exports.LexerParser = function LexerParser() {
                 objects[0] = input;
                 objects[1] = _inConversation;
             };
+
+            //convert directions.
+            var directionIndex = tools.directions.indexOf(verb);
+            if (directionIndex >= 0) {
+                preposition = verb;
+                verb = "go";
+
+                //use whole word direction.
+                if (preposition.length == 1) {
+                    var index = tools.directions.indexOf(_direction);
+                    if (index > -1) {
+                        preposition = tools.directions[index+1]; 
+                    };
+                };
+            }; 
+
+            //if action is a movement, set preposition to be direction (where reelvant).
+            if (verbs[verb].category == "movement" && (!preposition)) {
+                if (tools.directions.includes(objects[0])) {
+                    preposition = objects[0];
+                    objects[0] = null;
+                };
+            };
+
+
+            if (player) { player.setLastVerbUsed(verb); };
 
             return {
                 category: verbs[verb].category,
