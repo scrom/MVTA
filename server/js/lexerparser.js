@@ -206,7 +206,13 @@ module.exports.LexerParser = function LexerParser() {
             let verbIndex = -1
 
             //find position of each verb in token array and strip to left of them.
-            if (inputVerbs.length == 1) {
+            //special case - handle "get into/in/out/out of" - nothing too clever - only it it's the very first verb.
+            if (inputVerbs.length > 0 && inputVerbs[0] == "get") {
+                verbIndex = tokens.indexOf("get");
+                if (tools.directions.includes(tokens[verbIndex+1]) || locationPrepositions.includes(tokens[verbIndex+1]))  {
+                    tokens.splice(verbIndex, 1, "go");
+                };
+            } else if (inputVerbs.length == 1) {
                 verbIndex = tokens.indexOf(inputVerbs[0]);
             } else {
                 //we have more than one potential verb...

@@ -1014,13 +1014,13 @@ test('directions - get into car', () => {
     const input = "get into car";
 
     const expectedResult = {
-      "action": "enter",
+      "action": "go",
       "adverb": null,
       "category": "movement",
       "object": null,
       "originalInput": input,
       "originalVerb": "get",
-      "preposition": null,
+      "preposition": "into",
       "subject": "car",
     };
     const actualResult = lp.parseInput(input);
