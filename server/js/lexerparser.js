@@ -215,7 +215,7 @@ module.exports.LexerParser = function LexerParser() {
                 verbIndex = tokens.indexOf(inputVerbs[0]);
             } else {
                 //we have more than one potential verb...
-                //try all the verbs in reverse order, ditch any we don't know - if any left are dialogue, we'll use that.
+                //try all the verbs in reverse order, ditch any we don't know - if any left are dialogue, we'll use the *earliest* of those.
                 let handledVerbs = 0;
                 let dialogueVerb = "";
                 for (let v=inputVerbs.length -1 ; v>=0; v--) {
@@ -225,7 +225,6 @@ module.exports.LexerParser = function LexerParser() {
                         if (verbs[testVerb].category == "dialogue") {
                             dialogueVerb = testVerb;
                             verbIndex = tokens.indexOf(dialogueVerb);
-                            break;
                         };
                     }  else {
                         inputVerbs.splice(v,1); //remove unhandled verbs
@@ -293,6 +292,11 @@ module.exports.LexerParser = function LexerParser() {
 
             if (player) {
                 _inConversation = player.getLastCreatureSpokenTo();
+            };
+
+            if (salutations.some((e) => input.startsWith(e))) { //will only match single words
+                verb = "say";
+                verbInd = -1; //keep talking
             };
             if (_inConversation) {
                 //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals

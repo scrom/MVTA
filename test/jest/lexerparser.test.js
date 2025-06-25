@@ -181,7 +181,7 @@ test('what happens with a complex sentence?', () => {
 test('what happens with a complex sentence?', () => {
     const input = 'please carefully take the barbecue and put it quickly in to the swimming pool';
     const expectedResult =  {
-      category: 'item_use',
+      category: 'inventory',
       originalVerb: 'take',
       originalInput: input,
       action: 'put',
@@ -215,7 +215,7 @@ test('what happens with another complex sentence?', () => {
 test('what happens with another complex sentence?', () => {
     const input = 'put the bowl in the dishwasher';
     const expectedResult =  {
-      category: 'item_use',
+      category: 'inventory',
       originalVerb: 'put',
       originalInput: input,
       action: 'put',
@@ -251,7 +251,7 @@ test('can we handle "all" in a sentence?', () => {
     //parser should treat this as part of subject - game internals will have to translate "all".
     const input = "throw all of the books on the bonfire";
     const expectedResult =  {
-      category: 'item_use',
+      category: 'inventory',
       originalVerb: 'throw',
       originalInput: input,
       action: 'throw',
@@ -362,7 +362,7 @@ test('what does "it" mean in a follow up sentence - fail case?', () => {
     const input = "put it in the bin";
 
     const expectedResult = {
-      category: 'item_use',
+      category: 'inventory',
       originalVerb: 'put',
       originalInput: input,
       action: 'put',
@@ -513,7 +513,7 @@ test('what does "it" mean in a follow up sentence - fail case?', () => {
     const input = "put it in the bin";
 
     const expectedResult = {
-      category: 'item_use',
+      category: 'inventory',
       originalVerb: 'put',
       originalInput: input,
       action: 'put',
@@ -537,7 +537,7 @@ test('greetings are regognised and handled', () => {
       "category": "dialogue",
       "object": null,
       "originalInput": input,
-      "originalVerb": null,
+      "originalVerb": "hi",
       "preposition": null,
       "subject": "hi there dave how are you today",
     };
@@ -556,7 +556,7 @@ test('greetings are regognised and handled', () => {
       "category": "dialogue",
       "object": null,
       "originalInput": input,
-      "originalVerb": null,
+      "originalVerb": "ahoy",
       "preposition": null,
       "subject": "ahoy",
     };
@@ -574,7 +574,7 @@ test('greetings are regognised and handled', () => {
       "category": "dialogue",
       "object": null,
       "originalInput": input,
-      "originalVerb": null,
+      "originalVerb": "ahoy",
       "preposition": null,
       "subject": "ahoy there",
     };
@@ -629,7 +629,7 @@ test('have a... rest regognised and handled', () => {
       "category": "resting",
       "object": null,
       "originalInput": input,
-      "originalVerb": 'rest',
+      "originalVerb": 'have',
       "preposition": null,
       "subject": null,
     };
@@ -645,7 +645,7 @@ test('put down x', () => {
     const expectedResult = {
       "action": "put",
       "adverb": null,
-      "category": "item_use",
+      "category": "inventory",
       "object": null,
       "originalInput": input,
       "originalVerb": 'put',
@@ -664,7 +664,7 @@ test('put x down', () => {
     const expectedResult = {
       "action": "put",
       "adverb": null,
-      "category": "item_use",
+      "category": "inventory",
       "object": null,
       "originalInput": input,
       "originalVerb": 'put',
@@ -683,7 +683,7 @@ test('put x out', () => {
     const expectedResult = {
       "action": "put",
       "adverb": null,
-      "category": "item_use",
+      "category": "inventory",
       "object": null,
       "originalInput": input,
       "originalVerb": 'put',
@@ -701,7 +701,7 @@ test('put out x', () => {
     const expectedResult = {
       "action": "put",
       "adverb": null,
-      "category": "item_use",
+      "category": "inventory",
       "object": null,
       "originalInput": input,
       "originalVerb": 'put',
@@ -720,7 +720,7 @@ test('put x in y', () => {
     const expectedResult = {
       "action": "put",
       "adverb": null,
-      "category": "item_use",
+      "category": "inventory",
       "object": "bottle",
       "originalInput": input,
       "originalVerb": 'put',
@@ -812,7 +812,7 @@ test('make sure we can still handle water as a noun as well as a verb', () => {
     const expectedResult = {
       "action": "throw",
       "adverb": null,
-      "category": "item_use",
+      "category": "inventory",
       "object": "demon",
       "originalInput": input,
       "originalVerb": "throw",
@@ -830,7 +830,7 @@ test('make sure we can still handle water as a noun as well as a verb', () => {
     const expectedResult = {
       "action": "cool",
       "adverb": null,
-      "category": "item_use",
+      "category": "manipulation",
       "object": "water",
       "originalInput": input,
       "originalVerb": "cool",
@@ -848,7 +848,7 @@ test('more fun with nouns that are also verbs', () => {
     const expectedResult = {
       "action": "throw",
       "adverb": null,
-      "category": "item_use",
+      "category": "inventory",
       "object": "fire",
       "originalInput": input,
       "originalVerb": "throw",
@@ -904,7 +904,7 @@ test('throwing', () => {
     const expectedResult = {
       "action": "throw",
       "adverb": null,
-      "category": "item_use",
+      "category": "inventory",
       "object": "bin",
       "originalInput": input,
       "originalVerb": "throw",
@@ -1108,7 +1108,7 @@ test('give - as a request', () => {
     const expectedResult = {
       "action": "give",
       "adverb": null,
-      "category": "item_use",
+      "category": "inventory",
       "object": null,
       "originalInput": input,
       "originalVerb": "give",

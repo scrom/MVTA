@@ -256,6 +256,11 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
           //return dp.parseDialogue(verb, player, map, po);
         };
+              
+        self.greet = function (verb, player, map, po) {
+          return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
+          //return dp.parseDialogue(verb, player, map, po);
+        };
         
         self.cheat = function(verb, player, map, po) {
            return self.processResponse("Hmmm. I'm sure I heard about some cheat codes somewhere...<br><br>...Nope, I must have imagined it.<br>Looks like it's just you and your brain for now.", player, map, po,1);

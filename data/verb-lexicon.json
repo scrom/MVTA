@@ -22,6 +22,7 @@
       "check", 
       "browse",
       "peer",
+      "peep",
       "stare",
       "show",
       "look",
@@ -30,26 +31,26 @@
   },
   "on": {
     "category": "item_use",
-    "aliases": ["onto", "on to", "on top of"]
+    "aliases": ["start", "light", "ignite", "onto", "on to", "on top of"]
   },
   "off": {
     "category": "item_use",
-    "aliases": ["offof", "off of"]
+    "aliases": ["stop", "unlight", "extinguish", "offof", "off of"]
   },
   "switch": {
     "category": "item_use",
     "aliases": []
   },
   "turn": {
-    "category": "item_use",
-    "aliases": []
+    "category": "manipulation",
+    "aliases": ["rotate", "flip"]
   },
   "heat": {
-    "category": "item_use",
+    "category": "manipulation",
     "aliases": ["cook", "burn", "braise", "roast", "scorch", "flame", "char", "grill", "toast", "heat up", "warm", "warm up"]
   },
   "cool": {
-    "category": "item_use",
+    "category": "manipulation",
     "aliases": ["chill", "ice", "cool down"]
   },
   "search": {
@@ -62,7 +63,7 @@
   },
   "follow": {
     "category": "tracking",
-    "aliases": ["chase", "pursue", "track", "trail"]
+    "aliases": ["chase", "pursue", "track", "trail", "tail"]
   },
   "go": {
     "category": "movement",
@@ -108,6 +109,22 @@
     "category": "movement",
     "aliases": ["d"]
   },
+  "back": {
+    "category": "movement",
+    "aliases": ["b"] 
+  },
+  "forward": {
+    "category": "movement",
+    "aliases": ["f", "onward", "straight"] 
+  },
+  "left": {
+    "category": "movement",
+    "aliases": ["l"] 
+  },
+  "right": {
+    "category": "movement",
+    "aliases": ["r"] 
+  },
   "north": {
     "category": "movement",
     "aliases": ["n"]
@@ -146,7 +163,7 @@
   },
   "dismount": {
     "category": "movement",
-    "aliases": []
+    "aliases": ["unmount"]
   },
   "board": {
     "category": "movement",
@@ -172,33 +189,49 @@
     "category": "interaction_physical",
     "aliases": ["cure", "restore"]
   },
+  "hold": {
+    "category": "manipulation",
+    "aliases": ["grab", "grasp", "clutch", "clasp"]
+  },
   "push": {
-    "category": "interaction_physical",
-    "aliases": ["press"]
+    "category": "manipulation",
+    "aliases": ["press", "poke", "prod"]
   },
   "pull": {
-    "category": "interaction_physical",
-    "aliases": []
+    "category": "manipulation",
+    "aliases": ["tow", "heave", "drag", "haul", "yank"]
   },
   "move": {
-    "category": "interaction_physical",
+    "category": "manipulation",
     "aliases": []
   },
   "shove": {
-    "category": "interaction_physical",
-    "aliases": []
+    "category": "manipulation",
+    "aliases": ["nudge", "jostle", "jab"]
   },
   "wave": {
-    "category": "interaction_physical",
+    "category": "manipulation",
+    "aliases": []
+  },
+  "swing": {
+    "category": "manipulation",
     "aliases": []
   },
   "tap": {
-    "category": "interaction_physical",
-    "aliases": ["poke", "prod", "nudge", "jostle"]
+    "category": "manipulation",
+    "aliases": []
+  },
+  "knock": {
+    "category": "manipulation",
+    "aliases": []
   },
   "touch": {
-    "category": "interaction_physical",
+    "category": "sensory",
     "aliases": ["feel"]
+  },
+  "wink": {
+    "category": "interaction_physical",
+    "aliases": []
   },
   "pat": {
     "category": "interaction_physical",
@@ -208,10 +241,6 @@
     "category": "interaction_physical",
     "aliases": ["pet", "caress"]
   },
-  "rub": {
-    "category": "interaction_physical",
-    "aliases": []
-  },
   "hug": {
     "category": "interaction_physical",
     "aliases": ["embrace", "cuddle"]
@@ -220,33 +249,37 @@
     "category": "interaction_physical",
     "aliases": ["nuzzle"]
   },
-  "squeeze": {
+  "kiss": {
     "category": "interaction_physical",
-    "aliases": []
+    "aliases": ["snog", "smooch"]
   },
   "use": {
     "category": "item_use",
     "aliases": []
   },
   "put": {
-    "category": "item_use",
+    "category": "inventory",
     "aliases": ["install", "insert"]
   },
   "hide": {    
-    "category": "item_use",
+    "category": "manipulation",
     "aliases": ["stash"]
   },
   "place": {    
-    "category": "item_use",
+    "category": "manipulation",
     "aliases": ["position", "balance"]
   },
   "attach": {
-    "category": "item_use",
+    "category": "manipulation",
     "aliases": ["stick"]
   },
   "hang": {
-    "category": "item_use",
+    "category": "manipulation",
     "aliases": ["hook"]
+  },
+  "test": {
+    "category": "manipulation",
+    "aliases": []
   },
   "combine": {
     "category": "inventory",
@@ -260,6 +293,10 @@
     "category": "item_use",
     "aliases": ["spray", "squirt", "douse", "quench"]
   },
+  "inject": {
+    "category": "item_use",
+    "aliases": []
+  },
   "fill": {
     "category": "item_use",
     "aliases": []
@@ -269,13 +306,13 @@
     "aliases": []
   },
   "drop": {
-    "category": "item_use",
+    "category": "inventory",
     "aliases": [
       "drpo", "discard", "dump"
     ]
   },
   "give": {
-    "category": "item_use",
+    "category": "inventory",
     "aliases": ["present", "hand", "offer"]
   },
   "feed": {
@@ -283,8 +320,32 @@
     "aliases": []
   },
   "throw": {
-    "category": "item_use",
+    "category": "inventory",
     "aliases": ["chuck", "hurl","yeet","lob"]
+  },
+  "read": {
+    "category": "item_use",
+    "aliases": ["study", "reda"]
+  },
+  "write": {
+    "category": "item_use",
+    "aliases": ["sign", "signature","scrawl", "scribble", "scribe", "autograph", "tag"]
+  },
+  "draw": {
+    "category": "item_use",
+    "aliases": ["sketch", "doodle","scribble"]
+  },
+  "clean": {
+    "category": "item_use",
+    "aliases": ["scrub", "wipe","clear"]
+  },
+  "play": {
+    "category": "item_use",
+    "aliases": []
+  },
+  "dig": {
+    "category": "item_use",
+    "aliases": ["hollow", "bore"]
   },
   "attack": {
     "category": "combat",
@@ -296,7 +357,7 @@
   },
   "smash": {
     "category": "combat",
-    "aliases": ["bash", "beat", "whack"]
+    "aliases": ["bash", "beat", "whack", "club"]
   },
   "whip": {
     "category": "combat",
@@ -346,6 +407,14 @@
     "category": "magic",
     "aliases": ["channel"]
   },
+  "conjure": {
+    "category": "magic",
+    "aliases": []
+  },
+  "curse": {
+    "category": "magic",
+    "aliases": []
+  },
   "summon": {
     "category": "magic",
     "aliases": []
@@ -372,7 +441,7 @@
   },
   "talk": {
     "category": "dialogue",
-    "aliases": ["speak","chat"]
+    "aliases": ["speak","chat","tak","takl","tal", "tslk"]
   },
   "say": {
     "category": "dialogue",
@@ -380,11 +449,19 @@
   },
   "ask": {
     "category": "dialogue",
-    "aliases": ["request", "beg"]
+    "aliases": ["request", "beg", "have"]
+  },
+  "question": {
+    "category": "dialogue",
+    "aliases": ["who", "whos", "whose", "what", "whats", "why", "whys", "when", "whens", "where", "wheres", "how", "hows"]
+  },
+  "apologise": {
+    "category": "dialogue",
+    "aliases": ["sorry"]
   },
   "reply": {
     "category": "dialogue",
-    "aliases": []
+    "aliases": ["respond"]
   },
   "shout": {
     "category": "dialogue",
@@ -394,13 +471,17 @@
     "category": "dialogue",
     "aliases": []
   },
-  "squeak": {
-    "category": "dialogue",
-    "aliases": ["squeal"]
-  },
   "greet": {
     "category": "dialogue",
-    "aliases": []
+    "aliases": ["hello", "hi", "hey", "ahoy", "hiya"]
+  },
+   "goodbye": {
+    "category": "dialogue",
+    "aliases": ["bye", "laters", "seeya"]
+  }, 
+  "exclaim": {
+    "category": "dialogue",
+    "aliases": ["oh", "ow", "ouch", "oi", "oy"] 
   },
   "flatter": {
     "category": "dialogue",
@@ -409,6 +490,14 @@
   "persuade": {
     "category": "dialogue",
     "aliases": ["bribe","intimidate","threaten","negotiate"]
+  },
+  "taunt": {
+    "category": "dialogue",
+    "aliases": ["annoy","insult"]
+  },
+  "noise": {
+    "category": "dialogue",
+    "aliases": ["hum", "toot", "parp", "whistle", "growl", "meow","woof","bark","moo", "oink", "cheep", "cluck", "screech","squeak", "squawk","squeal","caw","tweet", "chirp"]
   },
   "get": {
     "category": "inventory",
@@ -474,9 +563,21 @@
     "category": "inventory",
     "aliases": []
   },
+  "buy": {
+    "category": "inventory",
+    "aliases": []
+  },
+  "sell": {
+    "category": "inventory",
+    "aliases": []
+  },
+  "pay": {
+    "category": "inventory",
+    "aliases": []
+  },
   "build": {
     "category": "building",
-    "aliases": ["construct"]
+    "aliases": ["construct", "make"]
   },
   "repair": {
     "category": "building",
@@ -508,7 +609,7 @@
   },
   "eat": {
     "category": "food_drink",
-    "aliases": ["bite","chomp", "chew", "gulp","swallow", "devour", "consume", "feast","nibble", "gobble","munch","chomp", "snack", "gorge","wolf","snarf"]
+    "aliases": ["bite","chomp", "chew", "gulp","swallow", "devour", "consume", "feast","nibble", "gobble","munch","chomp", "snack", "gorge","wolf","snarf", "ingest"]
   },
   "drink": {
     "category": "food_drink",
@@ -520,7 +621,7 @@
   },
   "imagine": {
     "category": "thinking",
-    "aliases": ["dream", "visualize", "visualise","conceptualise","envision","picture","meditate","focus","concentrate"]
+    "aliases": ["dream", "visualize", "visualise","conceptualise","conceptualize","envisage", "envision","picture","meditate","focus","concentrate"]
   },
   "plan": {
     "category": "thinking",
@@ -638,14 +739,6 @@
     "category": "ui_navigation",
     "aliases": []
   },
-  "cancel": {
-    "category": "ui_navigation",
-    "aliases": []
-  },
-  "confirm": {
-    "category": "ui_navigation",
-    "aliases": []
-  },
   "choose": {
     "category": "ui_navigation",
     "aliases": []
@@ -690,6 +783,10 @@
     "category": "manipulation",
     "aliases": []
   },
+  "raise": {
+    "category": "manipulation",
+    "aliases": ["lift", "hoist"]
+  },
   "fold": {
     "category": "manipulation",
     "aliases": []
@@ -704,15 +801,19 @@
   },
   "tie": {
     "category": "manipulation",
-    "aliases": []
+    "aliases": ["fasten"]
   },
   "untie": {
     "category": "manipulation",
-    "aliases": []
+    "aliases": ["undo", "unfasten"]
   },
   "tighten": {
     "category": "manipulation",
     "aliases": []
+  },
+  "dismantle": {
+    "category": "manipulation",
+    "aliases": ["disarm"]
   },
   "break": {
     "category": "manipulation",
@@ -720,9 +821,27 @@
   },
   "destroy": {
     "category": "manipulation",
-    "aliases": [
-      "destry"
-    ]
+    "aliases": ["destry"]
+  },
+  "shake":  {
+    "category": "manipulation",
+    "aliases": ["rattle"]
+  },
+  "rub": {
+    "category": "manipulation",
+    "aliases": ["buff", "polish", "sharp", "sharpen", "smooth", "smear"]
+  },
+  "squeeze": {
+    "category": "manipulation",
+    "aliases": ["squash", "smoosh", "squish"]
+  },
+  "suck": {
+    "category": "manipulation",
+    "aliases": []
+  },
+  "blow": {
+    "category": "manipulation",
+    "aliases": []
   },
   "broadcast": {
     "category": "communication_meta",
@@ -744,10 +863,6 @@
     "category": "communication_meta",
     "aliases": []
   },
-  "respond": {
-    "category": "communication_meta",
-    "aliases": []
-  },
   "acknowledge": {
     "category": "communication_meta",
     "aliases": []
@@ -758,11 +873,11 @@
   },
   "accept": {
     "category": "communication_meta",
-    "aliases": []
+    "aliases": ["confirm", "yes", "y", "positive", "affirmed", "affirmative", "ok", "okay", "okey", "sure", "thanks", "thankyou"]
   },
   "reject": {
     "category": "communication_meta",
-    "aliases": []
+    "aliases": ["cancel", "no", "n", "negative", "negatory", "dismiss"]
   },
   "cheat": {
     "category": "system",
@@ -798,7 +913,7 @@
   },
   "again": {
     "category": "system",
-    "aliases": ["g"]
+    "aliases": ["g", "repeat"]
   },
   "sleep": {
     "category": "resting",
