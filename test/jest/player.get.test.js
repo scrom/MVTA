@@ -403,7 +403,7 @@ test("Test that a player cannot add coco pops to water.", () => {
     let kitchen = m0.getLocation("kitchen-ground-floor")
     p0.setLocation(kitchen);
 
-    const expectedResult = "You try and try but can't find a satisfactory way to make them fit.";
+    const expectedResult = "Nope. They really won't mix well together.";
 
     p0.get('get', 'water');
 

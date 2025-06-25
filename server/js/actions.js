@@ -23,7 +23,6 @@ module.exports.Actions = function Actions(parser) {
         object: objects[1] || null,
         preposition: preposition || null
   */
-
         self.processResponse = function (response, player, map, po, time) {
           if (response) {
             if (response.includes("$inactive$")) {
@@ -45,7 +44,7 @@ module.exports.Actions = function Actions(parser) {
           };
           if (response.includes("$fail$")) {
             response = response.replace("$fail$", "");
-            _failCount ++;
+            _failCount++
           } else {
             _failCount = 0;
           };
@@ -115,9 +114,8 @@ module.exports.Actions = function Actions(parser) {
 
         self.null = function(verb, player, map, po) {
           //console.debug("fail count: "+_failCount);
-          if (_failCount >3) { //help on 4 or more fails
+          if (_failCount >=3) { //help on 3 or more fails
             _verb = "help";
-            _failCount = 0;
             return self.help(verb, player, map, po);
           };
           if (_failCount == 2) { //hint on second failure
@@ -268,17 +266,22 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.help = function(verb, player, map, po) {
+          let stuck = "";
+          if (_failCount <3 ) {
+            stuck = "Stuck already? Ok...";
+          }
           return  self.processResponse(
-                  "<br> I accept basic commands to move e.g. <i>'north','south','up','in'</i> etc.<br>" +
-                 "You can interact with objects and creatures by supplying a <i>verb</i> and the <i>name</i> of the object or creature. e.g. <i>'get sword'</i> or <i>'eat apple'</i>.<br>" +
-                 "You can also <i>'use'</i> objects on others (and creatures) e.g. <i>'give sword to farmer'</i>, <i>'hit door with sword'</i> or <i>'put key in box'</i>.<br>" +
-                 "<br>Two of the most useful verbs to remember are <i>'look'</i> and <i>'examine'</i>.<br>" +
-                 "In general I understand a fairly limited set of interactions (and I won't tell you them all, that'd spoil the fun) but hopefully they'll be enough for you to enjoy something more than a minimum viable adventure.<br>" +
-                  "<br>To find out more about how you're doing, try <i>'stats'</i> or <i>'status'</i><br>" +
-                  "In many cases, your positive or negative interactions within the game may impact how others respond to you, use this knowledge wisely.<br>" +
-                  "<br>You can save your progress by entering <i>'save'</i>.<br>You can return to a previously saved point from <i>this</i> session by simply typing <i>restore</i><br>You can load a previously saved game by entering '<i>load filename-x</i>' (where <i>filename-x</i> is the name of your previously saved game file.)<br>" +
-                  "If you've really had enough of playing, you can enter <i>quit</i> to exit the game (without saving).<br>"
-                  ,player, map, po ,0);
+              stuck+
+              "<br> I accept basic commands to move e.g. <i>'north','south','up','in'</i> etc.<br>" +
+              "You can interact with objects and creatures by supplying a <i>verb</i> and the <i>name</i> of the object or creature. e.g. <i>'get sword'</i> or <i>'eat apple'</i>.<br>" +
+              "You can also <i>'use'</i> objects on others (and creatures) e.g. <i>'give sword to farmer'</i>, <i>'hit door with sword'</i> or <i>'put key in box'</i>.<br>" +
+              "<br>Two of the most useful verbs to remember are <i>'look'</i> and <i>'examine'</i>.<br>" +
+              "In general I understand a fairly limited set of interactions (and I won't tell you them all, that'd spoil the fun) but hopefully they'll be enough for you to enjoy something more than a minimum viable adventure.<br>" +
+              "<br>To find out more about how you're doing, try <i>'stats'</i> or <i>'status'</i><br>" +
+              "In many cases, your positive or negative interactions within the game may impact how others respond to you, use this knowledge wisely.<br>" +
+              "<br>You can save your progress by entering <i>'save'</i>.<br>You can return to a previously saved point from <i>this</i> session by simply typing <i>restore</i><br>You can load a previously saved game by entering '<i>load filename-x</i>' (where <i>filename-x</i> is the name of your previously saved game file.)<br>" +
+              "If you've really had enough of playing, you can enter <i>quit</i> to exit the game (without saving).<br>"
+          ,player, map, po ,0);
         };
 
         self.map = function (verb, player, map, po) {
@@ -369,8 +372,14 @@ module.exports.Actions = function Actions(parser) {
         self.feed = function (verb, player, map, po) {
           return self.processResponse(player.give(verb, po.subject, po.preposition, po.object), player, map, po ,2);
         };  
+        self.get = function (verb, player, map, po) {
+          if (po.subject && po.object) {
+            return self.take(verb, player, map, po)
+          }
+          return self.processResponse(player.get(po.originalVerb, po.subject), player, map, po ,1);
+        };
         self.take = function (verb, player, map, po) {
-          return self.processResponse(player.take(verb, po.subject, po.object), player, map, po ,1);
+          return self.processResponse(player.take(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
         self.throw  = function (verb, player, map, po) {
           if (po.preposition === "at" && po.object != null) {

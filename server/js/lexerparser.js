@@ -49,7 +49,7 @@ module.exports.LexerParser = function LexerParser() {
         ];
 
         const givingPrepositions = ['to', 'for', 'onto', 'on', 'on to', 'toward', 'towards'];
-        const receivingPrepositions = ['from', 'by', 'at', 'in', 'out', 'out of'];
+        const receivingPrepositions = ['from', 'by', 'at', 'out', 'out of'];
         const sharedPrepositions = ['by', 'at', 'in', 'into', 'in to', 'with'];
 
         //collate prepositions and sort by number of words - important for when we try to split later.

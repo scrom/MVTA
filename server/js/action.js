@@ -869,7 +869,7 @@ exports.Action = function Action(player, map, fileManager) {
                         if (originalObject0 != _object0) {
                             _ticks = 1;
                             _verb = 'pick up';
-                            description = _player.take(_verb, _object0, _object1);
+                            description = _player.take(_verb, _object0, _splitWord, _object1);
                             break;
                         }
 
@@ -926,7 +926,7 @@ exports.Action = function Action(player, map, fileManager) {
                     case 'remove':
                     case 'make':
                         _ticks = 1;
-                        description = _player.take(_verb, _object0, _object1); 
+                        description = _player.take(_verb, _object0, _splitWord, _object1); 
                         break;
                     case 'dismantle':
                     case 'disarm':

@@ -1141,7 +1141,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             return null;              
         };
 
-        self.think = function (verb, artefactName, splitword, receiverName, originalAction) {
+        self.think = function (verb, artefactName, splitWord, receiverName, originalAction) {
             if (artefactName.length > 0) {
                 var artefact = getObjectFromPlayerOrLocation(artefactName);
             };
@@ -2072,7 +2072,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 if (artefact.chargesRemaining() == 0) {
                     removeObjectFromPlayerOrLocation(artefact.getName());
                 };
-                return "You add "+artefact.getDisplayName()+" to "+receiver.getDisplayName()+"." +tools.imgTag(receiver);
+                return "You add "+artefact.getDisplayName()+" to "+receiver.getDisplayName()+"." +tools.imgTag(receiver); //@todo #649- when we fix up "combines" to work like missions, this description will change.
             };
 
             var requiresContainer = newObject.requiresContainer();
@@ -2358,14 +2358,14 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
         };
 
     /*Allow player to put something in/on/under an object */
-    self.put = function(verb, artefactName, splitword, receiverName, requiredContainer, artefact, receiver){
+    self.put = function(verb, artefactName, splitWord, receiverName, requiredContainer, artefact, receiver){
         //player.put(verb, po.subject, po.preposition, po.object);
-            if (splitword == "down") { return self.drop(verb, artefactName, _map);};
-            if (splitword == "out") { return self.turn(verb, artefactName, splitword);};
+            if (splitWord == "down") { return self.drop(verb, artefactName, _map);};
+            if (splitWord == "out") { return self.turn(verb, artefactName, splitWord);};
             
             if (["spray","douse", "quench", "squirt", "water"].includes(verb)) {
                 verb = "pour";
-                if (artefactName && receiverName && splitword == "with") {
+                if (artefactName && receiverName && splitWord == "with") {
                     //water X with Y
                     let tempArtefactName = artefactName;
                     artefactName = receiverName;
@@ -2373,7 +2373,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 } else {
                     receiverName = artefactName;
                     artefactName = "water";
-                    splitword = "over";
+                    splitWord = "over";
                 };
             };
 
@@ -2443,7 +2443,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 };
                 
                 if (!artefact.isCollectable()) {
-                    return "You try in vain to move " + artefact.getDisplayName() + " to where you want it but just end up tired and annoyed."
+                    return "You try in vain to move " + artefact.getDisplayName() + " to where you want "+artefact.getSuffix()+" but just end up tired and annoyed."
                 };
             };
 
@@ -2488,13 +2488,13 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             //contain = in
             let position = "in";
 
-            if (tools.positions.indexOf(splitword) == -1) {
+            if (tools.positions.indexOf(splitWord) == -1) {
                 position = "in";
-             } else if (tools.positions.indexOf(splitword) <= 4) {
+             } else if (tools.positions.indexOf(splitWord) <= 4) {
                 position = "on";
-             } else if (tools.positions.indexOf(splitword) <= 5) {
+             } else if (tools.positions.indexOf(splitWord) <= 5) {
                 position = "above";
-            } else if (tools.positions.indexOf(splitword) <= 10) {
+            } else if (tools.positions.indexOf(splitWord) <= 10) {
                 position = "hidden";
             };
 
@@ -2515,10 +2515,10 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
                     //can only hide small objects under fixed items but not under scenery.
                     if (!(receiver.isCollectable()) && artefact.getWeight()>2) {              
-                        return "You can't fit "+artefact.getSuffix()+" "+splitword+" "+receiver.getDisplayName()+".";
+                        return "You can't fit "+artefact.getSuffix()+" "+splitWord+" "+receiver.getDisplayName()+".";
                     };
                     //can't hide liquids or things that are too big
-                    return "Try as you might, to can't find any way to hide "+artefact.getDisplayName()+" "+splitword+" "+receiver.getDisplayName()+".";
+                    return "Try as you might, to can't find any way to hide "+artefact.getDisplayName()+" "+splitWord+" "+receiver.getDisplayName()+".";
                 };
 
                 if (position == "on") {return "You're welcome to <i>put</i> "+artefact.getSuffix()+" "+position+" there but I'm afraid "+artefact.getSuffix()+"'ll still be in plain sight." };;
@@ -2530,7 +2530,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     if (verb == "hide") {
                         if (!(artefact.isHidden())) {
                             artefact.hide();
-                            return "You "+verb+" "+artefact.getDisplayName()+" "+splitword+" "+receiver.getDisplayName()+".";
+                            return "You "+verb+" "+artefact.getDisplayName()+" "+splitWord+" "+receiver.getDisplayName()+".";
                         } else {
                             return tools.initCap(artefact.getDescriptivePrefix())+" already hidden.";
                         };
@@ -2578,7 +2578,18 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     };
                 };                
                 
-                return  "You try and try but can't find a satisfactory way to make "+artefact.getSuffix()+" fit."; 
+                if ((artefact.isLiquid() || artefact.isPowder()) && (!receiver.holdsLiquid())) {
+                    if (receiver.isLiquid() || receiver.isPowder()) {
+                        return "Nope. They really won't mix well together."
+                    };
+                    return artefact.getPrefix()+" would all just leak out of "+receiver.getDisplayName()+". Best not to waste "+artefact.getSuffix()+"."
+                };
+
+                if (artefact.getRequiredContainer() && (artefact.getRequiredContainer() != receiver.getName())) {
+                    return "You need <i>something else</i> to "+verb+" "+artefact.getSuffix()+" "+splitWord+"."; 
+                };
+
+                return "You try and try but can't find a satisfactory way to make "+artefact.getSuffix()+" fit."; 
             };
 
             //doing odd things with liquids and powders...
@@ -2694,7 +2705,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             } else if (position == "on" || verb == "balance"){
                 resultString += " onto "; 
             } else {
-                resultString += " "+splitword+" ";    
+                resultString += " "+splitWord+" ";    
             };               
             resultString += receiverDisplayNameString+".<br>";
             
@@ -2705,7 +2716,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             } else if (position == "on") {
                 receiveResult = receiver.position(collectedArtefact, position);
             } else {
-                 receiveResult = receiver.position(collectedArtefact, splitword);
+                 receiveResult = receiver.position(collectedArtefact, splitWord);
             };
 
             //if receiving failed (or combined with something else)...
@@ -3033,9 +3044,13 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             return buyer.buy(objectToGive, self);
         };
 
-        self.take = function(verb, artefactName, giverName){
+        self.take = function(verb, artefactName, splitWord, giverName){
             //use "get" if we're not taking from anything
             if (tools.stringIsEmpty(giverName)){ return self.get(verb, artefactName);};
+
+            if (['in', 'into', 'in to', 'with', 'onto', 'on', 'on to'].includes(splitWord)) {
+                return self.put(verb, artefactName, splitWord, giverName);
+            };
 
             //if giverName is a creature - steal
             //if giverName is not a creature - remove

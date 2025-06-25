@@ -48,7 +48,7 @@ test('engine responds appropriately with empty input', () => {
 
 test('can call engine with simple action', () => {
     const input = "help";
-    const expectedResult = "<br> I accept basic commands to move e.g";
+    const expectedResult = "Stuck already? Ok...<br> I accept basic commands to move e.g";
     const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
@@ -263,10 +263,6 @@ test('test 3 unknown verbs in a row triggers help', () => {
     actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 
-    expectedResult = "Sorry, I didn't quite understand you there.";
-    actualResult = engine(input).substring(0,expectedResult.length);
-    expect(actualResult).toBe(expectedResult);
-
     expectedResult = "<br> I accept basic commands to move e.g. <i>'north','south','up','in'</i>";
     actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
@@ -278,16 +274,24 @@ test('test fail count reverts and restarts after successful action', () => {
     let actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 
-    expectedResult = "Nothing happens. (No logic for \"get\")";
-    actualResult = engine("get bottle").substring(0,expectedResult.length);
+    expectedResult = "a home location<br>There is a single exit up.<br>";
+    actualResult = engine("look"); // no need to test result of this.
     expect(actualResult).toBe(expectedResult);
 
     expectedResult = "Sorry, I didn't quite understand you there.";
     actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 
+    expectedResult = "Sorry, I didn't quite understand you there.";
+    actualResult = engine(input).substring(0,expectedResult.length);;
+    expect(actualResult).toBe(expectedResult);
+
     expectedResult = "It looks like you're struggling to be understood.<br>If you need some assistance, try typing <i>help</i>.";
     actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+
+    expectedResult = "<br> I accept basic commands to move e.g. <i>'north','south','up','in'</i>";
+    actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 

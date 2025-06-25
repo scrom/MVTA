@@ -119,42 +119,51 @@ describe('Contagion', () => {
         expect(actualResult).toBe(expectedResult);
     });
 
-    test('issue #617 attempting to collect venom without a syringe should not use it up', () => {
+    test('issue #617 attempting to collect venom without a syringe should work in correcrt circumstances only', () => {
         const mb = new mapBuilder.MapBuilder('../../data/', 'root-locations');
         let m0 = mb.buildMap();
-        var venomData = { file: "venom" };
-        var venom = mb.buildArtefact(venomData);
-        var syringeData = { file: "syringe" };
-        var syringe = mb.buildArtefact(syringeData);
-        var mugData = { file: "cup" };
-        var mug = mb.buildArtefact(mugData);
+        let wreckData = {file: "wreckage"};
+        let wreck = mb.buildArtefact(wreckData);
+
+        let syringeData = { file: "syringe" };
+        let syringe = mb.buildArtefact(syringeData);
+
+        let mugData = { file: "cup" };
+        let mug = mb.buildArtefact(mugData);
+
         let l0 = new location.Location('home', 'home', 'a home location');
         m0.addLocation(l0);
         let p0 = new player.Player({"username":"tester"}, m0, mb);
         p0.setStartLocation(l0);
         p0.setLocation(l0);
-        l0.addObject(venom);
-        console.debug(p0.get('get', venom.getName()));
+        l0.addObject(wreck);
+
+        let result = p0.search('seach', 'wreckage');
+        expect(result).toBe("You seach the plane wreckage and discover a pool of zombie venom and a burned corpse.");
+
+        let venom = wreck.getObject("venom");
+
+        result = p0.get('get', venom.getName());
+
+        expect(result).toBe("You're not carrying anything that you can collect the venom into.");
         //p0.put("collect", "venom", "into", "mug");
+
         l0.addObject(mug);
-        console.debug("^^ Get - no container - Remaining Venom: "+venom.chargesRemaining());
-        console.debug(p0.get("get", "venom"));
-        console.debug("^^ Get - with mug in location - Remaining Venom: "+venom.chargesRemaining());
-        console.debug(p0.put("pour", "venom", "into", "mug"));
-        console.debug("Put/Pour - Remaining Venom: "+venom.chargesRemaining());
-        console.debug(p0.examine("examine", "mug"));
+        result = p0.get('get', venom.getName()); //Get - with mug in location
+        expect(result).toBe("You're not carrying anything that you can collect the venom into.");
 
-        console.debug(p0.position("put", "venom", "mug", "into"));
-        console.debug("^^ Position/Put - Remaining Venom: "+venom.chargesRemaining());
-        console.debug(p0.examine("examine", "mug"));
+        result = p0.put("pour", venom.getName(), "into", "mug"); //put/pour
+        charges = venom.chargesRemaining();
+        expect(result).toBe("You need <i>something else</i> to pour it into."); //@todo this could do with improving
 
-        console.debug(p0.take("collect", "venom", "mug"));
-        console.debug("^^ Collect - Remaining Venom: "+venom.chargesRemaining());
-        console.debug(p0.examine("examine", "mug"));
+        result = p0.put("put", venom.getName(), "into", "mug"); //put/put
+        expect(result).toBe("You need <i>something else</i> to put it into.");
+
+        result = p0.take("collect", "venom", "into", "mug"); //take/collect
+        expect(result).toBe("You need <i>something else</i> to collect it into.");
 
         l0.addObject(syringe);
-
-        var expectedResult = "xxx";
+        var expectedResult = "You add the pool of zombie venom to the hypodermic syringe and needle.$imagesyringe.jpg/$image"; //@todo improve this - default combines wording.
         var actualResult = p0.get('get', venom.getName());
         console.debug("Expected: " + expectedResult);
         console.debug("Actual  : " + actualResult);

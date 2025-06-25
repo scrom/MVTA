@@ -838,6 +838,10 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             return _sourceAttributes;
         }; 
 
+        self.setDeliveryItems = function(deliveryItemsArray) {
+            _delivers = deliveryItemsArray; //overwrites current list
+        };
+
         self.getDeliveryItems = function() {
             return _delivers;
         };
@@ -923,6 +927,11 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                     break;
             };
             return true;
+        };
+
+        
+        self.setCombinesWith = function (objecName) {
+            _combinesWith = objecName;
         };
 
         self.getCombinesWith = function () {
@@ -1059,7 +1068,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
         };
 
         self.getRequiredContainer = function() {
-            if (_requiresContainer) {
+            if (_requiredContainer) {
                 return _requiredContainer
             };
             return null;
