@@ -4505,10 +4505,10 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 };
             };
             if (!(exit)) {
-                return "There's no exit "+direct+" from here.";
+                return "There's no way <i>"+direct+"</i> from here.";
             };
 
-            if (!(exit.isVisible())) {return "Your way '"+direct+"' is blocked.";}; //this might be too obvious;
+            if (!(exit.isVisible())) {return "Your way <i>'"+direct+"'</i> is blocked.";}; //this might be too obvious;
 
             var requiredAction = exit.getRequiredAction();
             if (self.isTired() && requiredAction == "run") {
@@ -4528,10 +4528,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (!(exit.requiredAction(verb))) {               
                 if (requiredAction == "crawl") {
                     return "It looks like you're too tall to "+verb+" in there. Try <i>crawl</i>ing maybe?";
-                } else if (requiredAction == "climb") {
-                    return "You'll need to <i>climb</i> "+direct+" from here.";
-                } else if (requiredAction == "run") {
-                    return "You'll need to <i>run</i> "+direct+" from here.";
+                } else if (requiredAction == "climb" || requiredAction == "run") {
+                    return "You'll need to <i>"+requiredAction+"</i> "+direct+" from here.";
                 } else {
                     return "You'll need to <i>"+requiredAction+"</i> '"+direct+"'.";
                 };

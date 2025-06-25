@@ -8,7 +8,7 @@ module.exports.Actions = function Actions(parser) {
   const tools = require('./tools.js');
   const customAction = require('./customaction.js');
 
-  const _baseTickSize = tools.baseTickSize; //default base measure of time //assume a move passes time. Some won't - for these, ticks will be 0.
+  const _baseTickSize = tools.baseTickSize; //default base measure of time //assume a move passes time. Some won't - for these, ticks/time will be 0.
   let _failCount = 0; //count the number of consecutive user errors
 
   try{
@@ -24,15 +24,15 @@ module.exports.Actions = function Actions(parser) {
         preposition: preposition || null
   */
 
-        self.processResponse = function (response, player, map, po, ticks) {
+        self.processResponse = function (response, player, map, po, time) {
           if (response) {
             if (response.includes("$inactive$")) {
               response = response.replace("$inactive$", "Thanks for playing.<br>There's nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.");
-              return {response: response, ticks: 0};
+              return {response: response, time: 0};
             };
             if (response.includes("$dead$")) {
               response = response.replace("$dead$", "You're dead. Game over.<br>There's nothing more you can do here.<br><br>You either need to <i>quit</i> and restart a game or <i>load</i> a previously saved game.");
-              return {response: response, ticks: 0};
+              return {response: response, time: 0};
             };
           };
           if (po) {
@@ -82,10 +82,10 @@ module.exports.Actions = function Actions(parser) {
             parser.setAwaitingPlayerAnswer(false);
           };
 
-          if (ticks) {ticks = ticks * _baseTickSize;}
-          else { ticks = 0; };
+          if (time) {time = Math.floor(time * _baseTickSize);}
+          else { time = 0; };
 
-          return {response: response, ticks: ticks}
+          return {"response": response, "time": time};
         };
 
         self.reconstructInputAndRecallSelfWithNewVerb = function(verb, player, map, po, replaceAll) {
@@ -111,11 +111,6 @@ module.exports.Actions = function Actions(parser) {
             };
           return handler(action, player, map, newParsedInput);
 
-        };
-
-        self.say = function (verb, player, map, po) {
-          return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
-          //return dp.parseDialogue(verb, player, map, po);
         };
 
         self.null = function(verb, player, map, po) {
@@ -162,6 +157,106 @@ module.exports.Actions = function Actions(parser) {
           if (actionResult) { actionResult = actionResult.trim(); }
           else { actionResult = ""; }; //just in case it comes back undefined.
           return self.processResponse(actionResult, player, map, po,1);
+        };
+
+        self.go = function (verb, player, map, po) {
+          let time = 1;
+          if (tools.directions.includes(verb)) {
+            time = 1;
+          } else {
+            switch (po.originalVerb) {
+              case "climb":
+              case "crawl":
+              case "sneak":
+              case "slink":
+                time = 2;
+                break;
+              case "run":
+              case "drive":
+                time = 0.5;
+                break;
+              case "jog":
+                time = 0.75;
+                break;
+              case "sprint":
+              case "fly":
+                time = 0.25;
+                break;
+              case "teleport":
+                time = 0;
+              case "go":
+              case "explore":
+              case "swim":
+              case "enter":
+              case "leave":
+              case "descend":          
+              case "travel":
+              case "return":
+              case "jump":
+              case "sail":
+              default:
+                time = 1;
+            }
+          };
+          if (po.subject) {
+            return self.processResponse(player.goObject(po.originalVerb, po.preposition, po.subject, map), player, map, po, time);
+          } else {
+            return self.processResponse(player.go(po.originalVerb, po.preposition, map), player, map, po, time);
+          }
+        };
+        self.run = function (verb, player, map, po) {
+            return self.go(verb, player, map, po);
+        };
+        self.swim = function (verb, player, map, po) {
+            return self.go(verb, player, map, po);
+        };
+        self.crawl = function (verb, player, map, po) {
+            return self.go(verb, player, map, po);
+        };
+        self.climb = function (verb, player, map, po) {
+            return self.go(verb, player, map, po);
+        };
+        self.descend = function (verb, player, map, po) {
+            po.preposition = "down";
+            return self.go(verb, player, map, po);
+        };
+        self.sneak = function (verb, player, map, po) {
+            return self.go(verb, player, map, po);
+        };
+        self.jog = function (verb, player, map, po) {
+            return self.go(verb, player, map, po);
+        };
+        self.sprint = function (verb, player, map, po) {
+            return self.go(verb, player, map, po);
+        };
+        self.enter = function (verb, player, map, po) {
+            po.preposition = "in";
+            return self.go(verb, player, map, po);
+        };
+        self.leave = function (verb, player, map, po) {
+            po.preposition = "out";
+            return self.go(verb, player, map, po);
+        };
+        self.follow = function (verb, player, map, po) {
+          let time = 0;
+          switch (po.originalVerb) {
+            case "chase":
+            case "pursue":
+              time = 0.5;
+              break; 
+            case "track":
+            case "trail":
+              time = 2;
+            case "follow":
+            default:  
+              time = 1;
+          };
+          return self.processResponse(player.follow(po.originalVerb, po.subject, map), player, map, po, time);
+        };
+      
+        self.say = function (verb, player, map, po) {
+          return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
+          //return dp.parseDialogue(verb, player, map, po);
         };
         
         self.cheat = function(verb, player, map, po) {
@@ -252,9 +347,6 @@ module.exports.Actions = function Actions(parser) {
         };
         self.find = function (verb, player, map, po) {
           return self.processResponse(player.hunt(verb, po.subject, map), player, map, po ,2);
-        };
-        self.follow = function() {
-          return self.processResponse(player.follow(verb, po.subject, map), player, map, po ,1);
         };
         self.put = function (verb, player, map, po) {
           return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);

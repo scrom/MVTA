@@ -24,7 +24,7 @@ beforeEach(() =>
     engine = createEngine(p0, m0);
     l0 = new location.Location('home', 'home', 'a home location');
     m0.addLocation(l0);
-    l0.addExit("s", "home", "new");
+    l0.addExit("u", "home", "atrium");
     p0.setStartLocation(l0);
     p0.setLocation(l0);
 });
@@ -42,28 +42,28 @@ afterEach(() =>
 test('engine responds appropriately with empty input', () => {
     const input = "";
     const expectedResult = "Sorry, I didn't hear you there";
-    const actualResult = engine(input).substring(0,30);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
 test('can call engine with simple action', () => {
     const input = "help";
     const expectedResult = "<br> I accept basic commands to move e.g";
-    const actualResult = engine(input).substring(0,40);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
 test('"cheat" verb', () => {
     const input = "cheat";
     const expectedResult = "Hmmm. I'm sure I heard about some cheat codes somewhere";
-    const actualResult = engine(input).substring(0,55);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
 test('"map" verb', () => {
     const input = "map";
     const expectedResult = "Oh dear, are you lost?";
-    const actualResult = engine(input).substring(0,22);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -108,13 +108,13 @@ test('"heal" verb for creature', () => {
 test('"stats" verb', () => {
     const input = "stats";
     const expectedResult = "<i>Statistics for $player:</i><br>Your score is 0 out of 2055";
-    const actualResult = engine(input).substring(0,61);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
 test('"status" verb', () => {
     const input = "status";
-    const expectedResult = "<i>Status:</i><br>Your health is at 100%.<br><br>a home location<br>There is a single exit to the South.<br>";
+    const expectedResult = "<i>Status:</i><br>Your health is at 100%.<br><br>a home location<br>There is a single exit up.<br>";
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
@@ -149,7 +149,7 @@ test('can call engine with player interacting with single object', () => {
 
 test('test basic "look" gets the right words', () => {
     const input = "look";
-    const expectedResult = "a home location<br>There is a single exit to the South.<br>";
+    const expectedResult = "a home location<br>There is a single exit up.<br>";
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
@@ -223,7 +223,7 @@ test('Attempting to put an object we dont own into a bowl fails gracefully', () 
     p0.setLocation(atrium);
     const input = "put beans in to bowl";
     const expectedResults = ["There's no","You can't ","You'll nee"];
-    const actualResult = engine(input).substring(0,10);
+    const actualResult = engine(input).substring(0,expectedResults[0].length);
     console.debug(actualResult);
     expect(expectedResults.includes(actualResult)).toBe(true);
 });
@@ -231,7 +231,7 @@ test('Attempting to put an object we dont own into a bowl fails gracefully', () 
 test('test "try/attempt" verb with a nonexistent object', () => {
     const input = "attempt very carefully to eat a tiny tin of dog food with a spoon";
     const expectedResults = ["There's no","You can't ","You'll nee"];
-    const actualResult = engine(input).substring(0,10);
+    const actualResult = engine(input).substring(0,expectedResults[0].length);
     console.debug(actualResult);
     expect(expectedResults.includes(actualResult)).toBe(true);
 });
@@ -249,14 +249,14 @@ test('test "use" verb with an item that returns a new verb based action', () => 
 test('test unknown verbs attempt custom action and fail gracefully', () => {
     const input = "skibidee an artefact of little consequence";
     const expectedResult = "Sorry, I didn't quite understand you there.";
-    const actualResult = engine(input).substring(0,43);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
 test('test 3 unknown verbs in a row triggers help', () => {
     const input = "skibidee an artefact of little consequence";
     let expectedResult = "Sorry, I didn't quite understand you there.";
-    let actualResult = engine(input).substring(0,43);
+    let actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 
     expectedResult = "It looks like you're struggling to be understood.<br>If you need some assistance, try typing <i>help</i>.";
@@ -264,26 +264,26 @@ test('test 3 unknown verbs in a row triggers help', () => {
     expect(actualResult).toBe(expectedResult);
 
     expectedResult = "Sorry, I didn't quite understand you there.";
-    actualResult = engine(input).substring(0,43);
+    actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 
     expectedResult = "<br> I accept basic commands to move e.g. <i>'north','south','up','in'</i>";
-    actualResult = engine(input).substring(0,74);
+    actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
 test('test fail count reverts and restarts after successful action', () => {
     const input = "skibidee an artefact of little consequence";
     let expectedResult = "Sorry, I didn't quite understand you there.";
-    let actualResult = engine(input).substring(0,43);
+    let actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 
     expectedResult = "Nothing happens. (No logic for \"get\")";
-    actualResult = engine("get bottle").substring(0,43);
+    actualResult = engine("get bottle").substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 
     expectedResult = "Sorry, I didn't quite understand you there.";
-    actualResult = engine(input).substring(0,43);
+    actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 
     expectedResult = "It looks like you're struggling to be understood.<br>If you need some assistance, try typing <i>help</i>.";
@@ -297,7 +297,7 @@ test('test initate dialogue with "say"', () => {
     object.go(null, l0);
     const input = "say hello to aaron";
     const expectedResult = "Aaron says";
-    const actualResult = engine(input).substring(0,10);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -307,7 +307,7 @@ test('test initate dialogue with salutation to creature', () => {
     object.go(null, l0);
     const input = "hiya aaron";
     const expectedResult = "He says"; //note, prefix is picked up 
-    const actualResult = engine(input).substring(0,7);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -317,7 +317,7 @@ test('test initate dialogue with open salutation when only one creature present'
     object.go(null, l0);
     const input = "ahoy";
     const expectedResult = "Aaron says";
-    const actualResult = engine(input).substring(0,10);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -335,12 +335,12 @@ test('test follow-on dialogue in active conversation with find request', () => {
     const firstInput = "say hello to aaron";
 
     const expecteFirstResult = "Aaron says";
-    const actualFirstResult = engine(firstInput).substring(0,10);
+    const actualFirstResult = engine(firstInput).substring(0,expecteFirstResult.length);
     expect(actualFirstResult).toBe(expecteFirstResult);
 
     const input = "can you find my guitar";
     const expectedResult = "You ask Aaron to find";
-    const actualResult = engine(input).substring(0,21);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -350,13 +350,13 @@ test('test follow-on dialogue in active conversation including other verbs', () 
     object.go(null, l0);
     const firstInput = "say hello to aaron";
 
-    const expecteFirstResult = "Aaron says";
-    const actualFirstResult = engine(firstInput).substring(0,10);
-    expect(actualFirstResult).toBe(expecteFirstResult);
+    const expectedFirstResult = "Aaron says";
+    const actualFirstResult = engine(firstInput).substring(0,expectedFirstResult.length);
+    expect(actualFirstResult).toBe(expectedFirstResult);
 
     const input = "can you put my guitar in the toaster";
     const expectedResult = "Aaron says";
-    const actualResult = engine(input).substring(0,10);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -371,9 +371,9 @@ test('test revert to actions from active conversation', () => {
 
     const firstInput = "say hello to aaron";
 
-    const expecteFirstResult = "Aaron says";
-    const actualFirstResult = engine(firstInput).substring(0,10);
-    expect(actualFirstResult).toBe(expecteFirstResult);
+    const expectedFirstResult = "Aaron says";
+    const actualFirstResult = engine(firstInput).substring(0,expectedFirstResult.length);
+    expect(actualFirstResult).toBe(expectedFirstResult);
 
     const input = "examine guitar";
     const expectedResult = "The strings are a bit tatty but it's mostly in tune.<br>It's worth about £10.00.$imageguitar.jpg/$image";
@@ -568,7 +568,7 @@ test('test "give me your X', () => {
     let greet = engine("hi aaron"); //start conversation
     const input = "give me your ice cream";
     const expectedResult = "You ask Aaron to give you his ice cream.";
-    const actualResult = engine(input).substring(0,40);
+    const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -584,7 +584,68 @@ test('test "I want your X"', () => {
     const input = "i want some ice cream";
     const expectedResult = "$imageaaronprescott.jpg/$image<br>"; //image comes back - we're still talking
     let actualResult = engine(input);
-    actualResult = actualResult.substring(actualResult.length-34);
+    actualResult = actualResult.substring(actualResult.length-expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "go location"', () => {
+    const input = "go to kitchen";
+    const expectedResult = "You'll need to explore and find your way there yourself I'm afraid.";
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "go direction"', () => {
+    const input = "go north";
+    const expectedResult = "There's no way <i>North</i> from here.";
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "crawl direction"', () => {
+    const input = "crawl up";
+    const expectedResult = "You crawl up...<br><br>";
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test "crawl out"', () => {
+    const input = "crawl out";
+    const expectedResult = "You crawl up...<br><br>";
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "n" direction', () => {
+    const input = "n";
+    const expectedResult = "There's no way <i>North</i> from here.";
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "climb in" direction', () => {
+    const input = "climb in";
+    const expectedResult = "There's no way <i>in</i> from here.";
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "follow X"', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    const atrium = m0.getLocation("atrium");
+    object.go("", l0);
+    const input = "follow aaron";
+    const expectedResult = "He's right here."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
 //@todo - handle "have a break" - break as a verb with nothing else == rest

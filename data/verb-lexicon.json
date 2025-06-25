@@ -66,19 +66,11 @@
   },
   "go": {
     "category": "movement",
-    "aliases": ["head"]
-  },
-  "walk": {
-    "category": "movement",
-    "aliases": []
+    "aliases": ["head", "walk", "hike", "explore"] 
   },
   "run": {
     "category": "movement",
-    "aliases": []
-  },
-  "dash": {
-    "category": "movement",
-    "aliases": []
+    "aliases": ["dash", "jog", "sprint"]
   },
   "swim": {
     "category": "movement",
@@ -90,7 +82,7 @@
   },
   "climb": {
     "category": "movement",
-    "aliases": []
+    "aliases": ["clamber"]
   },
   "descend": {
     "category": "movement",
@@ -98,35 +90,7 @@
   },
   "sneak": {
     "category": "movement",
-    "aliases": []
-  },
-  "slink": {
-    "category": "movement",
-    "aliases": []
-  },
-  "clamber": {
-    "category": "movement",
-    "aliases": []
-  },
-  "jog": {
-    "category": "movement",
-    "aliases": []
-  },
-  "hike": {
-    "category": "movement",
-    "aliases": []
-  },
-  "head": {
-    "category": "movement",
-    "aliases": []
-  },
-  "sprint": {
-    "category": "movement",
-    "aliases": []
-  },
-  "explore": {
-    "category": "movement",
-    "aliases": []
+    "aliases": ["slink"]
   },
   "enter": {
     "category": "movement",
@@ -838,7 +802,7 @@
   },
   "sleep": {
     "category": "resting",
-    "aliases": ["nap", "zzz"]
+    "aliases": ["nap", "zzz", "doze"]
   },
   "rest": {
     "category": "resting",
