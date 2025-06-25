@@ -221,12 +221,6 @@ module.exports.Actions = function Actions(parser) {
         self.sneak = function (verb, player, map, po) {
             return self.go(verb, player, map, po);
         };
-        self.jog = function (verb, player, map, po) {
-            return self.go(verb, player, map, po);
-        };
-        self.sprint = function (verb, player, map, po) {
-            return self.go(verb, player, map, po);
-        };
         self.enter = function (verb, player, map, po) {
             po.preposition = "in";
             return self.go(verb, player, map, po);
