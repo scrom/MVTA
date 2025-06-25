@@ -565,9 +565,26 @@ test('test "give" me your X', () => {
     const object2 = mb.buildArtefact(object2JSON);
     const inv = object.getInventoryObject();
     inv.add(object2);
-    const input = "give me your ice cream";
-    const expectedResult = "Aaron takes a 99 flake ice cream.";
-    const actualResult = engine(input);
+    let greet = engine("hi aaron"); //start conversation
+    const input = "please give me your ice cream";
+    const expectedResult = "You ask Aaron to give you his ice cream.";
+    const actualResult = engine(input).substring(0,40);
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test please can I have your X', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    const inv = object.getInventoryObject();
+    inv.add(object2);
+    let greet = engine("hi aaron"); //start conversation
+    const input = "please can i have your ice cream";
+    const expectedResult = "You ask Aaron for his ice cream.";
+    const actualResult = engine(input).substring(0,32);
     expect(actualResult).toBe(expectedResult);
 });
 //@todo - handle "have a break" - break as a verb with nothing else == rest

@@ -141,7 +141,7 @@ module.exports.LexerParser = function LexerParser() {
             for (var i=0; i<=allPrepositions.length; i++) {              
                 //support case where first word of string is a preposition
                 if (rest.startsWith(allPrepositions[i]+" ")) {
-                    //console.debug('first word is split');
+                    //console.debug('first word is preposition');
                     preposition = allPrepositions[i];
                     objects = [rest.substring(allPrepositions[i].length).trim()];
                     break;
@@ -149,7 +149,7 @@ module.exports.LexerParser = function LexerParser() {
 
                 //support case where last word of string is a preposition
                 if (rest.endsWith(" "+allPrepositions[i])) {
-                    //console.debug('last word is split');
+                    //console.debug('last word is preposition');
                     preposition = allPrepositions[i];
                     objects = [rest.substring(0, rest.indexOf(' '+allPrepositions[i])).trim()];
                     break;
@@ -297,9 +297,13 @@ module.exports.LexerParser = function LexerParser() {
                     (goodbyes.some((e) => input.startsWith(e))) ||
                     (noWords.some((e) => input.startsWith(e))) ||
                     (questions.some((e) => input.startsWith(e))) ||
+                    (input.endsWith("?")) ||
                     (moreQuestions.some((e) => input.startsWith(e))) ||
-                    (modalVerbs.some((e) => input.startsWith(e)))
-                ) {
+                    (modalVerbs.some((e) => input.startsWith(e))) ||
+                    //pronouns...
+                    (firstPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))  ||
+                    (secondPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))
+                ) { 
                     verbInd = -1; //keep talking
                     verb = "say";
                 };

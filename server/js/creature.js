@@ -3374,12 +3374,14 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         };
                         if (stringStartsWith(remainderString, "give ") || stringStartsWith(remainderString, "i have ") || stringStartsWith(remainderString, "tell ")) {
                             var artefactName = remainderString;
-                            artefactName = artefactName.replace("give ", " ");
-                            artefactName = artefactName.replace("tell ", " ");
-                            artefactName = artefactName.replace("i have ", " ");
+                            artefactName = artefactName.replace("give ", "to give ");
+                            artefactName = artefactName.replace("your ", _genderPossessiveSuffix+" ");
+                            artefactName = artefactName.replace( "me ", "you ");
+                            artefactName = artefactName.replace("tell ", "to ");
+                            artefactName = artefactName.replace("i have ", "for ");
                             artefactName = artefactName.trim();
                             //@todo trap "can you give x to y" here in future.
-                            return "You ask " + self.getFirstName() + " for " + artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
+                            return "You ask " + self.getFirstName() +" "+ artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
                         };
                         if (stringStartsWith(remainderString, "fix ") || stringStartsWith(remainderString, "mend ") || stringStartsWith(remainderString, "repair ")) {
                             var artefactName = remainderString;
