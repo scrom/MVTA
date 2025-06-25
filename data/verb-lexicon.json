@@ -30,11 +30,11 @@
   },
   "on": {
     "category": "item_use",
-    "aliases": []
+    "aliases": ["onto", "on to", "on top of"]
   },
   "off": {
     "category": "item_use",
-    "aliases": []
+    "aliases": ["offof", "off of"]
   },
   "switch": {
     "category": "item_use",
@@ -66,7 +66,7 @@
   },
   "go": {
     "category": "movement",
-    "aliases": []
+    "aliases": ["head"]
   },
   "walk": {
     "category": "movement",
@@ -77,6 +77,10 @@
     "aliases": []
   },
   "dash": {
+    "category": "movement",
+    "aliases": []
+  },
+  "swim": {
     "category": "movement",
     "aliases": []
   },
@@ -126,11 +130,11 @@
   },
   "enter": {
     "category": "movement",
-    "aliases": ["in", "i"]
+    "aliases": ["in", "i", "into", "in to", "inside"]
   },
   "leave": {
     "category": "movement",
-    "aliases": ["depart", "out", "exit", "o"]
+    "aliases": ["depart", "out", "exit", "o", "outof", "out of", "outside"]
   },
   "up": {
     "category": "movement",

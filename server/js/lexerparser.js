@@ -237,7 +237,7 @@ module.exports.LexerParser = function LexerParser() {
                         verbIndex = tokens.indexOf(inputVerbs[1]);                
                     } else {
                         //some prepositions and even nouns (in/out/up/down/water) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
-                        let ignoreVerbs = ["in", "out", "up", "down", "water", "on", "off", "fire", "ice"];
+                        let ignoreVerbs = ["in", "into", "inside", "out", "outside", "up", "down", "water", "on", "onto", "off", "offof", "fire", "ice"];
                         if (ignoreVerbs.some((e) => inputVerbs.includes(e))) {
                             for (i = 0; i < ignoreVerbs.length; i++) {
                                 let inputVerbIndex = inputVerbs.indexOf(ignoreVerbs[i]);

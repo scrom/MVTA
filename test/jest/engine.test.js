@@ -39,8 +39,6 @@ afterEach(() =>
     engine = null;
 });
 
-
-
 test('engine responds appropriately with empty input', () => {
     const input = "";
     const expectedResult = "Sorry, I didn't hear you there";
@@ -107,14 +105,12 @@ test('"heal" verb for creature', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-
 test('"stats" verb', () => {
     const input = "stats";
     const expectedResult = "<i>Statistics for $player:</i><br>Your score is 0 out of 2055";
     const actualResult = engine(input).substring(0,61);
     expect(actualResult).toBe(expectedResult);
 });
-
 
 test('"status" verb', () => {
     const input = "status";
@@ -179,14 +175,12 @@ test('test "look over" with an adverb gets the right words', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-
 test('test "look under" gets the right words', () => {
     const input = "look under the floor";
     const expectedResult = "You look under the floor and discover nothing new.";
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
-
 
 test('test "search" gets the right words', () => {
     const input = "search floor";
@@ -259,7 +253,6 @@ test('test unknown verbs attempt custom action and fail gracefully', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-
 test('test 3 unknown verbs in a row triggers help', () => {
     const input = "skibidee an artefact of little consequence";
     let expectedResult = "Sorry, I didn't quite understand you there.";
@@ -279,7 +272,6 @@ test('test 3 unknown verbs in a row triggers help', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-
 test('test fail count reverts and restarts after successful action', () => {
     const input = "skibidee an artefact of little consequence";
     let expectedResult = "Sorry, I didn't quite understand you there.";
@@ -298,7 +290,6 @@ test('test fail count reverts and restarts after successful action', () => {
     actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
-
 
 test('test initate dialogue with "say"', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
@@ -337,7 +328,6 @@ test('test saying things out loud when no characters nearby', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-
 test('test follow-on dialogue in active conversation with find request', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
@@ -353,7 +343,6 @@ test('test follow-on dialogue in active conversation with find request', () => {
     const actualResult = engine(input).substring(0,21);
     expect(actualResult).toBe(expectedResult);
 });
-
 
 test('test follow-on dialogue in active conversation including other verbs', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
@@ -550,6 +539,34 @@ test('test "drop onto" verb', () => {
     p0.acceptItem(object2);
     const input = "drop ice cream onto the cat";
     const expectedResult = "I don't think the cat appreciates you doing that.";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test "give" X to Y verb', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    p0.acceptItem(object2);
+    const input = "give ice cream to aaron";
+    const expectedResult = "Aaron takes a 99 flake ice cream.";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "give" me your X', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    const inv = object.getInventoryObject();
+    inv.add(object2);
+    const input = "give me your ice cream";
+    const expectedResult = "Aaron takes a 99 flake ice cream.";
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });

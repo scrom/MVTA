@@ -915,3 +915,192 @@ test('throwing', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+
+test('directions - head west to kitchen', () => {
+    const input = "head west to kitchen";
+
+    const expectedResult = {
+      "action": "west",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "head",
+      "preposition": "to",
+      "subject": "kitchen",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('directions - go north', () => {
+    const input = "go north";
+
+    const expectedResult = {
+      "action": "go",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "go",
+      "preposition": null,
+      "subject": "north",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('directions - e', () => {
+    const input = "e";
+
+    const expectedResult = {
+      "action": "east",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "e",
+      "preposition": null,
+      "subject": null,
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('directions - up', () => {
+    const input = "up";
+
+    const expectedResult = {
+      "action": "up",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "up",
+      "preposition": null,
+      "subject": null,
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('directions - go in house', () => {
+    const input = "go in house";
+
+    const expectedResult = {
+      "action": "go",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "go",
+      "preposition": "in",
+      "subject": "house",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('directions - get into car', () => {
+    const input = "get into car";
+
+    const expectedResult = {
+      "action": "enter",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "get",
+      "preposition": null,
+      "subject": "car",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('directions - climb tree', () => {
+    const input = "climb tree";
+
+    const expectedResult = {
+      "action": "climb",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "climb",
+      "preposition": null,
+      "subject": "tree",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('directions - climb down ladder', () => {
+    const input = "climb down ladder";
+
+    const expectedResult = {
+      "action": "climb",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "climb",
+      "preposition": "down",
+      "subject": "ladder",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('directions - climb down ladder', () => {
+    const input = "swim across lake";
+
+    const expectedResult = {
+      "action": "swim",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "swim",
+      "preposition": "across",
+      "subject": "lake",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('give - as a request', () => {
+    const input = "please give me your ice cream";
+
+    const expectedResult = {
+      "action": "give",
+      "adverb": null,
+      "category": "item_use",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "give",
+      "preposition": "me",
+      "subject": "your ice cream",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
