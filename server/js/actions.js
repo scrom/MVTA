@@ -44,7 +44,7 @@ module.exports.Actions = function Actions(parser) {
           };
           if (response.includes("$fail$")) {
             response = response.replace("$fail$", "");
-            _failCount++
+            _failCount++;
           } else {
             _failCount = 0;
           };

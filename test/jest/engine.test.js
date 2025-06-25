@@ -253,7 +253,7 @@ test('test unknown verbs attempt custom action and fail gracefully', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-test('test 3 unknown verbs in a row triggers help', () => {
+test('test 3 unknown actions in a row triggers help', () => {
     const input = "skibidee an artefact of little consequence";
     let expectedResult = "Sorry, I didn't quite understand you there.";
     let actualResult = engine(input).substring(0,expectedResult.length);
