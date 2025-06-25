@@ -1096,7 +1096,7 @@ test('give - as a request', () => {
       "object": null,
       "originalInput": input,
       "originalVerb": "give",
-      "preposition": "me",
+      "preposition": null,
       "subject": "your ice cream",
     };
     const actualResult = lp.parseInput(input);

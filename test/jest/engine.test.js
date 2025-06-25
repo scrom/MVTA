@@ -557,7 +557,7 @@ test('test "give" X to Y verb', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-test('test "give" me your X', () => {
+test('test "give me your X', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
     object.go("", l0);
@@ -566,14 +566,13 @@ test('test "give" me your X', () => {
     const inv = object.getInventoryObject();
     inv.add(object2);
     let greet = engine("hi aaron"); //start conversation
-    const input = "please give me your ice cream";
+    const input = "give me your ice cream";
     const expectedResult = "You ask Aaron to give you his ice cream.";
     const actualResult = engine(input).substring(0,40);
     expect(actualResult).toBe(expectedResult);
 });
 
-
-test('test please can I have your X', () => {
+test('test "I want your X"', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
     object.go("", l0);
@@ -582,9 +581,10 @@ test('test please can I have your X', () => {
     const inv = object.getInventoryObject();
     inv.add(object2);
     let greet = engine("hi aaron"); //start conversation
-    const input = "please can i have your ice cream";
-    const expectedResult = "You ask Aaron for his ice cream.";
-    const actualResult = engine(input).substring(0,32);
+    const input = "i want some ice cream";
+    const expectedResult = "$imageaaronprescott.jpg/$image<br>"; //image comes back - we're still talking
+    let actualResult = engine(input);
+    actualResult = actualResult.substring(actualResult.length-34);
     expect(actualResult).toBe(expectedResult);
 });
 //@todo - handle "have a break" - break as a verb with nothing else == rest

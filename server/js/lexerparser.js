@@ -289,8 +289,8 @@ module.exports.LexerParser = function LexerParser() {
             if (player) {
                 _inConversation = player.getLastCreatureSpokenTo();
             };
-            //@todo add handling in here for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
             if (_inConversation) {
+                //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
                 if (
                     (yesWords.some((e) => input.startsWith(e))) ||
                     (politeWords.some((e) => input.startsWith(e))) ||
