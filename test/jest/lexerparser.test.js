@@ -1137,3 +1137,21 @@ test('have a break', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+test('move + direction translates to "go"', () => {
+    const input = "move east";
+
+    const expectedResult = {
+      "action": "go",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "move",
+      "preposition": "east",
+      "subject": null,
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});

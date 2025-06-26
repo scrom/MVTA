@@ -2837,9 +2837,10 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             return resultString;
          };
 
-        self.shove = function(verb) {
+        self.shove = function(verb, splitWord, receiverName) {
             //@todo improve for they/them
             if (self.isDead()) {return "You're a bit sick aren't you.<br>You prod and push at the corpse. "+_genderPrefix+" makes some squishy gurgling sounds and some vile-smelling fluid seeps onto the floor."};
+            _currentLocation.addLiquid("corpse fluids");
             self.decreaseAffinity(1);
             return tools.initCap(_genderPrefix)+" really doesn't appreciate being pushed around.";
         };

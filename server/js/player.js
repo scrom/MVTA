@@ -4006,7 +4006,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
         };
 
-        self.shove = function(verb, artefactName) {
+        self.shove = function(verb, artefactName, splitWord, receiverName) {
             //note artefact could be a creature!
             if (tools.stringIsEmpty(artefactName)){ return tools.initCap(verb)+" what?";};
 
@@ -4019,11 +4019,12 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             };
 
             if (artefact.getType() == "creature") {
-                return artefact.shove(verb);
+                return artefact.shove(verb, splitWord, receiverName);
             };
 
             if (artefact.getSubType() == "intangible") {return "There's nothing to "+verb+" in "+artefact.getDisplayName()+".";};
 
+            //@todo - improve this to be more dynamic
             return self.openOrClose(verb, artefact);
         };
 

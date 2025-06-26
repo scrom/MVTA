@@ -359,6 +359,9 @@ module.exports.Actions = function Actions(parser) {
         self.place = function (verb, player, map, po) {
           return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
+        self.move = function (verb, player, map, po) {
+          return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+        };
         self.empty = function (verb, player, map, po) {
           return self.processResponse(player.empty(verb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
@@ -405,6 +408,13 @@ module.exports.Actions = function Actions(parser) {
         self.wait = function (verb, player, map, po) {
           return self.processResponse(player.wait(1, map), player, map, po ,1);
         };
+        self.push = function (verb, player, map, po) {
+          return self.processResponse(player.shove(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+        };
+        self.shove = function (verb, player, map, po) {
+          return self.processResponse(player.shove(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+        };
+         
   }  catch(err) {
 	    console.error('Unable to create Actions object: '+err.stack);
         throw err;

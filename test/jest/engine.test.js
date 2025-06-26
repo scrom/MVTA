@@ -670,3 +670,14 @@ test('test "take a break"', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test push/shove', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const input = "shove aaron down the stairs";
+    const expectedResult = "He really doesn't appreciate being pushed around."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});

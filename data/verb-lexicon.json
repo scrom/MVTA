@@ -201,10 +201,6 @@
     "category": "manipulation",
     "aliases": ["tow", "heave", "drag", "haul", "yank"]
   },
-  "move": {
-    "category": "manipulation",
-    "aliases": []
-  },
   "shove": {
     "category": "manipulation",
     "aliases": ["nudge", "jostle", "jab"]
@@ -259,7 +255,7 @@
   },
   "put": {
     "category": "inventory",
-    "aliases": ["install", "insert"]
+    "aliases": ["install", "insert", "move"]
   },
   "hide": {    
     "category": "manipulation",
