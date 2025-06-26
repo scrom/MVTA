@@ -204,64 +204,95 @@ module.exports.LexerParser = function LexerParser() {
 
             let verbIndex = -1
 
+            //we have no recognised verbs...
+            if (inputVerbs.length == 0) {
+                return {inputVerbs, verbIndex}; 
+            };
+
             //find position of each verb in token array and strip to left of them.
             //special case - handle "get into/in/out/out of" - nothing too clever - only it it's the very first verb.
-            if (inputVerbs.length > 0 && inputVerbs[0] == "get") {
+            if (inputVerbs[0] == "get") {
                 verbIndex = tokens.indexOf("get");
                 if (tools.directions.includes(tokens[verbIndex+1]) || locationPrepositions.includes(tokens[verbIndex+1]))  {
                     tokens.splice(verbIndex, 1, "go");
                 };
-            } else if (inputVerbs.length == 1) {
-                verbIndex = tokens.indexOf(inputVerbs[0]);
-            } else {
-                //we have more than one potential verb...
-                //try all the verbs in reverse order, ditch any we don't know - if any left are dialogue, we'll use the *earliest* of those.
-                let handledVerbs = 0;
-                let dialogueVerb = "";
-                for (let v=inputVerbs.length -1 ; v>=0; v--) {
-                    let testVerb = self.normaliseVerb(inputVerbs[v]);
-                    if (testVerb) {
-                        handledVerbs++;
-                        if (verbs[testVerb].category == "dialogue") {
-                            dialogueVerb = testVerb;
-                            verbIndex = tokens.indexOf(dialogueVerb);
-                        };
-                    }  else {
-                        inputVerbs.splice(v,1); //remove unhandled verbs
-                    };
-                };
 
-                //console.debug("Recognised Verb count: "+handledVerbs+", dialogue verb: "+dialogueVerb);
-
-                if (!dialogueVerb) {
-                    if (inputVerbs.includes("go")) {
-                        verbIndex = tokens.indexOf("go");
-                    } else if (["try", "attempt"].includes(inputVerbs[0])) {
-                        //take the next verb whatever that may be
-                        verbIndex = tokens.indexOf(inputVerbs[1]);                
-                    } else {
-                        //some prepositions and even nouns (in/out/up/down/water) are also verbs. We have other verbs here so remove them from the list of input verbs leave them in original tokens though.
-                        let ignoreVerbs = ["in", "into", "inside", "out", "outside", "up", "down", "water", "on", "onto", "off", "offof", "fire", "ice"];
-                        if (ignoreVerbs.some((e) => inputVerbs.includes(e))) {
-                            for (i = 0; i < ignoreVerbs.length; i++) {
-                                let inputVerbIndex = inputVerbs.indexOf(ignoreVerbs[i]);
-                                if (inputVerbIndex >-1) {
-                                    inputVerbs.splice(inputVerbIndex,1);
-                                };
-                            };
-                        };
-                    
-                        //we may be back down to 1 verb now...
-                        if (inputVerbs.length == 1) {
-                            verbIndex = tokens.indexOf(inputVerbs[0]);
-                        } else {
-                            console.warn("potential multiple verb parsing issue, taking last verb as action");
-                        };
-                    };
-                };
-                //don't try to handle more than 3 inputVerbs.
+                //if we start with "get" (and/or now "go"), we'll return here - no point doing extra procesing
+                return {inputVerbs, verbIndex};
             };
 
+            if (inputVerbs.length == 1) {
+                verbIndex = tokens.indexOf(inputVerbs[0]);
+                return {inputVerbs, verbIndex};
+            };
+
+            //another special case. have/take a break/rest
+            if (["have", "take"].includes(inputVerbs[0])) {
+                if (inputVerbs[1] == "break") {
+                    inputVerbs.splice(1, 1, "rest");
+
+                    verbIndex = tokens.indexOf("break");
+                    tokens.splice(verbIndex, 1, "rest");
+                    return {inputVerbs, verbIndex};
+                };
+                let testVerb = self.normaliseVerb(inputVerbs[1]);
+                if (verbs[testVerb].category == "resting") {
+                    verbIndex = tokens.indexOf(inputVerbs[1]); 
+                    return {inputVerbs, verbIndex};
+                };
+            };
+
+            //we have more than one potential verb...
+            //try all the verbs in reverse order, ditch any we don't know - if any left are dialogue, we'll use the *earliest* of those.
+            let dialogueVerb = "";
+            for (let v=inputVerbs.length -1 ; v>=0; v--) {
+                let testVerb = self.normaliseVerb(inputVerbs[v]);
+                if (testVerb) {
+                    if (verbs[testVerb].category == "dialogue") {
+                        dialogueVerb = testVerb;
+                        verbIndex = tokens.indexOf(dialogueVerb);
+                    };
+                }  else {
+                    inputVerbs.splice(v,1); //remove unhandled verbs
+                };
+            };
+
+            //we have a dialogue verb..
+            if (verbIndex > -1) {
+                return {inputVerbs, verbIndex};
+            };
+
+            //basic directions...
+            if (inputVerbs.includes("go")) {
+                verbIndex = tokens.indexOf("go");
+                return {inputVerbs, verbIndex};
+            };
+                
+            if (["try", "attempt"].includes(inputVerbs[0])) {
+                //take the next verb whatever that may be
+                verbIndex = tokens.indexOf(inputVerbs[1]); 
+                return {inputVerbs, verbIndex};               
+            }; 
+
+            //some prepositions and even nouns (in/out/up/down/water) are also verbs. We have multiple verbs here so remove them from the list of input verbs - leave them in original tokens though.
+            let ignoreVerbs = ["in", "into", "inside", "out", "outside", "up", "down", "water", "on", "onto", "off", "offof", "fire", "ice"];
+            if (ignoreVerbs.some((e) => inputVerbs.includes(e))) {
+                for (i = 0; i < ignoreVerbs.length; i++) {
+                    let inputVerbIndex = inputVerbs.indexOf(ignoreVerbs[i]);
+                    if (inputVerbIndex >-1) {
+                        inputVerbs.splice(inputVerbIndex,1);
+                    };
+                };
+            };
+                    
+            //we may be back down to 1 verb now...
+            if (inputVerbs.length == 1) {
+                verbIndex = tokens.indexOf(inputVerbs[0]);
+                return {inputVerbs, verbIndex};
+            };
+
+            //don't try to handle more than 3 inputVerbs, just take the last one...
+            console.warn("Potential multiple verb parsing issue, taking last verb as action." );
             if (verbIndex == -1) {
                 verbIndex = tokens.indexOf(inputVerbs[inputVerbs.length-1]);
             };
@@ -296,7 +327,7 @@ module.exports.LexerParser = function LexerParser() {
 
             if (salutations.some((e) => input.startsWith(e))) { //will only match single words
                 verb = "say";
-                verbInd = -1; //keep talking
+                verbInd = -1; //don't trim input
             };
             if (_inConversation) {
                 //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
@@ -313,13 +344,13 @@ module.exports.LexerParser = function LexerParser() {
                     (firstPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))  ||
                     (secondPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))
                 ) { 
-                    verbInd = -1; //keep talking
+                    verbInd = -1; //keep talking, don't trim input
                     verb = "say";
                 };
             };
 
             //splice tokens to the verb we are using. (dump everything to the left of selected verb)
-            if (verbInd >-1) {
+            if (verbInd > -1) {
                 tokens.splice(0,verbInd)   
                 //verb will now be first token
                 verb = self.normaliseVerb(tokens[0]);
@@ -361,7 +392,7 @@ module.exports.LexerParser = function LexerParser() {
                 verb = "customaction"
             };
 
-            if (verbInd >= 0) {
+            if (verbInd > -1) {
                 //only do this if we had an original verb match, otherwise it's all dialogue
                 rest = tokens.slice(1).join(' ');
                 rest = self.removeStopWords(rest);
@@ -378,7 +409,7 @@ module.exports.LexerParser = function LexerParser() {
 
             //convert directions.
             var directionIndex = tools.directions.indexOf(verb);
-            if (directionIndex >= 0) {
+            if (directionIndex > -1) {
                 preposition = verb;
                 verb = "go";
 

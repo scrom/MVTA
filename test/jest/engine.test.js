@@ -651,4 +651,14 @@ test('test "follow X"', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
-//@todo - handle "have a break" - break as a verb with nothing else == rest
+
+
+test('test "take a break"', () => {
+    const input = "take a break";
+    const expectedResult = "There's nothing to rest on here."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+//@todo - handle "have a break" / take a break / take a rest - break as a verb with nothing else == rest

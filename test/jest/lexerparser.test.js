@@ -1120,3 +1120,20 @@ test('give - as a request', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
+test('take a break', () => {
+    const input = "have a break";
+
+    const expectedResult = {
+      "action": "rest",
+      "adverb": null,
+      "category": "resting",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "have",
+      "preposition": null,
+      "subject": null,
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
