@@ -338,21 +338,21 @@ module.exports.LexerParser = function LexerParser() {
                     _inConversation = player.getLastCreatureSpokenTo();
                 };
 
-                if (salutations.some((e) => input.startsWith(e))) { //will only match single words
+                if (salutations.some((e) => input.split(" ")[0] == e)) { //will only match single words
                     verb = "say";
                     verbInd = -1; //don't trim input
                 };
                 if (_inConversation) {
                     //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
                     if (
-                        (yesWords.some((e) => input.startsWith(e))) ||
-                        (politeWords.some((e) => input.startsWith(e))) ||
-                        (goodbyes.some((e) => input.startsWith(e))) ||
-                        (noWords.some((e) => input.startsWith(e))) ||
-                        (questions.some((e) => input.startsWith(e))) ||
+                        (yesWords.some((e) =>  input.split(" ")[0] == e)) ||
+                        (politeWords.some((e) =>  input.split(" ")[0] == e)) ||
+                        (goodbyes.some((e) =>  input.split(" ")[0] == e)) ||
+                        (noWords.some((e) =>  input.split(" ")[0] == e)) ||
+                        (questions.some((e) =>  input.split(" ")[0] == e)) ||
                         (input.endsWith("?")) ||
-                        (moreQuestions.some((e) => input.startsWith(e))) ||
-                        (modalVerbs.some((e) => input.startsWith(e))) ||
+                        (moreQuestions.some((e) =>  input.split(" ")[0] == e)) ||
+                        (modalVerbs.some((e) =>  input.split(" ")[0] == e)) ||
                         //pronouns...
                         (firstPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))  ||
                         (secondPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))

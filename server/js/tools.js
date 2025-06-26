@@ -12,6 +12,7 @@ var self = module.exports= {
     bluntAttackVerbs: ['smash','bash','beat','whack','whip','hit','smack','swing', 'thwack','thwok','thwomp'],
     genericAttackVerbs: ['attack','hurt'],
     throwVerbs: ['throw','yeet', 'hurl', 'chuck', 'lob'],
+    chokeAttackVerbs: ['choke','strangle', 'garrotte', 'garotte', 'throttle'],
     damageVerbs: ['destry','destroy','break','force','pry','crack','damage'],
 
     onIndex: 6,

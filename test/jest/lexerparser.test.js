@@ -1209,3 +1209,22 @@ test('test "open my..."', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+
+test('test "hit person"', () => {
+    const input = "hit aaron";
+
+    const expectedResult = {
+      "action": "attack",
+      "adverb": null,
+      "category": "combat",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "hit",
+      "preposition": null,
+      "subject": "aaron",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});

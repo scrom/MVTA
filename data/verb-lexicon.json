@@ -361,7 +361,7 @@
   },
   "choke": {
     "category": "combat",
-    "aliases": ["strangle","garrotte", "garotte"]
+    "aliases": ["strangle","garrotte", "garotte", "throttle"]
   },
   "fire": {
     "category": "combat",
@@ -377,7 +377,7 @@
   },
   "shoot": {
     "category": "combat",
-    "aliases": []
+    "aliases": ["nerf"]
   },
   "kick": {
     "category": "combat",
@@ -392,10 +392,6 @@
     "aliases": ["smack"]
   },
   "kill": {
-    "category": "combat",
-    "aliases": []
-  },
-  "nerf": {
     "category": "combat",
     "aliases": []
   },

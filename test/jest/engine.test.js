@@ -766,3 +766,25 @@ test('test shake', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test attacks - hit', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const input = "hit aaron";
+    const expectedResult = "You attempt a bare-knuckle fight with Aaron.<br>He takes exception to your violent conduct.<br>Fortunately for you, you missed. Don't do that again."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test attacks - strangle', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const input = "strangle aaron";
+    const expectedResult = "You reach out to grab Aaron but your feeble hands feel more like a caress.<br>He takes exception to your violent conduct.<br>Fortunately for you, you missed. Don't do that again."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});

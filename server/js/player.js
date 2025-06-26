@@ -4757,7 +4757,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (tools.unarmedAttackVerbs.includes(verb)) {attackType = "unarmed"}
             else if (tools.projectileAttackVerbs.includes(verb)) {attackType = "projectile"}
             else if (tools.sharpAttackVerbs.includes(verb)) {attackType = "sharp"}
-            else if (tools.throwVerbs.includes(verb)) {attackType = "throw"};
+            else if (tools.throwVerbs.includes(verb)) {attackType = "throw"}
+            else if (tools.chokeAttackVerbs.includes(verb)) {attackType = "choke"};
 
             var weapon;
             //arm with named weapon
@@ -4868,6 +4869,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (!(weapon)) {
                 if (tools.sharpAttackVerbs.includes(verb) || tools.projectileAttackVerbs.includes(verb)) {
                     resultString = choseUnarmedAttack+"You jab wildly at "+ receiverDisplayName+" with your fingers whilst making savage noises.<br>"; 
+                } else if (tools.chokeAttackVerbs.includes(verb)) {
+                    resultString = choseUnarmedAttack+"You reach out to grab "+ receiverDisplayName +" but your feeble hands feel more like a caress.<br>";
                 } else if (verb=='kick') {
                     resultString = choseUnarmedAttack+"You lash out at "+ receiverDisplayName +" but your footwork is lacking something.<br>";
                 } else if ((tools.unarmedAttackVerbs.includes(verb)) || ((!receiver.isCollectable() && (!tools.throwVerbs.includes(verb)))) ) {
@@ -4892,7 +4895,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
                 if (receiver.getType() == "creature") {
                     if (receiver.getSubType() == "friendly") {
-                        return receiver.hurt(0, self); //could alter this to support unarmed fighting as a skill later
+                        return resultString + receiver.hurt(0, self); //could alter this to support unarmed fighting as a skill later
                     } else {
                         resultString += "You do no visible damage";
                         var tempResult = receiver.hit(self);

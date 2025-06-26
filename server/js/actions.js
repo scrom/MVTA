@@ -473,6 +473,44 @@ module.exports.Actions = function Actions(parser) {
           return  self.processResponse(player.shake(po.originalVerb, po.subject), player, map, po,1);
         };   
 
+        self.attack = function(verb, player, map, po) {
+          //verb, receiverName, artefactName
+          return  self.processResponse(player.hit(po.originalVerb, po.subject, po.object), player, map, po,1);
+        };
+        self.stab = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.smash = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.whip = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.choke = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.fire = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.blast = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.zap = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.shoot = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.kick = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.punch = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+        self.slap = function(verb, player, map, po) {
+          return self.attack(verb, player, map, po);
+        };
+
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";
           let ticks = 1; //can't completely cheat for free.

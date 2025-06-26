@@ -388,7 +388,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
 
             if (type == "weapon") {
                 //weapons must have a subtype
-                var validWeaponSubTypes = ["blunt", "sharp", "projectile", "magic", "energy"];
+                var validWeaponSubTypes = ["blunt", "sharp", "projectile", "magic", "energy", "choke"];
                 if (validWeaponSubTypes.indexOf(subType) == -1) { throw "'" + subType + "' is not a valid "+type+" subtype."; };
                 //console.debug(_name+' subtype validated: '+subType);
             };
