@@ -206,7 +206,7 @@ test('can shake closed container with liquid', () => {
     flask.receive(coffee);
     l0.addObject(flask);
     p0.get('get', flask.getName());
-    var expectedResult = "You shake the flask. You hear a sloshing sound from inside it.";
+    var expectedResult = "You shake the flask. You hear sloshes from inside it.";
     var actualResult = p0.shake('shake', flask.getName());
     console.debug("Expected: " + expectedResult);
     console.debug("Actual  : " + actualResult);

@@ -733,3 +733,36 @@ test('test close', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test eat', () => {
+    const objectJSON  = fm.readFile("artefacts/crisps.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "eat crisps";
+    let expectedResult = "You eat a packet of crisps."; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test drink', () => {
+    const objectJSON  = fm.readFile("artefacts/milk.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "drink milk";
+    let expectedResult = "You drink a serving of milk."; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test shake', () => {
+    const objectJSON  = fm.readFile("artefacts/milk.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "shake milk";
+    let expectedResult = "You shake the milk. Slosh, splosh, gurgle...<br>... Well, you dind't spill any at least."; 
+    let actualResult = engine(input)
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});

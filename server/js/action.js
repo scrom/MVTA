@@ -773,7 +773,6 @@ exports.Action = function Action(player, map, fileManager) {
                             _ticks = 0;
                         };
                         break;
-//////Conversion to new engine reached here
                     case 'shut':
                     case 'close':
                     case 'furl':
@@ -817,6 +816,7 @@ exports.Action = function Action(player, map, fileManager) {
                         _ticks = 1;
                         description = _player.shake(_verb, _object0);
                         break;
+//////Conversion to new engine reached here
                     case 'nerf':
                     case 'shoot':
                     case 'fire':

@@ -272,10 +272,6 @@ module.exports.Actions = function Actions(parser) {
            return self.processResponse("Hmmm. I'm sure I heard about some cheat codes somewhere...<br><br>...Nope, I must have imagined it.<br>Looks like it's just you and your brain for now.", player, map, po,1);
         };
 
-        self.eat = function(verb, player, map, po) {
-          return  self.processResponse(player.eat(po.originalVerb, po.subject), player, map, po,1);
-        };
-
         self.help = function(verb, player, map, po) {
           let stuck = "";
           if (_failCount <3 ) {
@@ -462,6 +458,20 @@ module.exports.Actions = function Actions(parser) {
         self.seal = function (verb, player, map, po) {
           return self.close(verb, player, map, po);
         };
+
+        self.drink = function(verb, player, map, po) {
+          return  self.processResponse(player.drink(po.originalVerb, po.subject), player, map, po,1);
+        };       
+        self.eat = function(verb, player, map, po) {
+          let response = "";
+          if (po.object) {response = player.eat(po.originalVerb+" "+po.preposition,po.object);}
+          else {response = player.eat(po.originalVerb, po.subject);};
+          return  self.processResponse(response, player, map, po,1);
+        };
+
+        self.shake = function(verb, player, map, po) {
+          return  self.processResponse(player.shake(po.originalVerb, po.subject), player, map, po,1);
+        };   
 
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";

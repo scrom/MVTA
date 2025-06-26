@@ -2070,12 +2070,25 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 return self.performCustomAction(verb, map, player);
             };
             
-            var liquidOrPowder = _inventory.getLiquidOrPowder();
+
+            if (self.isLiquid()) {
+                return "Slosh, splosh, gurgle...<br>... Well, you dind't spill any at least.";
+            };
+
+            if (self.isPowder()) {
+                return "You hear a gentle rattle. Nothing else happens though.";
+            };
+
+            var  liquidOrPowder = _inventory.getLiquidOrPowder();
             if (liquidOrPowder) {
+                let sloshesOrRattles = "rattles";
+                if (liquidOrPowder.isLiquid()) {
+                    sloshesOrRattles = "sloshes";
+                };
                 if (self.isOpen()) {
-                    return tools.initCap(liquidOrPowder.getName())+" sloshes around inside " + self.getSuffix() + " but you manage not to spill any.";
+                    return tools.initCap(liquidOrPowder.getName())+" "+sloshesOrRattles+" around inside " + self.getSuffix() + " but you manage not to spill any.";
                 } else {
-                    return "You hear a sloshing sound from inside " + self.getSuffix() + ".";
+                    return "You hear "+sloshesOrRattles+" from inside " + self.getSuffix() + ".";
                 };
             };
             if (_inventory.size(true, true) > 0) {
