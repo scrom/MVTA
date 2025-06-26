@@ -410,6 +410,10 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.take(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
 
+        self.hold = function (verb, player, map, po) {
+          return self.take(verb, player, map, po);
+        };
+
         self.dismantle = function (verb, player, map, po) {
             return self.processResponse(player.dismantle(po.originalVerb, po.subject), player, map, po ,2);
         };
@@ -538,6 +542,15 @@ module.exports.Actions = function Actions(parser) {
         };
         self.slap = function(verb, player, map, po) {
           return self.attack(verb, player, map, po);
+        };
+
+        self.steal = function(verb, player, map, po) {
+          if (!po.object) {
+            //if we're not stealing anything specific = make sure we pass in creature name in correct parameter.
+            po.object = po.subject;
+            po.subject = null;
+          }
+          return self.processResponse(player.steal(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
 
         self.pay = function(verb, player, map, po) {

@@ -505,11 +505,7 @@
   },
   "steal": {
     "category": "inventory",
-    "aliases": []
-  },
-  "mug": {
-    "category": "inventory",
-    "aliases": []
+    "aliases": ["mug"]
   },
   "borrow": {
     "category": "inventory",

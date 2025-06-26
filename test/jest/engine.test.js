@@ -868,3 +868,20 @@ test('test take apart/dismantle', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test mug', () => {
+    let objectJSON  = fm.readFile("artefacts/cup.json"); //just to check we don't get this instead!
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    //objectJSON  = fm.readFile("artefacts/axe.json") //increase our chances of success with a weapon!
+    //const axe = mb.buildArtefact(objectJSON);
+    //p0.acceptItem(axe);
+    objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object2 = mb.buildCreature(objectJSON);
+    object2.go("", l0);
+    const input = "mug aaron";
+    const expectedResults = ["He dodges out of the way and attacks you instead. <br>You failed to gain anything but pain for your actions.", "He takes exception to your violent conduct.<br>Fortunately for you, you missed. Don't do that again.<br>"];
+    const actualResult = engine(input)
+    console.debug(actualResult);
+    expect(expectedResults.includes(actualResult)).toBe(true);
+});
