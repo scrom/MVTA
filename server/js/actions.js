@@ -87,7 +87,9 @@ module.exports.Actions = function Actions(parser) {
 
             return {"response": response, "time": time};
           } catch (err) {
-              console.error('problem processing action: '+response+' : '+po+' : '+err);
+              let input = ""
+              if (po) {input = po.originalInput}
+              console.error('Action processing error. Input: '+input+'. Response: '+response+', ParsedObject: '+po+'. Error: '+err);
               throw err;              
           };
         };

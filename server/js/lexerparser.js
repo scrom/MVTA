@@ -431,7 +431,6 @@ module.exports.LexerParser = function LexerParser() {
                     };
                 };
 
-
                 if (player) { player.setLastVerbUsed(verb); };
 
                 return {
@@ -445,7 +444,7 @@ module.exports.LexerParser = function LexerParser() {
                     preposition: preposition || null
                 };
             } catch (err) {
-                console.error('problem parsing input data: '+input+' : '+err);
+                console.error('Parser error. Input: '+input+'. Error: '+err);
                 throw err;              
             };
         };
