@@ -392,9 +392,11 @@ module.exports.Actions = function Actions(parser) {
           }
           return self.processResponse(player.get(po.originalVerb, po.subject), player, map, po ,1);
         };
+
         self.take = function (verb, player, map, po) {
           return self.processResponse(player.take(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
+
         self.throw  = function (verb, player, map, po) {
           if (po.preposition === "at" && po.object != null) {
             return self.processResponse(player.hit(verb, po.object, po.subject), player, map, po ,1);
@@ -411,21 +413,25 @@ module.exports.Actions = function Actions(parser) {
             return self.processResponse(player.drop(po.originalVerb, po.subject, po.object), player, map, po ,1);
           };
         };
+
         self.sleep  = function (verb, player, map, po) {
           return self.processResponse(player.rest(po.action, 25, map), player, map, po ,1);
         };        
         self.rest  = function (verb, player, map, po) {
           return self.processResponse(player.rest(po.action, 7, map), player, map, po ,1);
         };
+
         self.wait = function (verb, player, map, po) {
           return self.processResponse(player.wait(1, map), player, map, po ,1);
         };
+
         self.push = function (verb, player, map, po) {
           return self.processResponse(player.shove(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
         self.shove = function (verb, player, map, po) {
           return self.processResponse(player.shove(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
+
         self.open = function (verb, player, map, po) {
           ticks = 1;
           let response = player.open(po.originalVerb, po.subject);
@@ -434,12 +440,28 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(response, player, map, po ,ticks);
         };
         self.pull = function (verb, player, map, po) {
-          return self.open(po.originalVerb, player, map, po);
+          return self.open(verb, player, map, po);
         };
         self.raise = function (verb, player, map, po) {
-          return self.open(po.originalVerb, player, map, po);
+          return self.open(verb, player, map, po);
         };
 
+        self.close = function (verb, player, map, po) {
+          ticks = 1;
+          let response = player.close(po.originalVerb, po.subject);
+          //don't consume time if already open
+          if (response.includes("not open")) { ticks = 0;};
+          return self.processResponse(response, player, map, po ,ticks);
+        };
+        self.lower = function (verb, player, map, po) {
+          return self.close(verb, player, map, po);
+        };
+        self.roll = function (verb, player, map, po) {
+          return self.close(verb, player, map, po);
+        };      
+        self.seal = function (verb, player, map, po) {
+          return self.close(verb, player, map, po);
+        };
 
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";

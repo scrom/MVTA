@@ -1192,7 +1192,6 @@ test('test cheat code handling', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('test "open my..."', () => {
     const input = "open my present";
 

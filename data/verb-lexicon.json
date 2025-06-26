@@ -763,25 +763,13 @@
     "category": "manipulation",
     "aliases": []
   },
-  "unfurl": {
-    "category": "manipulation",
-    "aliases": []
-  },
-  "furl": {
-    "category": "manipulation",
-    "aliases": []
-  },
   "lower": {
     "category": "manipulation",
-    "aliases": []
+    "aliases": ["furl", "fold"]
   },
   "raise": {
     "category": "manipulation",
-    "aliases": ["lift", "hoist"]
-  },
-  "fold": {
-    "category": "manipulation",
-    "aliases": []
+    "aliases": ["lift", "hoist", "unfurl", "unfold"]
   },
   "roll": {
     "category": "manipulation",

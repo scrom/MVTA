@@ -723,3 +723,13 @@ test('test open', () => {
     expect(actualResult).toBe(expectedResult); 
 });
 
+test('test close', () => {
+    const objectJSON  = fm.readFile("artefacts/bag.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "close bag";
+    let expectedResult = "It's not open."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
