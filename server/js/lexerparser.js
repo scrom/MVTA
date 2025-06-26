@@ -126,7 +126,7 @@ module.exports.LexerParser = function LexerParser() {
         };
 
         self.extractObjectsAndPrepositions = function(input) {
-            let tokens = input.split(/\s+/)
+            let tokens = input.split(/\s+/);
 
             //remove firstPersonPronouns
             tokens = tokens.filter(function (value, index, array) {
@@ -155,11 +155,23 @@ module.exports.LexerParser = function LexerParser() {
                 };
 
                 objects = rest.split(' '+allPrepositions[i]+' '); //pad each side with spaces to avoid substring oddities - easier to understand than a regex
-                if (objects != rest) { //split successful
+                if (objects[0] != rest) { //split successful
                     //console.debug('split using "'+allPrepositions[i]+'".');
                     preposition = allPrepositions[i];                  
                     break; //exit the loop early
                 }; //end if
+            };
+
+            if (objects.length == 1 && !preposition) {
+                //check if we start or end with a number and split that out as subject
+                tokens = rest.split(/\s+/);
+                if (Number.isInteger(Number(tokens[0]))) {
+                    preposition = tokens.shift();
+                    objects[0] = tokens.join(" ");
+                } else if (Number.isInteger(Number(tokens[tokens.length-1]))) {
+                    preposition = tokens.pop();
+                    objects[0] = tokens.join(" ");
+                };
             };
 
             //If current input object is "it", we use the last object instead.

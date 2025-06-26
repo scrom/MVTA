@@ -1155,3 +1155,39 @@ test('move + direction translates to "go"', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+test('test cheat code handling', () => {
+    const input = "+heal 25";
+
+    const expectedResult = {
+      "action": "cheatcode",
+      "adverb": null,
+      "category": "system",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "+heal",
+      "preposition": "25",
+      "subject": null,
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('test cheat code handling', () => {
+    const input = "+affinity 25 aaron";
+
+    const expectedResult = {
+      "action": "cheatcode",
+      "adverb": null,
+      "category": "system",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "+affinity",
+      "preposition": "25",
+      "subject": "aaron",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});

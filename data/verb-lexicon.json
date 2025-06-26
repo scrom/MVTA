@@ -922,5 +922,11 @@
   "wait": {
     "category": "resting",
     "aliases": ["z"]
+  },
+  "cheatcode": {
+    "category": "system",
+    "aliases": ["+aggression", "+stealth", "+heal", "+health", "+dead", "+contagion", "+infected", "+immunity", "+immune", 
+    "+kill", "+hurt", "+die", "+attrib", "+time", "+wait", "+go", "+find", "+where", "+get", "+fix", "+missions", "+activate", 
+    "+start", "+complete", "+fail", "+destination", "+affinity", "+cash", "+money"]
   }
 }

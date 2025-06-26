@@ -25,7 +25,12 @@ module.exports.Actions = function Actions(parser) {
   */
         self.processResponse = function (response, player, map, po, time) {
           try {
+
             if (response) {
+              if (response.includes("$cheat$")) {
+                response = response.replace("$cheat$", "");
+                return {response: response, time: 0};
+              };
               if (response.includes("$inactive$")) {
                 response = response.replace("$inactive$", "Thanks for playing.<br>There's nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.");
                 return {response: response, time: 0};
@@ -122,7 +127,7 @@ module.exports.Actions = function Actions(parser) {
         self.null = function(verb, player, map, po) {
           //console.debug("fail count: "+_failCount);
           if (_failCount >=3) { //help on 3 or more fails
-            _verb = "help";
+            verb = "help";
             return self.help(verb, player, map, po);
           };
           if (_failCount == 2) { //hint on second failure
@@ -340,8 +345,8 @@ module.exports.Actions = function Actions(parser) {
             po.preposition = "";
           };
           
-          var positionIndex = tools.positions.indexOf(po.preposition);
-          var searchAdverbs = ["closely", "carefully", "carefuly", "thoroughly", "meticulously"];
+          const positionIndex = tools.positions.indexOf(po.preposition);
+          const searchAdverbs = ["closely", "carefully", "carefuly", "thoroughly", "meticulously"];
 
           //support "look under", "look behind" and "look in" as well as "look carefully at" etc.
           if ((positionIndex > 3) ||(searchAdverbs.includes(po.adverb))) {
@@ -421,7 +426,211 @@ module.exports.Actions = function Actions(parser) {
         self.shove = function (verb, player, map, po) {
           return self.processResponse(player.shove(verb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
-         
+
+        self.cheatcode = function (verb, player, map, po) {
+          let response = "cheat!";
+          let ticks = 1; //can't completely cheat for free.
+          try {
+            //Cheating!
+            player.incrementCheatCount();
+               
+            if (po.originalVerb == '+aggression') {
+                response =  "Player Aggression set: "+player.setAggression(parseInt(po.subject));
+            };
+
+            if (po.originalVerb  == '+stealth') {
+                response =  "Player Stealth set: "+player.setStealth(parseInt(po.subject));
+            };
+
+            if (po.originalVerb  == '+heal' || po.originalVerb  == '+health') {
+                if (!(Number.isInteger(Number(po.preposition)))) {po.preposition = 0};
+                if (!po.subject) {
+                  player.updateHitPoints(parseInt(po.preposition));
+                  response =  "Player Health set to: "+player.getHitPoints();
+                } else {
+                  const creature = map.getCreature(po.subject);
+                  if (creature) {
+                    creature.updateHitPoints(parseInt(po.preposition))
+                    response =  "Healed "+creature.getName()+": "+creature.health();
+                  } else {
+                    response =  "cannot find "+po.subject+" to heal"; 
+                  };     
+                };
+            };
+                
+            if (po.originalVerb  == '+dead') {
+                response =  "Obituaries: " + map.listDead();
+            };
+                
+            if (po.originalVerb  == '+contagion' || po.originalVerb  == '+infected') {
+                response =  "Infected: " + map.listInfected();
+            };
+                
+            if (po.originalVerb  == '+immunity' || po.originalVerb  == '+immune') {
+                response =  "Immune: " + map.listImmune();
+            };
+
+            if (po.originalVerb  == '+kill') {
+                const creature = map.getCreature(po.subject);
+                if (creature) {
+                  response =  "Killing "+creature.getName()+":<br>"+creature.kill();
+                } else {
+                  response =  "cannot find "+po.subject+" to kill";   
+                };            
+            };
+                
+            if (po.originalVerb  == '+hurt') {
+                const creature = map.getCreature(po.subject);
+                if (creature) {
+                  response =  "Hurting " + creature.getName() + ":<br>" + creature.hurt(po.object);
+                } else {
+                  response =  "cannot find " + po.subject + " to hurt";
+                };
+            };
+                
+            if (po.originalVerb  == '+die') {
+                response =  player.kill();
+            };
+
+            if (po.originalVerb  == '+attrib') {
+              let item;
+              if (!po.subject) {
+                item = player.getCurrentLocation();
+              };
+              if (po.subject == "player" || po.subject == "self" || po.subject == "me") {
+                item = player;
+              };
+              if (!(item)) {
+                item = player.getObject(po.subject);
+              };
+              if (!(item)) {
+                const loc = player.getCurrentLocation();
+                if (loc) {
+                  item = loc.getObject(po.subject);
+                };
+              };
+              if (!(item)) {
+                item = map.getObject(po.subject);
+              };
+              if (!(item)) {
+                item = map.getNamedMission(po.subject, player);
+              };
+              if (item) {
+                let itemString = item.toString();
+                itemString = itemString.replace(/<br>/g, '&lt;br>');
+                itemString = itemString.replace(/\\/g, '\\\\');
+                response =  itemString.replace(/"/g, '\\"');
+              } else {
+                response =  "cannot find " + po.subject;
+              };
+            };
+                               
+            if (po.originalVerb  == '+time') {
+              //default 9am
+              if (Number.isInteger(Number(po.preposition)))  {po.subject = 9};
+              response =  player.time(parseInt(po.preposition), 0); 
+            };
+
+            if (po.originalVerb  == '+wait') {
+              if (Number.isInteger(Number(po.preposition))) {po.preposition = 1};
+              ticks = parseInt(po.preposition);
+              player.incrementWaitCount(ticks);
+              response =  "Waiting " + po.preposition + " ticks...";       
+            };
+
+            if (po.originalVerb  == '+go') {
+              const location = map.getLocation(po.subject);
+              if (location) {
+                response =  "Player teleported:<br> "+player.setLocation(location);
+              } else {
+                response =  "location '"+po.subject+"' not found.";
+              };
+            };
+
+            if (po.originalVerb  == '+find'||verb == '+where') {
+              if(po.object) { response =  map.find(po.object, true, true);}
+              else { response =  map.find(po.subject, true, true); };
+            };
+
+            if (po.originalVerb  == '+get') {
+              let inventory = player.getInventoryObject();
+              if(po.object) { response =  inventory.add(map.getObject(po.object, true, true));}
+              else { response =  inventory.add(map.getObject(po.subject, true, true)); };
+            };
+
+            if (po.originalVerb  == '+fix') {
+              const item = map.getObject(po.subject);
+              if (item) {
+                response =  item.forceRepair();
+              } else {
+                response =  "cannot find " + po.subject + " to fix";
+              };
+            };
+
+            if (po.originalVerb  == '+missions') {
+              response =  map.listAllMissions(player);
+            };
+            
+            if (po.originalVerb  == '+activate' || po.originalVerb  == '+start') {
+              response =  map.activateNamedMission(po.subject, player);
+            };
+
+            if (po.originalVerb  == '+complete') {
+              response =  map.completeNamedMission(po.subject, player);
+            };
+                
+            if (po.originalVerb  == '+fail') {
+              response =  map.failNamedMission(po.subject, player);
+            };
+
+            if (po.originalVerb  == '+destination') {
+              const creatures = map.getAllCreatures();
+              let resultString = "";
+              for (let c=0;c<creatures.length;c++) {
+                creatures[c].clearPath();
+                resultString+=creatures[c].goTo(po.subject, 0, map)+"<br>";
+              };
+              response =  resultString;
+            };
+
+            if (po.originalVerb  == '+affinity') {
+              let creatureName = null;
+              let affinity = 1;
+
+              if (po.subject) {
+                creatureName = po.subject;
+              };
+
+              if (Number.isInteger(Number(po.preposition))) {
+                affinity = parseInt(po.preposition);
+              };
+
+              let creatures = [];
+              if (creatureName) {creatures.push(map.getCreature(creatureName)) }
+              else {creatures = map.getAllCreatures();}
+              for (let c=0;c<creatures.length;c++) {
+                creatures[c].increaseAffinity(affinity)+"<br>";
+              };
+
+              if (!creatureName) {creatureName = "Global"};
+              if (creatures.length > 0) {
+                response =  creatureName+" affinity increased by "+affinity;
+              } else {response = "No creatures found"}
+            };
+
+            if (po.originalVerb  == '+cash' || po.originalVerb  == '+money') {
+              player.updateCash(po.subject);
+              response =  "Player cash balance changed by "+po.subject;
+            };
+
+          } catch (err) {
+            let input = ""
+            if (po) {input = po.originalInput}
+            console.error('Cheat Action processing error. Input: '+input+'. Response: '+response+', ParsedObject: '+po+'. Error: '+err);
+            throw err;              
+          };	
+          return self.processResponse("$cheat$"+response, player, map, po, ticks);
+        };       
   }  catch(err) {
 	    console.error('Unable to create Actions object: '+err.stack);
         throw err;

@@ -689,3 +689,19 @@ test('test unimplemented verb', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test cheatcodes', () => {
+    const input = "+affinity aaron 5";
+    const expectedResult = "aaron affinity increased by 5"; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test cheatcodes', () => {
+    const input = "+heal aaron 25";
+    const expectedResult = "Healed aaron prescott: He's generally the picture of health."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
