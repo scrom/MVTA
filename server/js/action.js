@@ -844,6 +844,11 @@ exports.Action = function Action(player, map, fileManager) {
                     case 'thwack':
                     case 'thwok':
                     case 'thwomp':
+                    case 'strangle':
+                    case 'choke':
+                    case 'throttle':
+                    case 'garrotte':
+                    case 'garotte':
                         _ticks = 1;
                         if (_object0 && _splitWord == "on" && _object1) {
                             //smash bottle on floor
