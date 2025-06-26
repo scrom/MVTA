@@ -449,11 +449,11 @@
   },
   "ask": {
     "category": "dialogue",
-    "aliases": ["request", "beg", "have"]
+    "aliases": ["request", "beg"]
   },
   "question": {
     "category": "dialogue",
-    "aliases": ["who", "whos", "whose", "what", "whats", "why", "whys", "when", "whens", "where", "wheres", "how", "hows"]
+    "aliases": ["who", "whos", "whose", "what", "whats", "why", "whys", "when", "whens", "where", "wheres", "how", "hows", "have", "do"]
   },
   "apologise": {
     "category": "dialogue",
