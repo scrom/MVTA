@@ -1099,7 +1099,7 @@ test('cannot get liquid into container already containing liquid that doesnt com
     console.debug(bottle.receive(rum));
     console.debug(p0.acceptItem(bottle));
 
-    var expectedResult = "You attempt to add soup to the bottle but decide it won't really mix well with the rum that's already in there.";
+    var expectedResult = "You're not carrying anything that you can collect the soup into.";
     var actualResult = p0.get('get', soup.getName());
     console.debug("Expected: " + expectedResult);
     console.debug("Actual  : " + actualResult);

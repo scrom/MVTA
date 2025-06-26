@@ -255,11 +255,11 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
         };
         
         self.getLiquidOrPowder = function () {
-            //as opposed to "hasLiquid".
+            //as opposed to "hasLiquid". 
             //only explore items directly in this inventory, no nested items.
+            //we cannot have more than one liquid or powder in a container.
             for (var i = 0; i < _items.length; i++) {
-                if (_items[i].isLiquid()) { return _items[i]; };
-                if (_items[i].isPowder()) { return _items[i]; };
+                if (_items[i].isLiquid() || _items[i].isPowder()) { return _items[i]; };
             };
             return null;
         };
@@ -275,6 +275,17 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
             if ((objectWeight + inventoryWeight) > _maxCarryingWeight) {
                 //console.debug("can't carry total weight of "+parseFloat(anObject.getWeight()+self.getWeight()));
                 return false;
+            };
+
+            //check if what we're adding will conflict vs combine with existing liquid or powder.
+            if (anObject.isLiquid()||anObject.isPowder()) {
+                contents = self.getLiquidOrPowder();
+                if (!contents || contents.getName() == anObject.getName()) {
+                    return true;
+                };
+                if (!anObject.combinesWith(contents, true)) {
+                    return false;
+                };
             };
 
             return true;
@@ -837,7 +848,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
             //loop thru all containers
             //check canContain
             //if any one is true, add it, if not fail
-            var isLiquid = anObject.isLiquid();
             var requiresContainer = anObject.requiresContainer();
             var requiredContainer = anObject.getRequiredContainer();
             var suitableContainer;

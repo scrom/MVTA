@@ -644,7 +644,6 @@ test('test "climb in" direction', () => {
 test('test "follow X"', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    const atrium = m0.getLocation("atrium");
     object.go("", l0);
     const input = "follow aaron";
     const expectedResult = "He's right here."; 

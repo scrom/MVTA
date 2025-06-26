@@ -11,6 +11,10 @@ const testDataDir = '../../test/testdata/';
 const testImageDir = '../../test/testdata/images/';
 const fm = new fileManager.FileManager(true, testDataDir, testImageDir);
 
+const prodDataDir = '../../data/';
+const prodImageDir = '../../images/';
+const prodfm = new fileManager.FileManager(true, prodDataDir, prodImageDir);
+
 let junkAttributes;
 let fixedAttributes;
 let containerAttributes;
@@ -418,10 +422,58 @@ test("Test that a player cannot add coco pops to a glass of water.", () => {
     let kitchen = m0.getLocation("kitchen-ground-floor")
     p0.setLocation(kitchen);
 
-    const expectedResult = "You attempt to add coco pops to the glass but decide they won't really mix well with the water that's already in there.";
+    const expectedResult = "You attempt to add coco pops to the glass but realise they won't really mix well with the water that's already in there.$imagedrinkingglass.jpg/$image";
 
     p0.get('get', 'water');
 
     const actualResult = p0.put('put', 'coco pops', 'into' , 'glass');
     expect(actualResult).toBe(expectedResult);
 });
+
+test("issue #394 Test that a player avoids container with water (and uses alternate) when collecting coco pops.", () => {
+    //sing "delivers" water so basic get needs to route through "delivered" items and then get a glass or similar to put it in.
+    const m0 = mb.buildMap();
+    p0 = new player.Player({"username": playerName}, m0, mb);
+    p0.setLocation(l0);
+
+    let objectJSON  = prodfm.readFile("artefacts/glass.json"); 
+    const glass = mb.buildArtefact(objectJSON);
+
+    objectJSON  = prodfm.readFile("artefacts/bowl.json"); 
+    const bowl = mb.buildArtefact(objectJSON);
+
+    objectJSON  = prodfm.readFile("artefacts/water.json"); 
+    const water = mb.buildArtefact(objectJSON);
+
+    objectJSON  = prodfm.readFile("artefacts/coco-pops.json"); 
+    const pops = mb.buildArtefact(objectJSON);
+
+    l0.addObject(glass);
+    l0.addObject(bowl);
+    l0.addObject(pops);
+
+    //ensure both containers have plenty of physical space...
+    const glassInv = glass.getInventoryObject();
+    glassInv.setCarryWeight(5);
+    const bowlInv = bowl.getInventoryObject();
+    bowlInv.setCarryWeight(5);
+
+    let expected = ""
+    let result = bowl.receive(water);
+    expect(result).toBe(expected);  
+
+    const expectedResult = "You collect the coco pops into a nearby drinking glass.<br>";
+
+    const actualResult = p0.get('get', 'coco pops'); //this should succeed
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+/*
+    const object2JSON  = prodfm.readFile("artefacts/vial.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    l0.addObject(object2);
+    const object3JSON  = prodfm.readFile("artefacts/water.json"); 
+    const object3 = mb.buildArtefact(object3JSON);
+    object2.receive(object3);
+*/

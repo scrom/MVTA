@@ -2576,17 +2576,28 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                         };
                         return putResult;
                     };
-                };                
+                };        
                 
-                if ((artefact.isLiquid() || artefact.isPowder()) && (!receiver.holdsLiquid())) {
-                    if (receiver.isLiquid() || receiver.isPowder()) {
-                        return "Nope. They really won't mix well together."
-                    };
-                    return artefact.getPrefix()+" would all just leak out of "+receiver.getDisplayName()+". Best not to waste "+artefact.getSuffix()+"."
-                };
-
                 if (artefact.getRequiredContainer() && (artefact.getRequiredContainer() != receiver.getName())) {
                     return "You need <i>something else</i> to "+verb+" "+artefact.getSuffix()+" "+splitWord+"."; 
+                };
+                
+                if (artefact.isLiquid() || artefact.isPowder()) {
+                    if (receiver.holdsLiquid()) {
+                        //there's already something in here...
+                        let contents = receiver.getLiquidOrPowder();
+                        if (contents) {
+                            return "You attempt to add " + artefact.getName() + " to " + receiver.getDisplayName() +
+                               " but realise "+artefact.getPrefix().toLowerCase()+" won't really mix well with " + contents.getDisplayName() + " that's already in there.";
+                        };
+
+                    } else {
+                        if (receiver.isLiquid() || receiver.isPowder()) {
+                            return "Nope. They really won't mix well together."
+                        };
+                        return artefact.getPrefix()+" would all just leak out of "+receiver.getDisplayName()+". Best not to waste "+artefact.getSuffix()+"."
+                    };
+                    
                 };
 
                 return "You try and try but can't find a satisfactory way to make "+artefact.getSuffix()+" fit."; 

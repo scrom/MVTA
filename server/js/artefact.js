@@ -1977,6 +1977,10 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             return _inventory.getObject(anObjectName);
         };
 
+        self.getLiquidOrPowder = function() {
+            return _inventory.getLiquidOrPowder();
+        };
+
         self.getInventorySize = function(countHiddenObjects, ignoreSceneryObjects) {
             return _inventory.size(countHiddenObjects, ignoreSceneryObjects);
         };
