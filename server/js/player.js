@@ -1388,6 +1388,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 
                 if (!artefact.isCollectable()) {
                     if (!artefact.willDivide()) {
+                        if (verb == "pick") {verb = "lift"};
                         var randomReplies = ["You try in vain to " + verb + " " + artefact.getDisplayName() + " but just end up tired and annoyed.", tools.initCap(artefact.getPrefix()) + " can't be picked up.", "Nope, that's not going to work for you, sorry."];
                         var randomIndex = Math.floor(Math.random() * randomReplies.length);
                         return randomReplies[randomIndex];

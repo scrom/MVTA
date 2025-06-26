@@ -841,8 +841,30 @@ test('test pick up', () => {
     const object = mb.buildArtefact(objectJSON);
     l0.addObject(object);
     const input = "pick up safe";
-    const expectedResult = "It can't be picked up."; 
-    let actualResult = engine(input);
+    const expectedResults = ["It can't be picked up.","You try in vain to lift the floor safe but just end up tired and annoyed.", "Nope, that's not going to work for you, sorry."];
+    const actualResult = engine(input)
+    console.debug(actualResult);
+    expect(expectedResults.includes(actualResult)).toBe(true);
+});
+
+test('test take apart/dismantle', () => {
+    let objectJSON  = fm.readFile("artefacts/torch.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "dismantle torch";
+    const expectedResult = "You dismantle the emergency torch and retrieve some torch batteries."; 
+    let actualResult = engine(input).substring(0,expectedResult.length); //sometimes you accidentally break things!
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test take apart/dismantle', () => {
+    let objectJSON  = fm.readFile("artefacts/torch.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "take apart torch";
+    const expectedResult = "You dismantle the emergency torch and retrieve some torch batteries."; 
+    let actualResult = engine(input).substring(0,expectedResult.length); //sometimes you accidentally break things!
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });

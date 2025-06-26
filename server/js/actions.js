@@ -383,8 +383,12 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.give(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,2);
         };  
         self.get = function (verb, player, map, po) {
+          if (po.preposition == "apart") {
+            po.originalVerb = "dismantle";
+            return self.dismantle(verb, player, map, po);
+          };
           if (po.subject && po.object) {
-            return self.take(verb, player, map, po)
+            return self.take(verb, player, map, po);
           }
           return self.processResponse(player.get(po.originalVerb, po.subject), player, map, po ,1);
         };
@@ -398,7 +402,16 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.take = function (verb, player, map, po) {
+          if (po.preposition == "apart") {
+            po.originalVerb = "dismantle";
+            return self.dismantle(verb, player, map, po);
+          };
+      
           return self.processResponse(player.take(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
+        };
+
+        self.dismantle = function (verb, player, map, po) {
+            return self.processResponse(player.dismantle(po.originalVerb, po.subject), player, map, po ,2);
         };
 
         self.throw  = function (verb, player, map, po) {

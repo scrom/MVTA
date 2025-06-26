@@ -45,7 +45,8 @@ module.exports.LexerParser = function LexerParser() {
             'below', 'beneath', // same as under unless hanging
             'behind', // if both object and subject are movable
             'between', 'beside', 'near',
-            'across', 'in front of', 'through'
+            'across', 'in front of', 'through',
+            'apart'
         ];
 
         const givingPrepositions = ['to', 'for', 'onto', 'on', 'on to', 'toward', 'towards'];

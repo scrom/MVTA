@@ -1029,6 +1029,80 @@ test('directions - get into car', () => {
 });
 
 
+test('directions - get on car', () => {
+    const input = "get on car";
+
+    const expectedResult = {
+      "action": "go",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "get",
+      "preposition": "on",
+      "subject": "car",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('directions - get off car', () => {
+    const input = "get off car";
+
+    const expectedResult = {
+      "action": "go",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "get",
+      "preposition": "off",
+      "subject": "car",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('directions - get in car', () => {
+    const input = "get in car";
+
+    const expectedResult = {
+      "action": "go",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "get",
+      "preposition": "in",
+      "subject": "car",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('directions - get out of car', () => {
+    const input = "get out of car";
+
+    const expectedResult = {
+      "action": "go",
+      "adverb": null,
+      "category": "movement",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "get",
+      "preposition": "out of",
+      "subject": "car",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
 test('directions - climb tree', () => {
     const input = "climb tree";
 
@@ -1210,7 +1284,6 @@ test('test "open my..."', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('test "hit person"', () => {
     const input = "hit aaron";
 
@@ -1223,6 +1296,24 @@ test('test "hit person"', () => {
       "originalVerb": "hit",
       "preposition": null,
       "subject": "aaron",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('test "take apart"', () => {
+    const input = "take radio apart";
+
+    const expectedResult = {
+      "action": "get",
+      "adverb": null,
+      "category": "inventory",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "take",
+      "preposition": "apart",
+      "subject": "radio",
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);

@@ -793,7 +793,7 @@
   },
   "dismantle": {
     "category": "manipulation",
-    "aliases": ["disarm"]
+    "aliases": ["disarm", "diassemble"]
   },
   "break": {
     "category": "manipulation",
