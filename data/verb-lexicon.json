@@ -881,7 +881,7 @@
   },
   "help": {
     "category": "system",
-    "aliases": []
+    "aliases": ["hepl"]
   },
   "map": {
     "category": "ui_navigation",
