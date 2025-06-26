@@ -360,31 +360,31 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.search(verb, po.subject, po.adverb, po.preposition), player, map, po ,3)
         };
         self.find = function (verb, player, map, po) {
-          return self.processResponse(player.hunt(verb, po.subject, map), player, map, po ,2);
+          return self.processResponse(player.hunt(po.originalVerb, po.subject, map), player, map, po ,2);
         };
         self.put = function (verb, player, map, po) {
-          return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+          return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
         self.hide = function (verb, player, map, po) {
           return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,3);
         };
         self.place = function (verb, player, map, po) {
-          return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,2);
+          return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
         self.move = function (verb, player, map, po) {
-          return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+          return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
         self.empty = function (verb, player, map, po) {
-          return self.processResponse(player.empty(verb, po.subject, po.preposition, po.object), player, map, po ,2);
+          return self.processResponse(player.empty(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
         self.water = function (verb, player, map, po) {
-          return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,2);
+          return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
         self.give = function (verb, player, map, po) {
-          return self.processResponse(player.give(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+          return self.processResponse(player.give(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };        
         self.feed = function (verb, player, map, po) {
-          return self.processResponse(player.give(verb, po.subject, po.preposition, po.object), player, map, po ,2);
+          return self.processResponse(player.give(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,2);
         };  
         self.get = function (verb, player, map, po) {
           if (po.subject && po.object) {
@@ -406,9 +406,9 @@ module.exports.Actions = function Actions(parser) {
         };
         self.drop = function (verb, player, map, po) {
           if (["in", "into", "in to", "inside", 'onto', 'on to', 'on top of', 'on'].includes(po.preposition) && po.object != null) {
-            return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+            return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
           } else {
-            return self.processResponse(player.drop(verb, po.subject, po.object), player, map, po ,1);
+            return self.processResponse(player.drop(po.originalVerb, po.subject, po.object), player, map, po ,1);
           };
         };
         self.sleep  = function (verb, player, map, po) {
@@ -421,11 +421,25 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.wait(1, map), player, map, po ,1);
         };
         self.push = function (verb, player, map, po) {
-          return self.processResponse(player.shove(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+          return self.processResponse(player.shove(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
         self.shove = function (verb, player, map, po) {
-          return self.processResponse(player.shove(verb, po.subject, po.preposition, po.object), player, map, po ,1);
+          return self.processResponse(player.shove(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
+        self.open = function (verb, player, map, po) {
+          ticks = 1;
+          let response = player.open(po.originalVerb, po.subject);
+          //don't consume time if already open
+          if (response.includes("already")) { ticks = 0;};
+          return self.processResponse(response, player, map, po ,ticks);
+        };
+        self.pull = function (verb, player, map, po) {
+          return self.open(po.originalVerb, player, map, po);
+        };
+        self.raise = function (verb, player, map, po) {
+          return self.open(po.originalVerb, player, map, po);
+        };
+
 
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";

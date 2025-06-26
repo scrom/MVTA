@@ -745,15 +745,11 @@
   },
   "open": {
     "category": "manipulation",
-    "aliases": []
+    "aliases": ["unfurl"]
   },
   "close": {
     "category": "manipulation",
-    "aliases": []
-  },
-  "shut": {
-    "category": "manipulation",
-    "aliases": []
+    "aliases": ["shut"]
   },
   "unlock": {
     "category": "manipulation",

@@ -755,7 +755,7 @@ exports.Action = function Action(player, map, fileManager) {
                         _ticks = 1;              
                         description = _player.shove(_verb, _object0);
                         break;
-//////Conversion to new engine reached here
+
                     case 'pull':
                     case 'drag':
                     case 'tow':
@@ -773,6 +773,7 @@ exports.Action = function Action(player, map, fileManager) {
                             _ticks = 0;
                         };
                         break;
+//////Conversion to new engine reached here
                     case 'shut':
                     case 'close':
                     case 'furl':

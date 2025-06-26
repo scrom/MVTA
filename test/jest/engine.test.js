@@ -705,3 +705,21 @@ test('test cheatcodes', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test open', () => {
+    const objectJSON  = fm.readFile("artefacts/bag.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "open bag";
+    let expectedResult = "You open the giant bag. It contains some coffee beans.$imagecoffeebag.jpg/$image"; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+
+    //and again
+    expectedResult = "It's already open.$imagecoffeebag.jpg/$image"; 
+    actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult); 
+});
+

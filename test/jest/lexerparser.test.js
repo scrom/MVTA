@@ -1191,3 +1191,22 @@ test('test cheat code handling', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+
+test('test "open my..."', () => {
+    const input = "open my present";
+
+    const expectedResult = {
+      "action": "open",
+      "adverb": null,
+      "category": "manipulation",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "open",
+      "preposition": null,
+      "subject": "present",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
