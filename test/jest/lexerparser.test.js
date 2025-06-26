@@ -1120,7 +1120,7 @@ test('give - as a request', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-test('take a break', () => {
+test('have a break', () => {
     const input = "have a break";
 
     const expectedResult = {

@@ -585,7 +585,7 @@ test('test "I want your X"', () => {
     const inv = object.getInventoryObject();
     inv.add(object2);
     let greet = engine("hi aaron"); //start conversation
-    const input = "i want some ice cream";
+    const input = "i want your ice cream";
     const expectedResult = "$imageaaronprescott.jpg/$image<br>"; //image comes back - we're still talking
     let actualResult = engine(input);
     actualResult = actualResult.substring(actualResult.length-expectedResult.length);
@@ -651,7 +651,6 @@ test('test "follow X"', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
-
 
 test('test "take a break"', () => {
     const input = "take a break";
