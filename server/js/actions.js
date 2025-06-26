@@ -474,7 +474,15 @@ module.exports.Actions = function Actions(parser) {
         };   
 
         self.attack = function(verb, player, map, po) {
-          //verb, receiverName, artefactName
+          //verb, receiverName, artefactName           
+          if (po.subject && po.object && (["on", "onto", "on to", "on top of"].includes(po.preposition))) {
+            // handle //smash bottle on floor etc       
+            //this isn't 100% reliable but is consistent with current game at least. "hit james on his head" for example won't work 
+            let tempString = po.subject;
+            po.object = po.subject;
+            po.subject = tempString;
+          };
+                            
           return  self.processResponse(player.hit(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
         self.stab = function(verb, player, map, po) {
