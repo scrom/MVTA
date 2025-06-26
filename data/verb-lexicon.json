@@ -493,7 +493,11 @@
   },
   "get": {
     "category": "inventory",
-    "aliases": ["take", "grab","pick","collect", "pick up"]
+    "aliases": ["take", "grab","collect"]
+  },
+  "pick": {
+    "category": "inventory",
+    "aliases": ["pick", "pick up"]
   },
   "remove": {
     "category": "inventory",

@@ -394,7 +394,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             };
 
             if (type == "tool") {
-                var validToolSubTypes = ["","buff","sharpen","assemble","sharp","clean","fire","dig","hook"];
+                var validToolSubTypes = ["","buff","sharpen","assemble","sharp","clean","fire","dig","hook","lockpick"];
                 if (validToolSubTypes.indexOf(subType) == -1) { throw "'" + subType + "' is not a valid "+type+" subtype."; };
                 //console.debug(_name+' subtype validated: '+subType);
             };
@@ -893,7 +893,6 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             };
             return "the "+_description;
         };
-
 
         self.getSubType = function() {
             return _subType;
@@ -3292,11 +3291,20 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
 
         self.getMatchingKey = function(verb, inventoryObject) {
             //find the strongest non-breakable key or tool the player is carrying.
-            var keys = inventoryObject.getAllObjectsOfType('key');
-            keys = keys.concat(inventoryObject.getAllObjectsOfType('tool'));
-            //try any keys that are part of this object itself
-            keys = keys.concat(_inventory.getAllObjectsOfType('key'));
-            keys = keys.concat(_inventory.getAllObjectsOfType('tool'));
+            var keys = inventoryObject.getAllObjectsOfType("key");
+            //then try any keys that are part of this object itself
+            keys = keys.concat(_inventory.getAllObjectsOfType("key"));
+
+            if (verb == "pick" || verb == "unlock") {
+                keys = keys.concat(inventoryObject.getAllObjectsOfType("lockpick"));
+                keys = keys.concat(_inventory.getAllObjectsOfType("lockpick"));
+            };
+
+            if (["dismantle", "undo", "unscrew", "tighten", "unpick"].includes(verb)) {
+                keys = keys.concat(inventoryObject.getAllObjectsOfType("assemble"));
+                keys = keys.concat(_inventory.getAllObjectsOfType("assemble"));
+            };
+            
             for(var index = 0; index < keys.length; index++) {
                 //caller must explicitly choose to use a breakable key using "pick" otherwise only auto-use non-breakable ones.
                 if (((!(keys[index].isBreakable()))||verb == "pick"||verb == "dismantle")) {
@@ -3344,7 +3352,6 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                     if (self.getType() == "property" || self.getType() == "vehicle") {_collectable = true;};
                     var resultString = self.moveOrOpen('unlock',locationName, map, player);
                     //unlocking with a breakable item will damage it
-                    var bashResult = "";
                     if (aKey.isBreakable()) {
                         aKey.bash();
                         if (aKey.isBroken()) {resultString += " You broke "+aKey.getDisplayName()+".";};

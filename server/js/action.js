@@ -865,7 +865,6 @@ exports.Action = function Action(player, map, fileManager) {
                     case 'sell':
                         description = _player.sell(_verb, _object0, _object1);
                         break;
-//////Conversion to new engine reached here
                     case 'pick':
                         //special case for "pick up"
                         var originalObject0 = _object0;
@@ -882,7 +881,7 @@ exports.Action = function Action(player, map, fileManager) {
                         //pick locked item...
                         description = _player.unlock(_verb, _object0);
                         break;
-                        
+//////Conversion to new engine reached here 
                     case 'get':
                         _ticks = 1;
                         if (_splitWord == "off") {

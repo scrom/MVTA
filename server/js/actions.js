@@ -389,6 +389,14 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.get(po.originalVerb, po.subject), player, map, po ,1);
         };
 
+        self.pick  = function (verb, player, map, po) {
+          if (po.preposition == "up" || po.originalVerb == "pick up") {
+            return self.take(verb, player, map, po);
+          };
+          
+          return self.processResponse(player.unlock(po.originalVerb, po.subject), player, map, po ,1);
+        };
+
         self.take = function (verb, player, map, po) {
           return self.processResponse(player.take(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };

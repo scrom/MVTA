@@ -495,7 +495,7 @@ test('can we handle "pick up"', () => {
       category: 'inventory',
       originalVerb: 'pick',
       originalInput: input,
-      action: 'get',
+      action: 'pick',
       adverb: null,
       subject: 'smoking hot barbecue',
       object: null,

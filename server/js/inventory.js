@@ -743,7 +743,7 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
         self.getAllObjectsOfType = function(anObjectType) {
            var returnObjects = [];
            for(var index = 0; index < _items.length; index++) {
-                if(_items[index].getType() == anObjectType  && (!(_items[index].isHidden()))) {
+                if((_items[index].getType() == anObjectType || _items[index].getSubType() == anObjectType) && (!(_items[index].isHidden()))) {
                     //console.debug(anObjectType+" found: "+_items[index].getName()+" in "+_ownerName+" inventory. Index: "+index);
                     returnObjects.push(_items[index]);
                 } else {

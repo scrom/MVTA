@@ -1105,7 +1105,14 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             };
         };
 
-        self.getSkills = function() {
+        self.getSkills = function(skillName) {
+            if (skillName) {
+                if (_repairSkills.includes(skillName)) {
+                    return skillName;
+                } else {
+                    return null;
+                };
+            }
             return _repairSkills;
         };
         

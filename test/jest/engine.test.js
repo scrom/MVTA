@@ -789,7 +789,6 @@ test('test attacks - strangle', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-
 test('test pay', () => {
     const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
     const object = mb.buildCreature(objectJSON);
@@ -821,6 +820,28 @@ test('test sell', () => {
     p0.acceptItem(object2);
     const input = "sell ice cream to aaron";
     const expectedResult = "Aaron bought the 99 flake ice cream."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test pick', () => {
+    let objectJSON  = fm.readFile("artefacts/floor-safe.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "pick safe";
+    const expectedResult = "You need something to unlock it with."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test pick up', () => {
+    let objectJSON  = fm.readFile("artefacts/floor-safe.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "pick up safe";
+    const expectedResult = "It can't be picked up."; 
     let actualResult = engine(input);
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
