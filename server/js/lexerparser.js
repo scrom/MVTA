@@ -301,149 +301,153 @@ module.exports.LexerParser = function LexerParser() {
         };
 
         self.parseInput = function(input, player, map) {
-            //we take in player and map as we may need additional context and want to store state
-            input = sanitiseString(input);
-            let rest = input;
-            if (_inputString) {
-                //remember last input
-                _lastInputString = _inputString;
-            };
-            _inputString = input; //store for later
-
-            //extract adverb
-            const extractedAdverbObject = self.extractAdverb(rest)
-            const { adverb, remainder } = extractedAdverbObject;
-            rest = remainder;
-
-            //find the position of the most relevant verb. 
-            const tokens = rest.split(/\s+/)
-            const {inputVerbs, verbIndex} = self.locateMostRelevantVerb(tokens);
-            let verb = "";
-            let verbInd = verbIndex;
-
-            if (player) {
-                _inConversation = player.getLastCreatureSpokenTo();
-            };
-
-            if (salutations.some((e) => input.startsWith(e))) { //will only match single words
-                verb = "say";
-                verbInd = -1; //don't trim input
-            };
-            if (_inConversation) {
-                //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
-                if (
-                    (yesWords.some((e) => input.startsWith(e))) ||
-                    (politeWords.some((e) => input.startsWith(e))) ||
-                    (goodbyes.some((e) => input.startsWith(e))) ||
-                    (noWords.some((e) => input.startsWith(e))) ||
-                    (questions.some((e) => input.startsWith(e))) ||
-                    (input.endsWith("?")) ||
-                    (moreQuestions.some((e) => input.startsWith(e))) ||
-                    (modalVerbs.some((e) => input.startsWith(e))) ||
-                    //pronouns...
-                    (firstPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))  ||
-                    (secondPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))
-                ) { 
-                    verbInd = -1; //keep talking, don't trim input
-                    verb = "say";
+            try {
+                //we take in player and map as we may need additional context and want to store state
+                input = sanitiseString(input);
+                let rest = input;
+                if (_inputString) {
+                    //remember last input
+                    _lastInputString = _inputString;
                 };
-            };
+                _inputString = input; //store for later
 
-            //splice tokens to the verb we are using. (dump everything to the left of selected verb)
-            if (verbInd > -1) {
-                tokens.splice(0,verbInd)   
-                //verb will now be first token
-                verb = self.normaliseVerb(tokens[0]);
+                //extract adverb
+                const extractedAdverbObject = self.extractAdverb(rest)
+                const { adverb, remainder } = extractedAdverbObject;
+                rest = remainder;
 
-                if (verb && verbs[verb].category != "dialogue") {
-                    _inConversation = null;
-                    if (player) {
-                        player.setLastCreatureSpokenTo();
+                //find the position of the most relevant verb. 
+                const tokens = rest.split(/\s+/)
+                const {inputVerbs, verbIndex} = self.locateMostRelevantVerb(tokens);
+                let verb = "";
+                let verbInd = verbIndex;
+
+                if (player) {
+                    _inConversation = player.getLastCreatureSpokenTo();
+                };
+
+                if (salutations.some((e) => input.startsWith(e))) { //will only match single words
+                    verb = "say";
+                    verbInd = -1; //don't trim input
+                };
+                if (_inConversation) {
+                    //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
+                    if (
+                        (yesWords.some((e) => input.startsWith(e))) ||
+                        (politeWords.some((e) => input.startsWith(e))) ||
+                        (goodbyes.some((e) => input.startsWith(e))) ||
+                        (noWords.some((e) => input.startsWith(e))) ||
+                        (questions.some((e) => input.startsWith(e))) ||
+                        (input.endsWith("?")) ||
+                        (moreQuestions.some((e) => input.startsWith(e))) ||
+                        (modalVerbs.some((e) => input.startsWith(e))) ||
+                        //pronouns...
+                        (firstPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))  ||
+                        (secondPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))
+                    ) { 
+                        verbInd = -1; //keep talking, don't trim input
+                        verb = "say";
                     };
                 };
-            };
 
-            if (!verb) {
-                //if we don't have a recognised verb here, there's a chance we are dealing with yes/no, please/thankyou, salutations, questions etc
-                //use last verb if in active conversation
-                let lastVerbUsed = "";
-                if (player) {
-                    lastVerbUsed = player.getLastVerbUsed(); 
-                    if (lastVerbUsed) {            
-                        if (verbs[lastVerbUsed].category == "dialogue") {
-                            verb = lastVerbUsed;
-                        } else {
-                            _inConversation = null;
+                //splice tokens to the verb we are using. (dump everything to the left of selected verb)
+                if (verbInd > -1) {
+                    tokens.splice(0,verbInd)   
+                    //verb will now be first token
+                    verb = self.normaliseVerb(tokens[0]);
+
+                    if (verb && verbs[verb].category != "dialogue") {
+                        _inConversation = null;
+                        if (player) {
                             player.setLastCreatureSpokenTo();
                         };
                     };
                 };
 
-                //are we greeting?
-                if (salutations.some((e) => tokens.includes(e))) { //will only match single words
-                    verb = "say";
+                if (!verb) {
+                    //if we don't have a recognised verb here, there's a chance we are dealing with yes/no, please/thankyou, salutations, questions etc
+                    //use last verb if in active conversation
+                    let lastVerbUsed = "";
+                    if (player) {
+                        lastVerbUsed = player.getLastVerbUsed(); 
+                        if (lastVerbUsed) {            
+                            if (verbs[lastVerbUsed].category == "dialogue") {
+                                verb = lastVerbUsed;
+                            } else {
+                                _inConversation = null;
+                                player.setLastCreatureSpokenTo();
+                            };
+                        };
+                    };
+
+                    //are we greeting?
+                    if (salutations.some((e) => tokens.includes(e))) { //will only match single words
+                        verb = "say";
+                    };
+                    
+                };
+
+                //not in a conversation 
+                if (!verb) {
+                    //could be a custom action!
+                    verb = "customaction"
+                };
+
+                if (verbInd > -1) {
+                    //only do this if we had an original verb match, otherwise it's all dialogue
+                    rest = tokens.slice(1).join(' ');
+                    rest = self.removeStopWords(rest);
                 };
                 
-            };
+                //split what's left by preposition to get objects   
+                const extractedObjectsAndPrepositions = self.extractObjectsAndPrepositions(rest);
+                let { objects, preposition} = extractedObjectsAndPrepositions;
 
-            //not in a conversation 
-            if (!verb) {
-                //could be a custom action!
-                verb = "customaction"
-            };
+                if (_inConversation) {
+                    objects[0] = input;
+                    objects[1] = _inConversation;
+                };
 
-            if (verbInd > -1) {
-                //only do this if we had an original verb match, otherwise it's all dialogue
-                rest = tokens.slice(1).join(' ');
-                rest = self.removeStopWords(rest);
-            };
-            
-            //split what's left by preposition to get objects   
-            const extractedObjectsAndPrepositions = self.extractObjectsAndPrepositions(rest);
-            let { objects, preposition} = extractedObjectsAndPrepositions;
+                //convert directions.
+                var directionIndex = tools.directions.indexOf(verb);
+                if (directionIndex > -1) {
+                    preposition = verb;
+                    verb = "go";
 
-            if (_inConversation) {
-                objects[0] = input;
-                objects[1] = _inConversation;
-            };
+                    //use whole word direction.
+                    if (preposition.length == 1) {
+                        var index = tools.directions.indexOf(_direction);
+                        if (index > -1) {
+                            preposition = tools.directions[index+1]; 
+                        };
+                    };
+                }; 
 
-            //convert directions.
-            var directionIndex = tools.directions.indexOf(verb);
-            if (directionIndex > -1) {
-                preposition = verb;
-                verb = "go";
-
-                //use whole word direction.
-                if (preposition.length == 1) {
-                    var index = tools.directions.indexOf(_direction);
-                    if (index > -1) {
-                        preposition = tools.directions[index+1]; 
+                //if action is a movement, set preposition to be direction (where reelvant).
+                if (verbs[verb].category == "movement" && (!preposition)) {
+                    if (tools.directions.includes(objects[0])) {
+                        preposition = objects[0];
+                        objects[0] = null;
                     };
                 };
-            }; 
 
-            //if action is a movement, set preposition to be direction (where reelvant).
-            if (verbs[verb].category == "movement" && (!preposition)) {
-                if (tools.directions.includes(objects[0])) {
-                    preposition = objects[0];
-                    objects[0] = null;
+
+                if (player) { player.setLastVerbUsed(verb); };
+
+                return {
+                    category: verbs[verb].category,
+                    originalVerb: inputVerbs[0] || null,
+                    originalInput: input,
+                    action: verb,
+                    adverb: adverb,
+                    subject: objects[0] || null,
+                    object: objects[1] || null,
+                    preposition: preposition || null
                 };
+            } catch (err) {
+                console.error('problem parsing input data: '+input+' : '+err);
+                throw err;              
             };
-
-
-            if (player) { player.setLastVerbUsed(verb); };
-
-            return {
-                category: verbs[verb].category,
-                originalVerb: inputVerbs[0] || null,
-                originalInput: input,
-                action: verb,
-                adverb: adverb,
-                subject: objects[0] || null,
-                object: objects[1] || null,
-                preposition: preposition || null
-            };
-
         };
 
 

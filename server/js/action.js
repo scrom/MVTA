@@ -715,7 +715,6 @@ exports.Action = function Action(player, map, fileManager) {
                         //    description += _player.hit(_verb,_object1,_object0);
                         //};
                         break;
-//////Conversion to new engine reached here
                     case 'move':
                         //"move" may be either navigation or moving an item...
 
@@ -756,6 +755,7 @@ exports.Action = function Action(player, map, fileManager) {
                         _ticks = 1;              
                         description = _player.shove(_verb, _object0);
                         break;
+//////Conversion to new engine reached here
                     case 'pull':
                     case 'drag':
                     case 'tow':

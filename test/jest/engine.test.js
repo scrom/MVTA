@@ -681,3 +681,11 @@ test('test push/shove', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test unimplemented verb', () => {
+    const input = "conjure demon";
+    const expectedResult = "Something bad happened on the server. We've logged it for review. If this happens again, you've probably found a bug. (Thanks for finding it!)"; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});

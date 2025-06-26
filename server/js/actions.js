@@ -24,67 +24,72 @@ module.exports.Actions = function Actions(parser) {
         preposition: preposition || null
   */
         self.processResponse = function (response, player, map, po, time) {
-          if (response) {
-            if (response.includes("$inactive$")) {
-              response = response.replace("$inactive$", "Thanks for playing.<br>There's nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.");
-              return {response: response, time: 0};
+          try {
+            if (response) {
+              if (response.includes("$inactive$")) {
+                response = response.replace("$inactive$", "Thanks for playing.<br>There's nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.");
+                return {response: response, time: 0};
+              };
+              if (response.includes("$dead$")) {
+                response = response.replace("$dead$", "You're dead. Game over.<br>There's nothing more you can do here.<br><br>You either need to <i>quit</i> and restart a game or <i>load</i> a previously saved game.");
+                return {response: response, time: 0};
+              };
             };
-            if (response.includes("$dead$")) {
-              response = response.replace("$dead$", "You're dead. Game over.<br>There's nothing more you can do here.<br><br>You either need to <i>quit</i> and restart a game or <i>load</i> a previously saved game.");
-              return {response: response, time: 0};
+            if (po) {
+              if (po.category != "dialogue") {
+                player.setLastCreatureSpokenTo("");
+              };
+            }
+            if (tools.stringIsEmpty(response)) {
+              return self.null(null, player, map, po);
             };
-          };
-          if (po) {
-            if (po.category != "dialogue") {
-              player.setLastCreatureSpokenTo("");
+            if (response.includes("$fail$")) {
+              response = response.replace("$fail$", "");
+              _failCount++;
+            } else {
+              _failCount = 0;
             };
-          }
-          if (tools.stringIsEmpty(response)) {
-            return self.null(null, player, map, po);
-          };
-          if (response.includes("$fail$")) {
-            response = response.replace("$fail$", "");
-            _failCount++;
-          } else {
-            _failCount = 0;
-          };
 
-          if (response.includes("$result$")) {
-            response = response.replace("$result$", "");
+            if (response.includes("$result$")) {
+              response = response.replace("$result$", "");
+            };
+
+            //if response redirects to another action...
+            if (response.includes("$action$")) {
+              //handle cases where $action does or doesn't have a second $
+              response = response.replace("$action$","$action").trim();
+            };
+            if (response.includes("$action")) {
+              //strip out any instances of $action
+              //we already don't have $result$ so has to be an action already
+              response = response.replace("$action","").trim();
+                    
+              if (response == 'use') {response = 'examine'}; //avoid infinite loop
+
+              let replaceAll = false;
+              //if default action is more than just a single word verb, overwrite the entire original action.
+              if (response.includes(" ")) {
+                replaceAll = true;
+              };    
+                            
+              //replace verb but keep original object
+              return self.reconstructInputAndRecallSelfWithNewVerb(response, player, map, po, replaceAll);  
+            };
+
+            if (response.includes("?")) {
+              parser.setAwaitingPlayerAnswer(true);
+            } else {
+              parser.setAwaitingPlayerAnswer(false);
+            };
+
+            if (time) {time = Math.floor(time * _baseTickSize);}
+            else { time = 0; };
+
+            return {"response": response, "time": time};
+          } catch (err) {
+              console.error('problem processing action: '+response+' : '+po+' : '+err);
+              throw err;              
           };
-
-          //if response redirects to another action...
-          if (response.includes("$action$")) {
-            //handle cases where $action does or doesn't have a second $
-            response = response.replace("$action$","$action").trim();
-          };
-          if (response.includes("$action")) {
-            //strip out any instances of $action
-            //we already don't have $result$ so has to be an action already
-            response = response.replace("$action","").trim();
-                  
-            if (response == 'use') {response = 'examine'}; //avoid infinite loop
-
-            let replaceAll = false;
-            //if default action is more than just a single word verb, overwrite the entire original action.
-            if (response.includes(" ")) {
-              replaceAll = true;
-            };    
-                          
-            //replace verb but keep original object
-            return self.reconstructInputAndRecallSelfWithNewVerb(response, player, map, po, replaceAll);  
-          };
-
-          if (response.includes("?")) {
-            parser.setAwaitingPlayerAnswer(true);
-          } else {
-            parser.setAwaitingPlayerAnswer(false);
-          };
-
-          if (time) {time = Math.floor(time * _baseTickSize);}
-          else { time = 0; };
-
-          return {"response": response, "time": time};
         };
 
         self.reconstructInputAndRecallSelfWithNewVerb = function(verb, player, map, po, replaceAll) {
