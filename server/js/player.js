@@ -4924,15 +4924,19 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             //we use this lots and displayName will change if the weapon is damaged or broken
             var weaponName = weapon.getDisplayName();
 
-            //need to validate that artefact is a weapon (or at least is mobile)
-            //and will do some damage
+            //when the artefact isn't a viable weapon (or is immobile)
             if (!(weapon.isCollectable()) || weapon.getAttackStrength()<1) {
-                resultString = "You attack "+ receiverDisplayName+". Unfortunately ";
-                if (!weapon.isCollectable()) {
-                    resultString += "you can't move "+ weaponName +" to use as a weapon.<br>";
-                } else {
-                    resultString += weaponName +" is useless as a weapon.<br>";
+                if (verb == "throw") {
+                    resultString = "In a display of pointless aggression, you throw "+weaponName+" at "+receiverDisplayName+".<br>"
                     resultString += weapon.bash();
+                } else { 
+                    resultString = "You try to "+verb+" "+ receiverDisplayName+". Unfortunately ";
+                    if (!weapon.isCollectable()) {
+                        resultString += "you can't move "+ weaponName +" to use as a weapon.<br>";
+                    } else {
+                        resultString += weaponName +" isn't really a viable weapon.<br>";
+                        resultString += weapon.bash();
+                    };
                 };
 
                 if (receiver.getType() == "creature") {

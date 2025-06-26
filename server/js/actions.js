@@ -382,7 +382,7 @@ module.exports.Actions = function Actions(parser) {
         };
         self.throw  = function (verb, player, map, po) {
           if (po.preposition === "at" && po.object != null) {
-            return self.processResponse(player.hit(verb, po.subject, po.object), player, map, po ,1);
+            return self.processResponse(player.hit(verb, po.object, po.subject), player, map, po ,1);
           } else if (["in", "into", "in to", "inside", 'onto', 'on to', 'on top of', 'on'].includes(po.preposition) && po.object != null) {
             return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,1);
           } else {

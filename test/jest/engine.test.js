@@ -524,6 +524,17 @@ test('test "feed" verb - sentence structure 3', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
+test('test "throw" verb', () => {
+    const objectJSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object); 
+    const input = "throw ice cream at the wall";
+    const expectedResult = "In a display of pointless aggression, you throw the 99 flake ice cream at the wall.<br>"; 
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+
 test('test "drop" verb', () => {
     const objectJSON  = fm.readFile("artefacts/ice-cream.json"); 
     const object = mb.buildArtefact(objectJSON);
@@ -659,5 +670,3 @@ test('test "take a break"', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
-
-//@todo - handle "have a break" / take a break / take a rest - break as a verb with nothing else == rest
