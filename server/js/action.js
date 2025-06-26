@@ -816,7 +816,6 @@ exports.Action = function Action(player, map, fileManager) {
                         _ticks = 1;
                         description = _player.shake(_verb, _object0);
                         break;
-//////Conversion to new engine reached here
                     case 'nerf':
                     case 'shoot':
                     case 'fire':
@@ -866,6 +865,7 @@ exports.Action = function Action(player, map, fileManager) {
                     case 'sell':
                         description = _player.sell(_verb, _object0, _object1);
                         break;
+//////Conversion to new engine reached here
                     case 'pick':
                         //special case for "pick up"
                         var originalObject0 = _object0;

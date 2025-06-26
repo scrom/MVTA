@@ -519,6 +519,16 @@ module.exports.Actions = function Actions(parser) {
           return self.attack(verb, player, map, po);
         };
 
+        self.pay = function(verb, player, map, po) {
+          return self.processResponse(player.pay(po.originalVerb, po.subject, po.object, map), player, map, po,1);
+        };
+        self.buy = function(verb, player, map, po) {
+          return self.processResponse(player.buy(po.originalVerb, po.subject, po.object), player, map, po,1);
+        };
+        self.sell = function(verb, player, map, po) {
+          return self.processResponse(player.sell(po.originalVerb, po.subject, po.object), player, map, po,1);
+        };
+
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";
           let ticks = 1; //can't completely cheat for free.

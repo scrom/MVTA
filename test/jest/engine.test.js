@@ -788,3 +788,40 @@ test('test attacks - strangle', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
+
+
+test('test pay', () => {
+    const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const input = "pay man for ice cream";
+    const expectedResult = "The ice cream man sells you a 99 flake ice cream.$imageice-cream.jpg/$image"; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test buy', () => {
+    const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const input = "buy ice cream";
+    const expectedResult = "The ice cream man sells you a 99 flake ice cream.$imageice-cream.jpg/$image"; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test sell', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    p0.acceptItem(object2);
+    const input = "sell ice cream to aaron";
+    const expectedResult = "Aaron bought the 99 flake ice cream."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
