@@ -262,6 +262,16 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
           //return dp.parseDialogue(verb, player, map, po);
         };
+      
+        self.ask = function (verb, player, map, po) {
+          let request = po;
+          if (po.object) {
+            request = lp.parseInput(po.object); //re-parse now we have subject and "ask" to find what we're asking for
+          }
+          //if (request.action == "question") {request.action = request.originalVerb};
+          return self.processResponse(player.ask(request.verb, po.subject, request.subject, map), player, map, po, 1);
+          //return dp.parseDialogue(verb, player, map, po);
+        };
               
         self.greet = function (verb, player, map, po) {
           return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);

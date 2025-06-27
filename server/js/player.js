@@ -3175,34 +3175,43 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
             self.setLastCreatureSpokenTo(giverName);
 
-            if (verb == "go") {
-                var resultString = "";
-                for (var g=0;g<givers.length;g++) {
-                    resultString += givers[g].goTo(artefactName, self, map); //artefactName will actually be location name
-                    resultString += "<br>";
-                };
-                if (givers.length==1) {
-                    resultString = resultString.replace(givers[0].getDisplayName(),givers[0].getPrefix());
-                };
-                return resultString;
-            }; 
-            if (verb == "wait") {
-                var resultString = "";
-                for (var g=0;g<givers.length;g++) {
-                    resultString += givers[g].wait(self);
-                    resultString += "<br>";
-                };
-                if (givers.length==1) {
-                    resultString = resultString.replace(givers[0].getDisplayName(),givers[0].getPrefix());
-                };
-                return resultString;
-            };
-            if (verb == "find") {return givers[0].find(artefactName, _aggression, map);};
-            if (verb == "repair" || verb == "fix" || verb == "mend") {return givers[0].repair(artefactName, self, false, map);};
+            let resultString = "";
+            switch (verb) {
+                case "go":
+                    for (let g=0;g<givers.length;g++) {
+                        resultString += givers[g].goTo(artefactName, self, map); //artefactName will actually be location name
+                        resultString += "<br>";
+                    };
+                    if (givers.length==1) {
+                        resultString = resultString.replace(givers[0].getDisplayName(),givers[0].getPrefix());
+                    };
+                    return resultString;
+                    break;
+                case "wait":
+                    for (let g=0;g<givers.length;g++) {
+                        resultString += givers[g].wait(self);
+                        resultString += "<br>";
+                    };
+                    if (givers.length==1) {
+                        resultString = resultString.replace(givers[0].getDisplayName(),givers[0].getPrefix());
+                    };
+                    return resultString;
+                    break;
+                case "find":
+                    return givers[0].find(artefactName, _aggression, map);
+                    break;
+                case "repair":
+                case "fix":
+                case "mend":
+                    return givers[0].repair(artefactName, self, false, map);
+                    break;
+            //@todo if verb == open/unlock 
+            //@todo if verb == give
+            }
 
+            //asking *for* something...
             if (tools.stringIsEmpty(artefactName)){ return verb+" "+givers[0].getDisplayName()+" for what?";};
             
-            //@todo if a particular verb hasn't been handled, it'll be left in the artefactName here - fix this
             var artefact = (getObjectFromLocation(artefactName)||givers[0].getObject(artefactName));
             if (!(artefact)) {
                 //does the creature have dialogue instead?
@@ -3212,15 +3221,11 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 return givers[0].notFoundMessage(artefactName);
             };  
             
-            //@todo if verb == open/unlock 
-            //@todo if verb == give
-
             //we'll only get this far if there is an object to give and a valid receiver - note the object *could* be a live creature!
             if (!(_inventory.canCarry(artefact))) { return tools.initCap(artefact.getDescriptivePrefix())+" too heavy. You may need to get rid of some things you're carrying first.";};
 
             //we know player *can* carry it...
             //if the character can pick it up, they'll take it!
-            var resultString = "";
             if (getObjectFromLocation(artefactName)) {
                 if (!(artefact.isCollectable())) {return  tools.initCap(givers[0].getPrefix())+" can't pick "+artefact.getSuffix()+" up.";};
                 if (!(givers[0].canCarry(artefact))) { return tools.initCap(givers[0].getPrefix())+" can't carry "+artefact.getSuffix()+".";};

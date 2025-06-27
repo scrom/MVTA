@@ -885,3 +885,17 @@ test('test mug', () => {
     console.debug(actualResult);
     expect(expectedResults.includes(actualResult)).toBe(true);
 });
+
+test('test ask', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    p0.acceptItem(object2);
+    const input = "ask aaron to find my ice cream";
+    const expectedResult = ""; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});

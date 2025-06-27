@@ -21,7 +21,7 @@ module.exports.LexerParser = function LexerParser() {
         const modalVerbs = ['can', 'could', 'may', 'might', 'must', 'shall', 'should', 'will', 'would'];
 
         const unhandledWordsAndConjunctions = ['and', 'then', 'than', 'or', 'but', 'because', 'coz','cause','cuz', 'therefore', 'while', 'whilst', 'thing','oh'];
-        const stopWords = ["the", "some", "a", "an", "again"];
+        const stopWords = ["the", "some", "a", "an", "again", "is"];
         const numerals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
         const firstPersonPronouns = ['i', 'me', 'my', 'mine', 'myself', 'we', 'us', 'our', 'ours', 'ourselves'];
         const secondPersonPronouns = ['your', 'yours', 'yourself', 'yourselves'];
@@ -175,6 +175,20 @@ module.exports.LexerParser = function LexerParser() {
                 };
             };
 
+            //now try splitting on conversation chunks...
+            if (objects.length == 1 && !preposition) {
+                //check if we start or end with a number and split that out as subject
+                tokens = rest.split(/\s+/);
+                if (Number.isInteger(Number(tokens[0]))) {
+                    preposition = tokens.shift();
+                    objects[0] = tokens.join(" ");
+                } else if (Number.isInteger(Number(tokens[tokens.length-1]))) {
+                    preposition = tokens.pop();
+                    objects[0] = tokens.join(" ");
+                };
+            };
+
+
             //If current input object is "it", we use the last object instead.
             //work out where last noun will belong 
             for (let n=0;n<objects.length; n++) {
@@ -196,6 +210,75 @@ module.exports.LexerParser = function LexerParser() {
             _preposition = preposition;
             return {objects, preposition};
    
+        };
+
+        self.extractObjectsByRequestStems = function(input) {
+            let objects = [input];
+            let preposition = null;
+            /*
+                \bif\b: matches the word "if" as a whole word (not part of another word)
+                \s+: one or more spaces
+                \w+: one word (the word between "if" and the modal verb)
+                another \s+
+                \b(...): matches one of the modal verbs as a whole word
+                i flag: makes the match case-insensitive
+            */
+            const words = modalVerbs.join("|");
+            const regex = new RegExp(`\\bif\\b\\s+\\w+\\s+\\b(${words})\\b`, "i"); 
+            const match = input.match(regex);
+
+            if (match) {
+            const matchText = match[0];
+            const start = match.index;
+            const end = start + matchText.length;
+
+            const before = input.slice(0, start).trim();
+            const matched = matchText.trim();
+            const after = input.slice(end).trim();
+
+            objects[0] = before;
+            objects[1] = after;
+            preposition = matched;
+            };
+
+            //save values for next call
+            //update stored nouns
+            _nouns = objects;
+            _preposition = preposition;
+            return {objects, preposition};
+        };
+
+        self.extractObjectsByQuestions = function(input) {
+            let objects = [input];
+            let preposition = null;
+            /*
+                \b(...): matches one of the questions as a whole word
+                i flag: makes the match case-insensitive
+            */
+            const allQuestions = questions.concat(moreQuestions);
+            const words = allQuestions.join("|");
+            const regex = new RegExp(`\\b(${words})\\b`, "i");
+            const match = input.match(regex);
+
+            if (match) {
+            const matchText = match[0];
+            const start = match.index;
+            const end = start + matchText.length;
+
+            const before = input.slice(0, start).trim();
+            const matched = matchText.trim();
+            const after = input.slice(end).trim();
+
+            objects[0] = before;
+            objects[1] = after;
+            preposition = matched;
+            };
+
+            //save values for next call
+            //update stored nouns
+            _nouns = objects;
+            _preposition = preposition;
+            return {objects, preposition};
         };
 
         self.removeStopWords = function(input) {
@@ -413,8 +496,21 @@ module.exports.LexerParser = function LexerParser() {
                 };
                 
                 //split what's left by preposition to get objects   
-                const extractedObjectsAndPrepositions = self.extractObjectsAndPrepositions(rest);
-                let { objects, preposition} = extractedObjectsAndPrepositions;
+                let { objects, preposition} = self.extractObjectsAndPrepositions(rest);
+
+                //split by modal verbs
+                if (verb && verbs[verb].category == "dialogue" && objects.length == 1 && !preposition)  {
+                    rest = objects[0];
+                    //attempt dialogue splitting
+                    ({ objects, preposition} =  self.extractObjectsByRequestStems(rest));
+                };
+
+                //split by questions
+                //if (verb && verbs[verb].category == "dialogue" && objects.length == 1 && !preposition)  {
+                //   rest = objects[0];
+                    //attempt dialogue splitting
+                //    ({ objects, preposition} =  self.extractObjectsByQuestions(rest));
+                //};
 
                 if (_inConversation) {
                     objects[0] = input;

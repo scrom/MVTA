@@ -441,7 +441,7 @@
   },
   "ask": {
     "category": "dialogue",
-    "aliases": ["request", "beg"]
+    "aliases": ["request", "beg", "borrow"]
   },
   "question": {
     "category": "dialogue",

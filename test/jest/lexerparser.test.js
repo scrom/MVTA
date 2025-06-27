@@ -1319,3 +1319,73 @@ test('test "take apart"', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+
+test('test ask', () => {
+    const input = "ask adam if he can help me find my magic wand";
+
+    const expectedResult = {
+      "action": "ask",
+      "adverb": null,
+      "category": "dialogue",
+      "object": "help find magic wand",
+      "originalInput": input,
+      "originalVerb": "ask",
+      "preposition": "if he can",
+      "subject": "adam",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('re-parse object part of dialogue', () => {
+    const input = "ask adam if he can help me find my magic wand";
+
+    const expectedResult = {
+      "action": "ask",
+      "adverb": null,
+      "category": "dialogue",
+      "object": "help find magic wand",
+      "originalInput": input,
+      "originalVerb": "ask",
+      "preposition": "if he can",
+      "subject": "adam",
+    };
+    let actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+
+      const secondResult = {
+      "action": "find",
+      "adverb": null,
+      "category": "finding",
+      "object": null,
+      "originalInput": "help find magic wand",
+      "originalVerb": "help",
+      "preposition": null,
+      "subject": "magic wand",
+    };
+
+    actualResult = lp.parseInput(actualResult.object);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(secondResult);
+});
+
+test('test ask', () => {
+    const input = "adam what time";
+
+    const expectedResult = {
+      "action": "question",
+      "adverb": null,
+      "category": "dialogue",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "what",
+      "preposition": null,
+      "subject": "time",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
