@@ -521,6 +521,9 @@ module.exports.Actions = function Actions(parser) {
           else {response = player.eat(po.originalVerb, po.subject);};
           return  self.processResponse(response, player, map, po,1);
         };
+        self.taste = function(verb, player, map, po) {
+          return  self.eat(verb, player, map, po);
+        };   
 
         self.shake = function(verb, player, map, po) {
           return  self.processResponse(player.shake(po.originalVerb, po.subject), player, map, po,1);

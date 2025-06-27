@@ -932,6 +932,18 @@ test('test think', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
+
+test('test taste', () => {
+    const objectJSON  = fm.readFile("artefacts/ice-cream.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "taste ice cream";
+    const expectedResult = "You lick at the ice cream. It's sweet, cold and delicious in a processed artificial non-dairy vanilla flavouring sort of way."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
 test('test ask', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
@@ -945,3 +957,5 @@ test('test ask', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
+
+

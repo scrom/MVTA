@@ -5301,7 +5301,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             };
 
             //don't protect from inedible things!
-            if (artefact.isEdible()) {
+            if (artefact.isEdible() &&  verb != "lick" && verb != "taste") {
                 //allow eating very first item earlier in game.
                 if (_consumedObjects.length > 0) {
                     //can't keep eating to heal in battle - must use medical item - TSE<180 (70% full) and  HP < 95% 
@@ -5317,7 +5317,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             //EAT IT
             var resultString = artefact.eat(verb, self, map, self); //trying to eat some things give interesting results.
             if (artefact.isEdible()) {
-                //consume it
+                //consume it - taste won't have used it up here.
                 if (artefact.chargesRemaining() == 0) {
                     resultString += emptyContentsOfContainer(artefactName);
                     if (artefact.isCollectable()) {
@@ -5325,10 +5325,9 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     };
                 };
 
-                //Issue #564 we should push just one "charge" here - but think this needs a bit of work.
-                _consumedObjects.push(artefact);
-
                 if (verb != "lick" && verb != "taste") {
+                    //Issue #564 we should push just one "charge" here - but think this needs a bit of work.
+                    _consumedObjects.push(artefact);
                     //only resolve hunger if actually eating thing.
                     if (artefact.getSubType() == "meal") {
                         _timeSinceEating = 0;
