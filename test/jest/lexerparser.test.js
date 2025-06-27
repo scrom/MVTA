@@ -246,7 +246,6 @@ test('what happens with another complex sentence?', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('can we handle "all" in a sentence?', () => {
     //parser should treat this as part of subject - game internals will have to translate "all".
     const input = "throw all of the books on the bonfire";
@@ -318,7 +317,6 @@ test('can handle "say"', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('can handle other dialogue words', () => {
     const input = "try really hard to persuade dave to go and get me a bottle of water and pick up some lemonade on the way back"; 
     const expectedResult =  {
@@ -336,7 +334,6 @@ test('can handle other dialogue words', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('can handle "in" as a direction', () => {
     const input = "try to go in the front door and push over the lampshade"; 
     const expectedResult =  {
@@ -353,7 +350,6 @@ test('can handle "in" as a direction', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('what does "it" mean in a follow up sentence - fail case?', () => {
     //when previous sentence has 2 objects we don't know which to choose
@@ -375,7 +371,6 @@ test('what does "it" mean in a follow up sentence - fail case?', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('ensure we dont lose "up"/"down"', () => {
     const input = 'up';
@@ -450,7 +445,6 @@ test('ensure we dont lose "in"/"out"', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('ensure we dont lose "in"/"out"', () => {
     const input = 'go in house';
 
@@ -468,7 +462,6 @@ test('ensure we dont lose "in"/"out"', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('ensure we dont lose "in"/"out"', () => {
     const input = 'in';
@@ -527,7 +520,6 @@ test('what does "it" mean in a follow up sentence - fail case?', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('greetings are regognised and handled', () => {
     const input = "hi there dave how are you today";
 
@@ -545,7 +537,6 @@ test('greetings are regognised and handled', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('greetings are regognised and handled', () => {
     const input = "ahoy";
@@ -583,7 +574,6 @@ test('greetings are regognised and handled', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('greetings are regognised and handled', () => {
     const input = "hiya adam";
 
@@ -601,7 +591,6 @@ test('greetings are regognised and handled', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('greetings are regognised and handled', () => {
     const input = "say ahoy there";
@@ -657,7 +646,6 @@ test('have a... rest regognised and handled', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('put down x', () => {
     const input = "put down bottle";
 
@@ -676,7 +664,6 @@ test('put down x', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('put x down', () => {
     const input = "put bottle down";
 
@@ -694,7 +681,6 @@ test('put x down', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('put x out', () => {
     const input = "put candle out";
@@ -732,7 +718,6 @@ test('put out x', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('put x in y', () => {
     const input = "put candle in bottle";
 
@@ -769,7 +754,6 @@ test('water plants', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('water plants', () => {
     const input = "water plants with gatorade";
 
@@ -787,7 +771,6 @@ test('water plants', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('water plants', () => {
     const input = "water plants with can full of gatorade";
@@ -879,7 +862,6 @@ test('more fun with nouns that are also verbs', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('feeding - x with y', () => {
     const input = "feed cat with cake";
 
@@ -916,7 +898,6 @@ test('feeding - x with y', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('throwing', () => {
     const input = "throw teddybear in to the bin";
 
@@ -934,7 +915,6 @@ test('throwing', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('directions - head west to kitchen', () => {
     const input = "head west to kitchen";
@@ -954,7 +934,6 @@ test('directions - head west to kitchen', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('directions - go north', () => {
     const input = "go north";
 
@@ -973,7 +952,6 @@ test('directions - go north', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('directions - e', () => {
     const input = "e";
 
@@ -991,7 +969,6 @@ test('directions - e', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('directions - up', () => {
     const input = "up";
@@ -1047,7 +1024,6 @@ test('directions - get into car', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('directions - get on car', () => {
     const input = "get on car";
 
@@ -1066,7 +1042,6 @@ test('directions - get on car', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('directions - get off car', () => {
     const input = "get off car";
 
@@ -1084,7 +1059,6 @@ test('directions - get off car', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('directions - get in car', () => {
     const input = "get in car";
@@ -1139,7 +1113,6 @@ test('directions - climb tree', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
-
 
 test('directions - crawl in', () => {
     const input = "crawl in";
@@ -1339,7 +1312,6 @@ test('test "take apart"', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('test ask', () => {
     const input = "ask adam if he can help me find my magic wand";
 
@@ -1403,6 +1375,24 @@ test('test ask', () => {
       "originalVerb": "what",
       "preposition": null,
       "subject": "time",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('test ask', () => {
+    const input = "can I have some ice cream?";
+
+    const expectedResult = {
+      "action": "question",
+      "adverb": null,
+      "category": "dialogue",
+      "object": null,
+      "originalInput": "can i have some ice cream", // we lose the ?
+      "originalVerb": "have",
+      "preposition": null,
+      "subject": "ice cream",
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);
