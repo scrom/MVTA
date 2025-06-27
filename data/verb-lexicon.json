@@ -507,10 +507,6 @@
     "category": "inventory",
     "aliases": ["mug"]
   },
-  "borrow": {
-    "category": "inventory",
-    "aliases": []
-  },
   "equip": {
     "category": "inventory",
     "aliases": []
@@ -623,9 +619,9 @@
     "category": "thinking",
     "aliases": []
   },
-  "decide": {
+  "choose": {
     "category": "thinking",
-    "aliases": []
+    "aliases": ["decide"]
   },
   "remember": {
     "category": "thinking",
@@ -731,10 +727,6 @@
     "category": "ui_navigation",
     "aliases": []
   },
-  "choose": {
-    "category": "ui_navigation",
-    "aliases": []
-  },
   "toggle": {
     "category": "ui_navigation",
     "aliases": []
@@ -816,6 +808,10 @@
     "aliases": []
   },
   "blow": {
+    "category": "manipulation",
+    "aliases": []
+  },
+  "detonate": {
     "category": "manipulation",
     "aliases": []
   },

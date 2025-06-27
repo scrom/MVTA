@@ -383,6 +383,12 @@ module.exports.Actions = function Actions(parser) {
         self.put = function (verb, player, map, po) {
           return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
+        self.pour = function (verb, player, map, po) {
+          return self.put(verb, player, map, po);
+        };
+        self.combine = function (verb, player, map, po) {
+          return self.put(verb, player, map, po);
+        };
         self.hide = function (verb, player, map, po) {
           return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,3);
         };
@@ -632,8 +638,51 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.breakOrDestroy(po.originalVerb, po.subject), player, map, po,1);
         }; 
 
-        self.kill  = function(verb, player, map, po) { 
+        self.kill = function(verb, player, map, po) { 
           return self.processResponse("Much as you may like to believe in instant karma. If you <b>have</b> to kill, you'll need to fight it out yourself.", player, map, po,0);
+        };
+
+        self.read = function(verb, player, map, po) { 
+          return self.processResponse(player.read(po.originalVerb, po.subject,map), player, map, po,7);
+        };
+
+        self.repair = function(verb, player, map, po) { 
+          return self.processResponse(player.repair(po.originalVerb, po.subject), player, map, po,3);
+        };
+
+        self.on = function(verb, player, map, po) { 
+          return self.processResponse("xxx", player, map, po,0);//@todo
+        };
+        self.off = function(verb, player, map, po) { 
+          return self.processResponse("xxx", player, map, po,0); //@todo
+        };
+
+        self.switch = function(verb, player, map, po) { 
+          if (po.preposition == "on") {
+            return self.on(verb, player, map, po);
+          };
+          if (po.preposition == "off") {
+            return self.off(verb, player, map, po);
+          };
+          return self.processResponse(player.turn(po.originalVerb, po.subject,po.preposition), player, map, po,1); //@todo clean up "turn"
+        };
+
+        self.turn = function(verb, player, map, po) { 
+          if (po.preposition == "on") {
+            return self.on(verb, player, map, po);
+          };
+          if (po.preposition == "off") {
+            return self.off(verb, player, map, po);
+          };
+          return self.processResponse(player.turn(po.originalVerb, po.subject,po.preposition), player, map, po,1); //@todo clean up "turn"
+        };
+
+        self.blow = function(verb, player, map, po) { 
+          if (po.preposition == "out") {
+            return self.off(verb, player, map, po);
+          };
+          //blow up/on/over - 
+          return self.processResponse("xxx", player, map, po,0); //@todo 
         };
 
         self.cheatcode = function (verb, player, map, po) {

@@ -1350,6 +1350,7 @@ exports.Action = function Action(player, map, fileManager) {
                             return self.processAction(_actionString);
                         };
                         break;
+///////////////////////////////////////////
                     case 'kiss':
                     case 'smooch':
                     case 'snog':
