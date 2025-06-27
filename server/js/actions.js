@@ -572,6 +572,10 @@ module.exports.Actions = function Actions(parser) {
         self.sell = function(verb, player, map, po) {
           return self.processResponse(player.sell(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
+        self.wave = function(verb, player, map, po) {
+          return self.processResponse(player.wave(po.originalVerb, po.subject, po.object), player, map, po,1);
+        };
+
 
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";

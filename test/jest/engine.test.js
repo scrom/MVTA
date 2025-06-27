@@ -886,6 +886,24 @@ test('test mug', () => {
     expect(expectedResults.includes(actualResult)).toBe(true);
 });
 
+
+test('test wave', () => {
+    let objectJSON  = fm.readFile("artefacts/cup.json"); //just to check we don't get this instead!
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    //objectJSON  = fm.readFile("artefacts/axe.json") //increase our chances of success with a weapon!
+    //const axe = mb.buildArtefact(objectJSON);
+    //p0.acceptItem(axe);
+    objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object2 = mb.buildCreature(objectJSON);
+    object2.go("", l0);
+    const input = "wave cup at aaron";
+    const expectedResult = "You wave the cup at Aaron Prescott. Nothing happens.<br>Your arms get tired and you feel slightly awkward."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
 test('test ask', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
