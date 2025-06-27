@@ -924,6 +924,20 @@ test('test rub', () => {
 });
 
 
+test('test sharpen', () => {
+    let objectJSON  = fm.readFile("artefacts/sword.json");
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    objectJSON  = fm.readFile("artefacts/whetstone.json");
+    const tool = mb.buildArtefact(objectJSON);
+    l0.addObject(tool);
+    const input = "sharpen sword";
+    const expectedResult = "You sharpen the ornamental sword with the whetstone."; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
 test('test think', () => {
     const input = "imagine laying on a sunny beach";
     const expectedResult = "You close your eyes and quietly try to imagine laying on a sunny beach...<br>It doesn't really do anything for you."; 
@@ -931,7 +945,6 @@ test('test think', () => {
     actualResult = actualResult;
     expect(actualResult).toBe(expectedResult);
 });
-
 
 test('test taste', () => {
     const objectJSON  = fm.readFile("artefacts/ice-cream.json"); 
