@@ -924,6 +924,14 @@ test('test rub', () => {
 });
 
 
+test('test think', () => {
+    const input = "imagine laying on a sunny beach";
+    const expectedResult = "You close your eyes and quietly try to imagine laying on a sunny beach...<br>It doesn't really do anything for you."; 
+    let actualResult = engine(input);
+    actualResult = actualResult;
+    expect(actualResult).toBe(expectedResult);
+});
+
 test('test ask', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);

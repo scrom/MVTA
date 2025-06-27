@@ -881,7 +881,6 @@ exports.Action = function Action(player, map, fileManager) {
                         //pick locked item...
                         description = _player.unlock(_verb, _object0);
                         break;
-//////Conversion to new engine reached here 
                     case 'get':
                         _ticks = 1;
                         if (_splitWord == "off") {
@@ -1261,6 +1260,7 @@ exports.Action = function Action(player, map, fileManager) {
                     case 'kill':
                         description = "Much as you may like to believe in instant karma. If you <b>have</b> to kill, you'll need to fight it out yourself."
                         break;
+//////Conversion to new engine reached here 
                     case 'on':
                     case 'off':
                         _ticks = 1;

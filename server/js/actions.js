@@ -262,6 +262,18 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
           //return dp.parseDialogue(verb, player, map, po);
         };
+        self.talk = function (verb, player, map, po) {
+            return self.say(po.originalVerb, player, map, po);
+        };
+        self.reply = function (verb, player, map, po) {
+            return self.say(po.originalVerb, player, map, po);
+        };
+        self.shout = function (verb, player, map, po) {
+            return self.say(po.originalVerb, player, map, po);
+        };
+        self.sing = function (verb, player, map, po) {
+            return self.say(po.originalVerb, player, map, po);
+        };
       
         self.ask = function (verb, player, map, po) {
           let request = po;
@@ -593,9 +605,36 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.rub = function(verb, player, map, po) {
-          return self.processResponse(player.rub(po.originalVerb, po.preposition, po.subject, po.object), player, map, po,1);
+          return self.processResponse(player.rub(po.originalVerb, po.preposition, po.subject, po.object), player, map, po,2);
+        }; 
+        
+        self.think = function(verb, player, map, po) {
+          return self.processResponse(player.think(po.originalVerb, po.preposition, po.subject, po.object, po.originalInput), player, map, po,2);
+        }; 
+        
+        self.imagine = function(verb, player, map, po) {
+          return self.think(verb, player, map, po);
         }; 
 
+        self.unlock = function(verb, player, map, po) {
+          return self.processResponse(player.unlock(po.originalVerb, po.subject), player, map, po,1);
+        }; 
+
+        self.lock = function(verb, player, map, po) {
+          return self.processResponse(player.lock(po.originalVerb, po.subject), player, map, po,1);
+        }; 
+        
+        self.break = function(verb, player, map, po) {
+          return self.processResponse(player.breakOrDestroy(po.originalVerb, po.subject), player, map, po,1);
+        }; 
+                
+        self.destroy = function(verb, player, map, po) {
+          return self.processResponse(player.breakOrDestroy(po.originalVerb, po.subject), player, map, po,1);
+        }; 
+
+        self.kill  = function(verb, player, map, po) { 
+          return self.processResponse("Much as you may like to believe in instant karma. If you <b>have</b> to kill, you'll need to fight it out yourself.", player, map, po,0);
+        };
 
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";
