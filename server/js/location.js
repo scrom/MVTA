@@ -908,6 +908,15 @@ exports.Location = function Location(name, displayName, description, attributes)
             return false;
         };
 
+        self.getCreature = function(aCreatureName) {
+            if (!aCreatureName) {return null;}
+            let creature = self.getObject(aCreatureName);
+                if (creature) { //we have a name match - is it a creature?
+                    if (creature.getType() == 'creature') {return creature;};
+                };
+            return null;
+        };
+
         self.getCreatures = function() {
             return _inventory.getAllObjectsOfType('creature');
         };

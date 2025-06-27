@@ -10,7 +10,7 @@ module.exports.LexerParser = function LexerParser() {
         const fm = new fileManagerModule.FileManager(true, dataFolder);
 
         //grammar dictionary:
-        const salutations = ["hello", "hi", "hey", "hiya", "ahoy", "good morning", "good afternoon", "good evening"];
+        const salutations = ["hello", "yo", "hi", "hey", "heys", "hiya", "ahoy", "good morning", "good afternoon", "good evening"];
         const yesWords = ['y','yes','yup','yeh','yep','aye','yeah', 'yarp','ok','okay','okey','kay','sure','absolutely', 'certainly', 'definitely','exactly', 'indeed', 'right','totally', 'totes', 'true','truth','great','excellent','marvelous','fantastic','affirmed', 'confirmed','confirmation','affirmative'];
         const politeWords = ['please', 'thankyou', "thanks", 'tx', 'thx','thanx','fanks','fanx',"cheers", "sorry", "apologies"];
         const goodbyes  =["bye", "good bye", "goodbye","seeya", "later","laters", "goodnight", "good night"]
@@ -58,20 +58,21 @@ module.exports.LexerParser = function LexerParser() {
         allPrepositions = Array.from(new Set(allPrepositions)); //remove duplicates.
         allPrepositions.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words greatest first
         
-        const verbs = fm.readFile("verb-lexicon.json");  //add  'ignore','blank','squeeze','grasp','clutch','clasp','hold','smoosh', 'smear','squish', 'chirp', 'tweet', 'bark', 'meow', 'moo','growl'
-        const topLevelVerbs = Object.keys(verbs);
+        verbs = fm.readFile("verb-lexicon.json");  //add  'ignore','blank','squeeze','grasp','clutch','clasp','hold','smoosh', 'smear','squish', 'chirp', 'tweet', 'bark', 'meow', 'moo','growl'
+        self.lexicon = verbs;
+        self.topLevelVerbs = Object.keys(verbs);
         const allAliases = [];
-        for (const key of topLevelVerbs) {
+        for (const key of self.topLevelVerbs) {
             const aliases = verbs[key].aliases || [];
             if (aliases.length > 0) {
                 allAliases.push(...aliases);
             };
         };
 
-        let allVerbs = topLevelVerbs.concat(allAliases); //~400 verbs!
-            const emptyValueIndex = allVerbs.indexOf("");
+        self.allVerbs = self.topLevelVerbs.concat(allAliases); //~400 verbs!
+            const emptyValueIndex = self.allVerbs.indexOf("");
             if (emptyValueIndex >-1) {
-                allVerbs.splice(emptyValueIndex,1);
+                self.allVerbs.splice(emptyValueIndex,1);
             };
 
         //action string components
@@ -223,9 +224,15 @@ module.exports.LexerParser = function LexerParser() {
                 \b(...): matches one of the modal verbs as a whole word
                 i flag: makes the match case-insensitive
             */
-            const words = modalVerbs.join("|");
-            const regex = new RegExp(`\\bif\\b\\s+\\w+\\s+\\b(${words})\\b`, "i"); 
-            const match = input.match(regex);
+            let words = modalVerbs.join("|");
+            let regex = new RegExp(`\\bif\\b\\s+\\w+\\s+\\b(${words})\\b`, "i"); 
+            let match = input.match(regex);
+
+            if (!match) {
+                words = "for an|for a";
+                regex = new RegExp(`\\b(${words})\\b`, "i");
+                match = input.match(regex);
+            }
 
             if (match) {
             const matchText = match[0];
@@ -295,7 +302,7 @@ module.exports.LexerParser = function LexerParser() {
             
             //find verbs... allVerbs
             const inputVerbs = tokens.filter(function (value, index, array) {
-                return ((allVerbs.includes(value)))
+                return ((self.allVerbs.includes(value)))
             });
 
             let verbIndex = -1
@@ -426,6 +433,7 @@ module.exports.LexerParser = function LexerParser() {
                     verb = "say";
                     verbInd = -1; //don't trim input
                 };
+
                 if (_inConversation) {
                     //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
                     if (
@@ -474,11 +482,6 @@ module.exports.LexerParser = function LexerParser() {
                                 player.setLastCreatureSpokenTo();
                             };
                         };
-                    };
-
-                    //are we greeting?
-                    if (salutations.some((e) => tokens.includes(e))) { //will only match single words
-                        verb = "say";
                     };
                     
                 };

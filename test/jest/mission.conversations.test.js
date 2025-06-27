@@ -171,7 +171,7 @@ test('test what happens when a creature does not understand a player', () => {
     character.go("",l0); //sets curent location
 
     const result1 = p0.say("talk", "hello", "chris", m0);
-    expect(result1).toEqual(expect.stringContaining("Chris says '"));
+    expect(result1).toEqual(expect.stringContaining("He says '"));
     expect(result1).toEqual(expect.stringContaining("$imagechriswarrington.jpg/$image<br>"));
     
     const actualResult = p0.say("talk", "beady beady boop boop", "chris", m0);

@@ -300,7 +300,7 @@ test('test initate dialogue with "say"', () => {
     const object = mb.buildCreature(objectJSON);
     object.go(null, l0);
     const input = "say hello to aaron";
-    const expectedResult = "Aaron says";
+    const expectedResult = "He says 'H";
     const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
@@ -310,7 +310,7 @@ test('test initate dialogue with salutation to creature', () => {
     const object = mb.buildCreature(objectJSON);
     object.go(null, l0);
     const input = "hiya aaron";
-    const expectedResult = "He says"; //note, prefix is picked up 
+    const expectedResult = "He says 'H"; //note, prefix is picked up 
     const actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
@@ -338,7 +338,7 @@ test('test follow-on dialogue in active conversation with find request', () => {
     object.go(null, l0);
     const firstInput = "say hello to aaron";
 
-    const expecteFirstResult = "Aaron says";
+    const expecteFirstResult = "He says";
     const actualFirstResult = engine(firstInput).substring(0,expecteFirstResult.length);
     expect(actualFirstResult).toBe(expecteFirstResult);
 
@@ -354,7 +354,7 @@ test('test follow-on dialogue in active conversation including other verbs', () 
     object.go(null, l0);
     const firstInput = "say hello to aaron";
 
-    const expectedFirstResult = "Aaron says";
+    const expectedFirstResult = "He says";
     const actualFirstResult = engine(firstInput).substring(0,expectedFirstResult.length);
     expect(actualFirstResult).toBe(expectedFirstResult);
 
@@ -375,7 +375,7 @@ test('test revert to actions from active conversation', () => {
 
     const firstInput = "say hello to aaron";
 
-    const expectedFirstResult = "Aaron says";
+    const expectedFirstResult = "He says";
     const actualFirstResult = engine(firstInput).substring(0,expectedFirstResult.length);
     expect(actualFirstResult).toBe(expectedFirstResult);
 
@@ -607,7 +607,7 @@ test('test "go location"', () => {
     const input = "go to kitchen";
     const expectedResult = "You'll need to explore and find your way there yourself I'm afraid.";
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -615,7 +615,7 @@ test('test "go direction"', () => {
     const input = "go north";
     const expectedResult = "There's no way <i>North</i> from here.";
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -623,7 +623,7 @@ test('test "crawl direction"', () => {
     const input = "crawl up";
     const expectedResult = "You crawl up...<br><br>";
     let actualResult = engine(input).substring(0,expectedResult.length);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -632,7 +632,7 @@ test('test "crawl out"', () => {
     const input = "crawl out";
     const expectedResult = "You crawl up...<br><br>";
     let actualResult = engine(input).substring(0,expectedResult.length);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -640,7 +640,7 @@ test('test "n" direction', () => {
     const input = "n";
     const expectedResult = "There's no way <i>North</i> from here.";
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -648,7 +648,7 @@ test('test "climb in" direction', () => {
     const input = "climb in";
     const expectedResult = "There's no way <i>in</i> from here.";
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -659,7 +659,7 @@ test('test "follow X"', () => {
     const input = "follow aaron";
     const expectedResult = "He's right here."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -667,7 +667,7 @@ test('test "take a break"', () => {
     const input = "take a break";
     const expectedResult = "There's nothing to rest on here."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -678,7 +678,7 @@ test('test push/shove', () => {
     const input = "shove aaron down the stairs";
     const expectedResult = "He really doesn't appreciate being pushed around."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -686,7 +686,7 @@ test('test unimplemented verb', () => {
     const input = "conjure demon";
     const expectedResult = "Something bad happened on the server. We've logged it for review. If this happens again, you've probably found a bug. (Thanks for finding it!)"; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -694,7 +694,7 @@ test('test cheatcodes', () => {
     const input = "+affinity aaron 5";
     const expectedResult = "aaron affinity increased by 5"; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -702,7 +702,7 @@ test('test cheatcodes', () => {
     const input = "+heal aaron 25";
     const expectedResult = "Healed aaron prescott: He's generally the picture of health."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -713,13 +713,13 @@ test('test open', () => {
     const input = "open bag";
     let expectedResult = "You open the giant bag. It contains some coffee beans.$imagecoffeebag.jpg/$image"; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 
     //and again
     expectedResult = "It's already open.$imagecoffeebag.jpg/$image"; 
     actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult); 
 });
 
@@ -730,7 +730,7 @@ test('test close', () => {
     const input = "close bag";
     let expectedResult = "It's not open."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -741,7 +741,7 @@ test('test eat', () => {
     const input = "eat crisps";
     let expectedResult = "You eat a packet of crisps."; 
     let actualResult = engine(input).substring(0,expectedResult.length);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -752,7 +752,7 @@ test('test drink', () => {
     const input = "drink milk";
     let expectedResult = "You drink a serving of milk."; 
     let actualResult = engine(input).substring(0,expectedResult.length);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -763,7 +763,7 @@ test('test shake', () => {
     const input = "shake milk";
     let expectedResult = "You shake the milk. Slosh, splosh, gurgle...<br>... Well, you dind't spill any at least."; 
     let actualResult = engine(input)
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -774,7 +774,7 @@ test('test attacks - hit', () => {
     const input = "hit aaron";
     const expectedResult = "You attempt a bare-knuckle fight with Aaron.<br>He takes exception to your violent conduct.<br>Fortunately for you, you missed. Don't do that again."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -785,7 +785,7 @@ test('test attacks - strangle', () => {
     const input = "strangle aaron";
     const expectedResult = "You reach out to grab Aaron but your feeble hands feel more like a caress.<br>He takes exception to your violent conduct.<br>Fortunately for you, you missed. Don't do that again."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -796,7 +796,7 @@ test('test pay', () => {
     const input = "pay man for ice cream";
     const expectedResult = "The ice cream man sells you a 99 flake ice cream.$imageice-cream.jpg/$image"; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -807,7 +807,7 @@ test('test buy', () => {
     const input = "buy ice cream";
     const expectedResult = "The ice cream man sells you a 99 flake ice cream.$imageice-cream.jpg/$image"; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -821,7 +821,30 @@ test('test sell', () => {
     const input = "sell ice cream to aaron";
     const expectedResult = "Aaron bought the 99 flake ice cream."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test unlock', () => {
+    let objectJSON  = fm.readFile("artefacts/floor-safe.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "unlock safe";
+    const expectedResult = "You need something to unlock it with."; 
+    let actualResult = engine(input);
+    
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test lock', () => {
+    let objectJSON  = fm.readFile("artefacts/floor-safe.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "lock safe";
+    const expectedResult = "It's already locked."; 
+    let actualResult = engine(input);
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -832,7 +855,7 @@ test('test pick', () => {
     const input = "pick safe";
     const expectedResult = "You need something to unlock it with."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -854,7 +877,7 @@ test('test take apart/dismantle', () => {
     const input = "dismantle torch";
     const expectedResult = "You dismantle the emergency torch and retrieve some torch batteries."; 
     let actualResult = engine(input).substring(0,expectedResult.length); //sometimes you accidentally break things!
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -865,7 +888,7 @@ test('test take apart/dismantle', () => {
     const input = "take apart torch";
     const expectedResult = "You dismantle the emergency torch and retrieve some torch batteries."; 
     let actualResult = engine(input).substring(0,expectedResult.length); //sometimes you accidentally break things!
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -897,7 +920,7 @@ test('test wave', () => {
     const input = "wave cup at aaron";
     const expectedResult = "You wave the cup at Aaron Prescott. Nothing happens.<br>Your arms get tired and you feel slightly awkward."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -908,7 +931,7 @@ test('test touch', () => {
     const input = "stroke aaron";
     const expectedResult = "You reach out and stroke Aaron Prescott."; 
     let actualResult = engine(input).substring(0,expectedResult.length);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -919,10 +942,9 @@ test('test rub', () => {
     const input = "polish cup";
     const expectedResult = "You can't find anything to polish the cup with."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
-
 
 test('test sharpen', () => {
     let objectJSON  = fm.readFile("artefacts/sword.json");
@@ -934,7 +956,7 @@ test('test sharpen', () => {
     const input = "sharpen sword";
     const expectedResult = "You sharpen the ornamental sword with the whetstone."; 
     let actualResult = engine(input).substring(0,expectedResult.length);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -942,7 +964,7 @@ test('test think', () => {
     const input = "imagine laying on a sunny beach";
     const expectedResult = "You close your eyes and quietly try to imagine laying on a sunny beach...<br>It doesn't really do anything for you."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -953,22 +975,134 @@ test('test taste', () => {
     const input = "taste ice cream";
     const expectedResult = "You lick at the ice cream. It's sweet, cold and delicious in a processed artificial non-dairy vanilla flavouring sort of way."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
-test('test ask', () => {
+test('test break', () => {
+    let objectJSON  = fm.readFile("artefacts/screen.json");
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "break screen";
+    const expectedResult = "You set to with your bare hands and sheer malicious ingenuity in a bid to cause damage.<br>You broke it!"; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test destroy', () => {
+    let objectJSON  = fm.readFile("artefacts/screen.json");
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "destroy screen";
+    const expectedResult = "You set to with your bare hands and sheer malicious ingenuity in a bid to cause damage.<br>You destroyed it!"; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test kill', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
     object.go("", l0);
-    const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
-    const object2 = mb.buildArtefact(object2JSON);
-    p0.acceptItem(object2);
-    const input = "ask aaron to find my ice cream";
-    const expectedResult = ""; 
+    const input = "kill aaron";
+    const expectedResult = "Much as you may like to believe in instant karma. If you <b>have</b> to kill, you'll need to fight it out yourself."; 
     let actualResult = engine(input);
-    actualResult = actualResult;
+    
     expect(actualResult).toBe(expectedResult);
 });
 
+
+test('test shout', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const input = "shout hello";
+    const expectedResult = "Aaron says 'H"; 
+    let actualResult = engine(input).substring(0,expectedResult.length);;
+    
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test sing', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const input = "sing la lal lalalal";
+    const expectedResult = "It's lovely that you feel the joyful urge to sing. But... ...seriously. Come back when you can hold a tune."; 
+    let actualResult = engine(input);
+    
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test reply outside conversation', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const input = "reply yes of course I can";
+    const expectedResult = "Reply to who??"; 
+    let actualResult = engine(input);
+    
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test reply inside conversation', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    engine("hi aaron");
+    const input = "reply yes of course I can";
+    const expectedResult = "He says 'OK"; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test basic "talk"', () => {
+    const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const input = "talk to man";
+    const expectedResult = "He says 'H"; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test ask for sale item', () => {
+    const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    engine("talk to man");
+    const input = "can I have an ice cream";
+    const expectedResult = "You ask the ice cream man for an ice cream.<br>He says 'You're in luck!' 'I have some for sale right here.'$imageicecreamman.jpg/$image"; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test ask find', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/guitar.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    p0.acceptItem(object2);
+    const input = "ask aaron to find my guitar";
+    const expectedResult = "You're carrying it!$imageaaronprescott.jpg/$image"; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test ask for repair', () => {
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    const object2JSON  = fm.readFile("artefacts/guitar.json"); 
+    const object2 = mb.buildArtefact(object2JSON);
+    p0.acceptItem(object2);
+    const input = "ask aaron to fix my guitar";
+    const expectedResult = "It's not broken or damaged.$imageaaronprescott.jpg/$image"; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
 

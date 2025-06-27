@@ -279,7 +279,7 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
 
             //check if what we're adding will conflict vs combine with existing liquid or powder.
             if (anObject.isLiquid()||anObject.isPowder()) {
-                contents = self.getLiquidOrPowder();
+                let contents = self.getLiquidOrPowder();
                 if (!contents || contents.getName() == anObject.getName()) {
                     return true;
                 };

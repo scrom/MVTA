@@ -775,7 +775,7 @@ exports.Map = function Map() {
                     randomReplies = ["You can't see any " + objectName + " around here.", "There's no sign of any " + objectName + " nearby. You'll probably need to look elsewhere.", "You'll need to try somewhere (or someone) else for that.", "There's no " + objectName + " available here at the moment."];
                 };
             } else {
-                randomReplies = ["'Sorry $player, I can't help you there.'", "'Nope, I've not seen any "+objectName+" around'.'", "'I'm afraid you'll need to hunt that down yourself.'", "'Nope, sorry.'"];
+                randomReplies = ["Sorry $player, I can't help you there.", "I've not seen any "+objectName+" around recently, sorry $player.", "I'm afraid you'll need to hunt that down yourself.", "Nope, sorry."];
             }
             
             var randomIndex = Math.floor(Math.random() * randomReplies.length);

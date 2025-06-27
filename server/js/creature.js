@@ -1657,17 +1657,20 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             };
             var resultString = "";
 
-            if (tools.stringIsEmpty(artefactName)){ return tools.initCap(verb)+" what?"};
+            //creature will reply after this point...
+            var returnImage = tools.imgTag(self);
+
+            if (tools.stringIsEmpty(artefactName)){ return tools.initCap(verb)+" what?"+returnImage};
 
             //if we've come in via dialogue we may need to clean up artefact name...
             var firstWord = artefactName.split(" ")[0];
             var stopWords = ["the", "some", "a", "an", "this", "my", "your"];
             if (stopWords.includes(firstWord)) {
-                artefactName = artefactName.substring(firstWord.length).trim(); //will aso remove the space as zero indexed
+                artefactName = artefactName.substring(firstWord.length).trim(); //will also remove the space as zero indexed
             };
 
             //do this again - just in case!
-            if (tools.stringIsEmpty(artefactName)){ return tools.initCap(verb)+" what?"};
+            if (tools.stringIsEmpty(artefactName)){ return tools.initCap(verb)+" what?"+returnImage};
             
             var localArtefact = false;
             var artefact = getObjectFromSelfPlayerOrLocation(artefactName, player);
@@ -1682,7 +1685,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             };
             
             if (localArtefact) {
-                if (!(artefact.isBroken()) && !(artefact.isDamaged()) && !(artefact.isChewed())) { return tools.initCap(artefact.getDescriptivePrefix()) + " not broken or damaged."; }; //this will catch creatures
+                if (!(artefact.isBroken()) && !(artefact.isDamaged()) && !(artefact.isChewed())) { return tools.initCap(artefact.getDescriptivePrefix()) + " not broken or damaged."+returnImage; }; //this will catch creatures
             };
 
             if (!(self.canRepair(artefact))) {
@@ -1695,7 +1698,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         resultString += "<br>'Have you tried asking "+ recommendedRepairer.getDisplayName() +"?'"
                     };
                 };
-                return resultString;
+                return resultString+returnImage;
             };
             
             var repairCost = artefact.getRepairCost();
@@ -1706,23 +1709,23 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     if (_affinity > 0 && repairCost == 0) {
                         self.setDestination(destination, true);
                         _autoRepair = artefact.getName();
-                        return "'I'll wander over and take a look shortly.'<br>'I'll need your help over there though.'"
+                        return "'I'll wander over and take a look shortly.'<br>'I'll need your help over there though.'"+returnImage
                     } else {
-                        return "'I'm a little busy at the moment, sorry $player.'<br><br>You're pretty certain "+self.getPrefix().toLowerCase()+" <i>could</i> if "+self.getPrefix().toLowerCase()+" really wanted to.<br><i>(Maybe "+self.getPrefix().toLowerCase()+" doesn't think that much of you right now.)</i>";
+                        return "'I'm a little busy at the moment, sorry $player.'<br><br>You're pretty certain "+self.getPrefix().toLowerCase()+" <i>could</i> if "+self.getPrefix().toLowerCase()+" really wanted to.<br><i>(Maybe "+self.getPrefix().toLowerCase()+" doesn't think that much of you right now.)</i>"+returnImage;
                     };
                 };
-                return "'" + notFoundMessage(artefactName) + "'";             
+                return "'" + notFoundMessage(artefactName) + "'"+returnImage;             
             };
             
             //it's nearby and they can repair it...
             
             if (repairCost >0 && !paid) {
-                self.setNextAction(false, "Well, you know where to come if you change your mind."); 
-                self.setNextAction(true, "$action pay "+self.getName()+" to repair "+artefactName); 
-                return "That'll cost you &pound;" + repairCost.toFixed(2) + " are you sure?"
+                self.setNextAction(false, "Well, you know where to come if you change your mind."+returnImage); 
+                self.setNextAction(true, "$action pay "+self.getName()+" to repair "+artefactName+returnImage); 
+                return "That'll cost you &pound;" + repairCost.toFixed(2) + " are you sure?"+returnImage
             };
 
-            return artefact.repair(self);
+            return artefact.repair(self)+returnImage;
 
         };
 
@@ -2911,7 +2914,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             };
         };
 
-        self.find = function(objectName, playerAggression, map) {
+        self.find = function(objectName, playerAggression, map, player) {
             var willFindArtefacts = false;
             if (self.isDead()) {return _genderDescriptivePrefix+" dead. I don't think "+_genderSuffix+" can help you."}; 
             //@todo improve for they/them
@@ -2919,6 +2922,13 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             
             //creature will reply after this point...
             var returnImage = tools.imgTag(self);
+
+            if (player) {
+                let object = player.getObject(objectName);
+                if (object) {return "You're carrying "+object.getSuffix()+"!"+returnImage}
+                object = _currentLocation.getObject(objectName);
+                if (object) {return tools.initCap(object.getDescriptivePrefix())+" right here."+returnImage}
+            };
 
             if (_affinity >= 2) { willFindArtefacts = true };
             //@todo improve for they/them
@@ -3112,7 +3122,9 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 if (_salesInventory.check(keyword)) {
                     var saleItem = _salesInventory.getObject(keyword);
                     //@todo improve for they/them
-                    return tools.initCap(self.getPrefix())+" says 'You're in luck!' 'I have "+saleItem.getSuffix()+" for sale right here.'"+returnImage;
+                    let some = "what you're after"
+                    if (saleItem.willDivide() || saleItem.isPlural()) {some = "some"};
+                    return tools.initCap(self.getPrefix())+" says 'You're in luck!' 'I have "+some+" for sale right here.'"+returnImage;
                 };
 
                 if (keyword == "help") {
@@ -3125,7 +3137,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
 
                 //if high affinity, try to find item for player
                 if (self.getAffinity() >= 2) {
-                    return self.find(keyword, playerAggression, map);
+                    return self.find(keyword, playerAggression, map, player);
                 };
 
                 return tools.initCap(self.getPrefix())+" says '"+notFoundMessage(keyword, map)+"'"+returnImage;
@@ -3170,22 +3182,65 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 return initialReply;
             };
 
+            var replyName = tools.initCap(self.getPrefix());
+            if (player.getLastCreatureSpokenTo() != self.getName()) {
+                replyName = self.getFirstName();
+            };
+
             //_affinity--; (would be good to respond based on positive or hostile words here)
             var response = "";
             var randomReplies;
             var randomIndex;
             if (!(someSpeech)) {someSpeech = "";}; //handle nulls before attempting toLowerCase
-            
+
             //a bit of input cleanup...
             someSpeech = someSpeech.toLowerCase();
             someSpeech = " "+someSpeech+" ";
             someSpeech = someSpeech.replace(" please ","");
             someSpeech = someSpeech.trim();
 
-            switch (someSpeech) {
-                case "seriously":
-                case "whatever":
-                case "dude":
+            //strip out creature name
+            let tokens = someSpeech.split(" ");
+            for (let i=tokens.length-1; i >=0 ;i--) {
+                //work backwards as we may splice...
+                if (_synonyms.includes(tokens[i]) || _name == tokens[i] || _displayName.toLowerCase() == tokens[i]) {
+                    tokens.splice(i,1);
+                };
+            };
+
+            someSpeech = tokens.join(" ");
+            const keywords = {
+            //replace these with arrays from input parser.
+            casual: ["seriously", "whatever", "dude"],
+            greeting: ["hi", "yo", "hello", "ahoy", "hiya", "hey", "morning", "afternoon", "evening", "good morning", "good afternoon", "good evening"],
+            farewell: ["bye", "goodbye", "night", "goodnight", "good night", "good-night"],
+            affirmative: ["ok", "y", "yes", "yeah", "yarp", "yep", "affirmative", "great", "cool", "excellent", "awesome", "affirmatory", "sure", "okay", "no problem", "okey"],
+            negative: ["no", "n", "nah", "nope", "narp", "no thanks", "no ta", "no thank you", "no thankyou", "negative", "negatory"],
+            gratitude: ["thanks", "thankyou", "thank you", "thx", "ta", "cheers"],
+            keyword: [keyword]
+            };
+
+            function getInputCategory(input) {
+                if (keyword) {return "keyword"};
+                if (input == "") {return "greeting"};
+                for (const [category, words] of Object.entries(keywords)) {
+                    for (const word of words) {
+                        const regex = new RegExp(`\\b(${word})\\b`, "i");
+                        const match = input.match(regex);
+                        if (match) {
+                            return category;
+                        };
+                    };
+                };
+                return "";
+            };
+
+            let category = getInputCategory(someSpeech);
+
+            switch (category) {
+                case "keyword":
+                    if (keyword) {break;} //we're here through a mission keyword       
+                case "casual":
                     randomReplies = ["True", "Yep", "Seriously", "Indeed"];
                     if (self.getAffinity() < 1) {
                         randomReplies.push("What-ever");
@@ -3193,22 +3248,11 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         randomReplies.push("Get over it");
                     };
                     randomIndex = Math.floor(Math.random() * randomReplies.length);
-                    response += tools.initCap(self.getFirstName()) + " says '" + randomReplies[randomIndex] + ".'";
-                    break;  
-                case "":
-                    if (keyword) { break; }; //we're here through a mission keyword                  
-                case "hi":
-                case "yo":
-                case "hello":
-                case "ahoy":
-                case "morning":
-                case "afternoon":
-                case "evening":  
-                case "good morning":
-                case "good afternoon":
-                case "good evening":  
-                    randomReplies = ["Hi $player.", "Hey $player.", "Can I help you?", "Hello $player.", "Hello.", "Hi."];
-                    if (self.getAffinity() < 1) {
+                    response += tools.initCap(replyName) + " says '" + randomReplies[randomIndex] + ".'";
+                    break;             
+                case "greeting": 
+                    randomReplies = ["Hi $player.", "Hey $player.", "Hi. Can I help you?", "Hello $player.", "Hello.", "Hi."];
+                    if (self.getAffinity() < 0) {
                         randomReplies.push("Yes, what is it?");
                     };
                     if (self.getAffinity() > 2) {
@@ -3216,14 +3260,9 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         randomReplies.push("Alright $player, how goes?");
                     };                            
                     randomIndex = Math.floor(Math.random() * randomReplies.length);
-                    response += tools.initCap(self.getFirstName())+" says '"+randomReplies[randomIndex]+"'";
+                    response += tools.initCap(replyName)+" says '"+randomReplies[randomIndex]+"'";
                     break;
-                case "bye":
-                case "goodbye":
-                case "night":
-                case "goodnight":
-                case "good night":
-                case "good-night":
+                case "farewell":
                     randomReplies = ["Bye $player", "Goodbye $player", "See you round $player", "See you later", "Take care"];
                     if (self.getAffinity() > 2) {
                         randomReplies.push("Seeya");
@@ -3232,56 +3271,26 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     randomIndex = Math.floor(Math.random() * randomReplies.length);
                     var notSpokenString = "";
                     if (!(_spokenToPlayer)) {
-                       notSpokenString = "<br>"+tools.initCap(self.getFirstName())+" mutters to "+self.getSuffix()+"self. 'Odd, I'm sure we've not actually spoken to each other properly yet.'";
+                       notSpokenString = "<br>"+tools.initCap(replyName)+" mutters to "+self.getSuffix()+"self. 'Odd, I'm sure we've not actually spoken to each other properly yet.'";
                     };
 
                     //note - we exit early - shortcircuit before mission dialogue
-                    return tools.initCap(self.getFirstName())+" says '"+randomReplies[randomIndex]+".'"+notSpokenString;
+                    return tools.initCap(replyName)+" says '"+randomReplies[randomIndex]+".'"+notSpokenString;
                     break;
-                case "ok":
-                case "y":
-                case "yes":
-                case "yeah":
-                case "yarp":
-                case "yep":
                 case "affirmative":
-                case "great":
-                case "cool":
-                case "excellent":
-                case "awesome":
-                case "affirmatory":
-                case "sure":
-                case "okay":
-                case "no problem":
-                case "okey":
-                    randomReplies = ["Great", "OK $player", "OK"];
+                    randomReplies = ["OK, great", "OK $player", "OK"];
                     randomIndex = Math.floor(Math.random() * randomReplies.length);
-                    response += tools.initCap(self.getFirstName())+" says '"+randomReplies[randomIndex]+".'";
+                    response += tools.initCap(replyName)+" says '"+randomReplies[randomIndex]+".'";
                     break;
-                case "no":
-                case "n":
-                case "nah":
-                case "nope":
-                case "narp":
-                case "no thanks":
-                case "no ta":
-                case "no thank you":
-                case "no thankyou":
                 case "negative":
-                case "negatory":
                     randomReplies = ["Maybe another time then", "OK $player", "OK", "Fair enough", "That's fine $player"];
                     randomIndex = Math.floor(Math.random() * randomReplies.length);
-                    response += tools.initCap(self.getFirstName())+" says '"+randomReplies[randomIndex]+".'";
+                    response += tools.initCap(replyName)+" says '"+randomReplies[randomIndex]+".'";
                     break;
-                case "thanks":
-                case "thankyou":
-                case "thank you":
-                case "thx":
-                case "ta":
-                case "cheers":
+                case "gratitude":
                     randomReplies = ["My pleasure", "Happy to help", "Good luck", "No problem $player"];
                     randomIndex = Math.floor(Math.random() * randomReplies.length);
-                    response += tools.initCap(self.getFirstName())+" says '"+randomReplies[randomIndex]+".'";
+                    response += tools.initCap(replyName)+" says '"+randomReplies[randomIndex]+".'";
                     break;
                 default:
                     if (self.syn(someSpeech)) {
@@ -3293,7 +3302,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         if (talkingToOtherObject.getType() == "creature") {
                             return talkingToOtherObject.reply(someSpeech, player, keyword, map);
                         } else {
-                            return tools.initCap(self.getFirstName()) + " says 'Ooh, <i>'"+ someSpeech+"'</i>. Very clever of you'<br>'Now, what did you want?'"
+                            return tools.initCap(replyName) + " says 'Ooh, <i>'"+ someSpeech+"'</i>. Very clever of you'<br>'Now, what did you want?'"
                         };
                     };
                     break;
@@ -3301,7 +3310,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
 
             //if we've not already responded...
             if (response.length == 0) {
-                var firstWord = someSpeech.trim().substring(0, someSpeech.indexOf(" "));
+                var firstWord = someSpeech.split(" ")[0];
                 var remainderString = "";
                 if (firstWord.substr(firstWord.length - 1) == "s") {
                     firstWord = firstWord.substr(0, firstWord.length - 1);

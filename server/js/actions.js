@@ -259,20 +259,23 @@ module.exports.Actions = function Actions(parser) {
         };
       
         self.say = function (verb, player, map, po) {
+          if (lp.topLevelVerbs.includes(po.originalVerb) && lp.lexicon[po.originalVerb].category == "dialogue") {
+            verb = po.originalVerb
+          };
           return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
           //return dp.parseDialogue(verb, player, map, po);
         };
         self.talk = function (verb, player, map, po) {
-            return self.say(po.originalVerb, player, map, po);
+            return self.say(verb, player, map, po);
         };
         self.reply = function (verb, player, map, po) {
-            return self.say(po.originalVerb, player, map, po);
+            return self.say(verb, player, map, po);
         };
         self.shout = function (verb, player, map, po) {
-            return self.say(po.originalVerb, player, map, po);
+            return self.say(verb, player, map, po);
         };
         self.sing = function (verb, player, map, po) {
-            return self.say(po.originalVerb, player, map, po);
+            return self.say(verb, player, map, po);
         };
       
         self.ask = function (verb, player, map, po) {
@@ -281,7 +284,7 @@ module.exports.Actions = function Actions(parser) {
             request = lp.parseInput(po.object); //re-parse now we have subject and "ask" to find what we're asking for
           }
           //if (request.action == "question") {request.action = request.originalVerb};
-          return self.processResponse(player.ask(request.verb, po.subject, request.subject, map), player, map, po, 1);
+          return self.processResponse(player.ask(request.action, po.subject, request.subject, map), player, map, po, 1);
           //return dp.parseDialogue(verb, player, map, po);
         };
               

@@ -2016,7 +2016,7 @@ exports.Action = function Action(player, map, fileManager) {
     }
     catch(err) {
 	    console.error('Unable to create Action object: '+err);
-        throw err;
+        throw new Error(err);
     };	    
 };
 

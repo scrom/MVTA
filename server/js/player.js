@@ -3157,6 +3157,10 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     return tools.initCap(verb)+" <i>who</i> for <i>what</i>?";  
                 };
             };
+            artefactName = " "+artefactName
+            artefactName = artefactName.replace(" for an ", "");
+            artefactName = artefactName.replace(" for a ", "");
+            artefactName = artefactName.trim();
 
             var givers = [];
             if (giverName == "everyone" || giverName == "all") {
@@ -3175,9 +3179,16 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
             self.setLastCreatureSpokenTo(giverName);
 
-            let resultString = "";
+            let resultString = "";          
+            if(["go", "wait", "find", "repair", "fix", "mend" ].includes(verb)) {
+                //if we explicitly handle the verb, remove it from name..
+                artefactName = " "+artefactName
+                artefactName = artefactName.replace(" "+verb+" ", "");
+                artefactName = artefactName.trim();
+            }
             switch (verb) {
                 case "go":
+
                     for (let g=0;g<givers.length;g++) {
                         resultString += givers[g].goTo(artefactName, self, map); //artefactName will actually be location name
                         resultString += "<br>";
@@ -3198,7 +3209,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     return resultString;
                     break;
                 case "find":
-                    return givers[0].find(artefactName, _aggression, map);
+                    return givers[0].find(artefactName, _aggression, map, self);
                     break;
                 case "repair":
                 case "fix":
@@ -3217,6 +3228,11 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 //does the creature have dialogue instead?
                 var creatureResponse = givers[0].replyToKeyword(artefactName, self, map);
                 if (creatureResponse) {return creatureResponse;};
+
+                //do they sell it?
+                if (givers[0].sells(artefactName)) {
+                    return givers[0].sell(artefactName, self);
+                }
 
                 return givers[0].notFoundMessage(artefactName);
             };  
@@ -3239,6 +3255,21 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
         self.say = function(verb, speech, receiverName, map) {
                 //if (tools.stringIsEmpty(speech)){ return verb+" what?";};
+                if (verb == "sing" || verb == "whistle") {
+                    return "It's lovely that you feel the joyful urge to "+verb+". But... ...seriously. Come back when you can hold a tune."
+                };
+                if (verb == "reply") {
+                    if (!_lastCreatureSpokenTo && !receiverName) {
+                        return "Reply to who??"
+                    };
+                    let replyCreature = _currentLocation.getCreature(_lastCreatureSpokenTo)
+                    if(!replyCreature) {
+                        return "They're not here."
+                    } else if (replyCreature.isDead()) {
+                        return replyCreature.getDescriptivePrefix+" dead, $player. No use responding to "+replyCreature.getSuffix()+" now."
+                    };
+                };
+
                 var resultString = "";
                 if (verb == "shout") {
                     self.increaseAggression(1); //we don't like shouty!
@@ -3275,26 +3306,66 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 };
 
                 if (tools.stringIsEmpty(receiverName)) { 
-                    var creatures = _currentLocation.getCreatures();
-                    if (creatures.length == 1) { //if there's only 1 character in the roomm...
-                         receiverName = creatures[0].getName();
-                    } else { //enhance in future to handle when there are 0 vs multiple creatures here more interestingly
-                        return "'" + speech + "'" + "<br>" + resultString;     
-                    };                    
-                };
+                    let creatures = _currentLocation.getCreatures();
+                    let found = false;
+                    //can we determine receiver from speech?
+                    
+                    for (c=0; c<creatures.length;c++) {
+                        let names = [creatures[c].getName(), creatures[c].getDisplayName().toLowerCase()].concat(creatures[c].getSyns());
+                        names.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words - greatest first
+                        for (n=0; n<names.length; n++) {
+                            if (speech.includes(names[n])) {
+                                receiverName = creatures[c].getName();
+                                receiver = creatures[c];
+                                //strip out creature name
+                                speech = speech.replace(names[n], "");
+                                _lastCreatureSpokenTo = receiverName; //we use this in creature
+                                found = true;
+                                break;
+                            };
+                        };
+                        if (found) {break;}
+                    };
 
-                //get receiver if it exists
-                var receiver = getObjectFromPlayerOrLocation(receiverName);
+                    if (creatures.length == 1) {
+                        //there's only 1 creature to speak to and we didn't name them.
+                        //we don't tag that we've explicitly spoken to them yet though.
+                        receiverName = creatures[0].getName();
+                        receiver = creatures[0];
+                    };
+                };
+                
+                //not found who to speak to...
+                if (tools.stringIsEmpty(receiverName)) {
+                    return "'" + speech + "'" + "<br>" + resultString;     
+                };                    
+
+                //get receiver if it exists and we haven't already fetched them.
+                if (!(receiver)) {
+                    var receiver = getObjectFromPlayerOrLocation(receiverName);
+                    if (receiver) {
+                        if (receiver.getType() == "creature") {
+                            receiverName = receiver.getName();
+                            _lastCreatureSpokenTo = receiverName;
+
+                        }
+                    };
+                };
                 if (!(receiver)) {return notFoundMessage(receiverName);};
 
                 //we'll only get this far if there is a valid receiver
-                self.setLastCreatureSpokenTo(receiver.getName());
                 if (verb == "shout" && (tools.stringIsEmpty(speech) || speech == "!")) {return "I suggest you speak nicely to "+receiver.getSuffix()+" if you want something.";};
 
                 var hasSpokenBefore = receiver.hasSpoken();
+                speech = " "+speech+" ";
+                speech = speech.replace(" "+verb+" ", "");
+                speech = speech.trim();
                 resultString += receiver.reply(speech, self, null, map);
                 var hasSpokenAfter = receiver.hasSpoken();
-                if (!(hasSpokenBefore) && hasSpokenAfter) {_creaturesSpokenTo ++;};
+                if (!(hasSpokenBefore) && hasSpokenAfter) {
+                    _creaturesSpokenTo ++;
+                };
+                self.setLastCreatureSpokenTo(receiver.getName());
                 return resultString;
         };
         

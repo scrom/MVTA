@@ -585,6 +585,25 @@ test('greetings are regognised and handled', () => {
 
 
 test('greetings are regognised and handled', () => {
+    const input = "hiya adam";
+
+    const expectedResult = {
+      "action": "say",
+      "adverb": null,
+      "category": "dialogue",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "hiya",
+      "preposition": null,
+      "subject": "hiya adam",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('greetings are regognised and handled', () => {
     const input = "say ahoy there";
 
     const expectedResult = {
