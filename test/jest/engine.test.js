@@ -1106,3 +1106,22 @@ test('test ask for repair', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
+test('test read', () => {
+    const objectJSON  = fm.readFile("artefacts/coffee-machine-manual.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "read manual";
+    const expectedResult = "You read the maintenance manual for the coffee machines.<br>Blah blah blah wiring blah <i>lock</i>s blah coffee blah <i>beans</i> blah <i>milk</i> blah.<br><br> If something is broken and you have the right tools and/or skills you can try <i>repair</i>ing it.<br>Just don't go overboard and <i>destroy</i> anything you need and don't get caught <i>break</i>ing stuff deliberately.<br><br>You've learned how to repair a coffee machine. That might be handy.<br>"; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test repair', () => {
+    const objectJSON  = fm.readFile("artefacts/guitar.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "fix my guitar";
+    const expectedResult = "It's not broken or damaged."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
