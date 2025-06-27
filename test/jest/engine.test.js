@@ -1125,3 +1125,76 @@ test('test repair', () => {
     let actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test turning on torch', () => {
+    const objectJSON  = fm.readFile("artefacts/torch.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "on torch";
+    const expectedResult = "You turn the emergency torch on."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test extinguish torch', () => {
+    const objectJSON  = fm.readFile("artefacts/torch.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "extinguish torch";
+    const expectedResult = "It's already off."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test lighting candle (without lighter)', () => {
+    const objectJSON  = fm.readFile("artefacts/candle.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "light candle";
+    const expectedResult = "You don't have anything to light it with."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test lighting candle (with lighter)', () => {
+    let objectJSON  = fm.readFile("artefacts/candle.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    objectJSON  = fm.readFile("artefacts/lighter.json"); 
+    const object2 = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object2);
+    const input = "light candle";
+    const expectedResult = "You light the candle with your lighter."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test blowing out candle', () => {
+    let objectJSON  = fm.readFile("artefacts/candle.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "blow candle out";
+    const expectedResult = "It's not lit."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test turning item over', () => {
+    let objectJSON  = fm.readFile("artefacts/hookah.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "turn hookah over";
+    const expectedResult = "You attempt to turn the ornate hookah pipe over. Nothing of interest happens."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test turning wrong item off', () => {
+    let objectJSON  = fm.readFile("artefacts/hookah.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    p0.acceptItem(object);
+    const input = "switch off hookah";
+    const expectedResult = "There's no obvious way for you to switch it off."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});

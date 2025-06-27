@@ -30,16 +30,16 @@
     ]
   },
   "on": {
-    "category": "item_use",
+    "category": "manipulation",
     "aliases": ["start", "light", "ignite", "onto", "on to", "on top of"]
   },
   "off": {
-    "category": "item_use",
+    "category": "manipulation",
     "aliases": ["stop", "unlight", "extinguish", "offof", "off of"]
   },
   "switch": {
-    "category": "item_use",
-    "aliases": []
+    "category": "manipulation",
+    "aliases": ["swap"]
   },
   "turn": {
     "category": "manipulation",

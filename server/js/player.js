@@ -3423,6 +3423,29 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             return resultString;
         };
 
+        self.onOff = function(verb, onOff, artefactName) {
+            //note artefact could be a creature!
+            if (tools.stringIsEmpty(artefactName)){ return tools.initCap(verb)+" what?";};
+
+            var artefact = getObjectFromPlayerOrLocation(artefactName);
+            if (!(artefact)) {
+                return notFoundMessage(artefactName);
+            };
+
+            if (artefact.checkCustomAction(verb)) {
+                return self.customAction(verb, artefactName);
+            };
+                
+            if (artefact.isSwitched() || artefact.isPoweredOn()) {
+                return artefact.switchOnOrOff(verb, onOff);  
+            };
+            if (artefact.isFlammable() || artefact.isExplosive()) {
+                return self.ignite(verb, onOff, artefact);
+            };
+
+            return "There's no obvious way for you to "+verb+" "+artefact.getSuffix()+" "+onOff+".";
+        };
+
         self.turn = function(verb, artefactName, action) {
             //note artefact could be a creature!
             if (tools.stringIsEmpty(artefactName)){ return tools.initCap(verb)+" what?";};

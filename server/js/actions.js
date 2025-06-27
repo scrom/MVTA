@@ -657,10 +657,12 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.on = function(verb, player, map, po) { 
-          return self.processResponse("xxx", player, map, po,0);//@todo
+          if (po.originalVerb == "on") {po.originalVerb = "turn"};
+          return self.processResponse(player.onOff(po.originalVerb, "on", po.subject), player, map, po,0);//@todo
         };
         self.off = function(verb, player, map, po) { 
-          return self.processResponse("xxx", player, map, po,0); //@todo
+          if (po.originalVerb == "off") {po.originalVerb = "turn"};
+          return self.processResponse(player.onOff(po.originalVerb, "off", po.subject), player, map, po,0); //@todo
         };
 
         self.switch = function(verb, player, map, po) { 

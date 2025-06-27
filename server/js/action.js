@@ -1260,7 +1260,6 @@ exports.Action = function Action(player, map, fileManager) {
                     case 'kill':
                         description = "Much as you may like to believe in instant karma. If you <b>have</b> to kill, you'll need to fight it out yourself."
                         break;
-//////Conversion to new engine reached here 
                     case 'on':
                     case 'off':
                         _ticks = 1;
@@ -1350,7 +1349,7 @@ exports.Action = function Action(player, map, fileManager) {
                             return self.processAction(_actionString);
                         };
                         break;
-///////////////////////////////////////////
+////////Conversion to new engine reached here////////////
                     case 'kiss':
                     case 'smooch':
                     case 'snog':
