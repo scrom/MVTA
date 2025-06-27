@@ -2227,7 +2227,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             var randomInt = Math.floor(Math.random() * 3);
                             if (randomInt == 0) {
                                 exit = exits[0];
-                                escapes = " pushes past you and ";
+                                escapes = " pushes past you and";
                             };
                         };
                     } else {

@@ -1822,7 +1822,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             return resultString + shakeResult;
         };
 
-        self.touch = function(verb, firstArtefactName) {
+        self.touch = function(verb, firstArtefactName, secondArtefactName) {
             // if only one artefact - return touch attribute if an artefact, a dead creature, or a high affinity NPC
             // eventually add support for secondArtefact - we're touching something with something else - will need specific handling for that. (e.g. touching wire to battery, touching sword with wand)
             //touch & feel are fairly innocuous.

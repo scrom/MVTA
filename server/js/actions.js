@@ -576,6 +576,26 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.wave(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
 
+        self.touch = function(verb, player, map, po) {
+          return self.processResponse(player.touch(po.originalVerb, po.subject, po.object), player, map, po,1);
+        };          
+        self.pat = function(verb, player, map, po) {   
+          return self.touch(verb, player, map, po);
+        };
+        self.stroke = function(verb, player, map, po) {   
+          return self.touch(verb, player, map, po);      
+        };
+        self.hug = function(verb, player, map, po) {   
+          return self.touch(verb, player, map, po);      
+        };
+        self.snuggle = function(verb, player, map, po) {   
+          return self.touch(verb, player, map, po);      
+        };
+
+        self.rub = function(verb, player, map, po) {
+          return self.processResponse(player.rub(po.originalVerb, po.preposition, po.subject, po.object), player, map, po,1);
+        }; 
+
 
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";
