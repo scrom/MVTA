@@ -283,6 +283,11 @@ exports.Creature = function Creature(name, description, detailedDescription, att
 
         processGender();
 
+        // they/them/his/hers handling
+        const s = (self.getPrefix() == "They") ? "" : "s";
+        const dont = (self.getPrefix() == "They") ? "don't" : "doesn't";
+        const have = (self.getPrefix() == "They") ? "have" : "has";
+
         //return right prefix for item       
         self.descriptionWithCorrectPrefix = function (anItemDescription, plural) {
             if (!anItemDescription) {
@@ -1011,12 +1016,11 @@ exports.Creature = function Creature(name, description, detailedDescription, att
 
         self.getAffinityDescription = function() {
             if (self.isDead()) {return ""};
-            //@todo - improve this for they/them 
-            if (_affinity >5) {return "<br>" + _genderPrefix+" really likes you."};
-            if (_affinity >0) {return "<br>" + _genderPrefix+" seems to like you."};
-            if (_affinity <-5) {return "<br>" + _genderPrefix+" really doesn't like you."};        
-            if (_affinity <-2) {return "<br>" + _genderPrefix+" doesn't like you much."};
-            if (_affinity <0) {return "<br>" + _genderPrefix+" seems wary of you."};
+            if (_affinity >5) {return "<br>" + _genderPrefix+" really like"+s+" you."};
+            if (_affinity >0) {return "<br>" + _genderPrefix+" seem"+s+" to like you."};
+            if (_affinity <-5) {return "<br>" + _genderPrefix+" really "+dont+" like you."};        
+            if (_affinity <-2) {return "<br>" + _genderPrefix+" "+dont+" like you much."};
+            if (_affinity <0) {return "<br>" + _genderPrefix+" seem"+s+" wary of you."};
             return ""; //neutral
         };
 
@@ -1371,8 +1375,8 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 };
                 resultString += " if you <i>ask</i> "+_genderSuffix+" nicely.<br>"; 
             };
-            //@todo - improve for they/them
-            if (_salesInventory.size() == 1) { resultString += "<br>" + _genderPrefix + " has " + _salesInventory.describe('price')+" for sale.<br>"; }
+
+            if (_salesInventory.size() == 1) { resultString += "<br>" + _genderPrefix + " "+have+" " + _salesInventory.describe('price')+" for sale.<br>"; }
             else if (_salesInventory.size() > 1) { resultString += "<br>" + tools.initCap(_genderDescriptivePrefix) + " offering some items for sale:<br>" + _salesInventory.describe('price'); };
             
             var wantsToTalk = false;
@@ -1383,8 +1387,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 };
             };
             if (wantsToTalk) {
-                //@todo improve for they/them
-                if (((_affinity <0) && (playerAggression>0))|| (_affinity <-1)) {resultString +="<br>"+_genderPrefix+" appears to have something on "+_genderPossessiveSuffix+" mind but doesn't trust you enough to talk about it right now.";}
+                if (((_affinity <0) && (playerAggression>0))|| (_affinity <-1)) {resultString +="<br>"+_genderPrefix+" appear"+s+" to "+have+" something on "+_genderPossessiveSuffix+" mind but "+dont+" trust you enough to talk about it right now.";}
                 else { resultString +="<br>"+_genderPrefix+" wants to <i>talk</i> to you about something.";};
             };
 
@@ -1544,8 +1547,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             if (self.getSubType() != "animal" || _affinity <0) {
                 if (_affinity >=-1) {
                     self.decreaseAffinity(1);
-                    //@todo improve for they/them
-                    return _genderPrefix+" really doesn't appreciate it. I recommend you stop now.";
+                    return _genderPrefix+" really "+dont+" appreciate it. I recommend you stop now.";
                 } else { 
                     self.decreaseAffinity(1);
                     return "Seriously. Stop that!";
@@ -1554,8 +1556,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             //only get here if a friendly or neutral animal
             if (_affinity < 5) {
                 self.increaseAffinity(1);
-                //@todo improve for they/them
-                return _genderPrefix+" makes happy purring and snuffling noises at you.<br>"+_genderPrefix+" seems to like that.";
+                return _genderPrefix+" make"+s+" happy purring and snuffling noises at you.<br>"+_genderPrefix+" seem"+s+" to like that.";
             };
             if (_affinity == 5) {
                 self.increaseAffinity(1);
@@ -1568,8 +1569,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 return _genderDescriptivePrefix+" getting bored now. It's probably time to stop before you get bitten or scratched.";
             } else {
                 self.decreaseAffinity(_affinity-1);      
-                //@todo improve for they/them   
-                return _genderDescriptivePrefix+" growls and lashes out at you. That's the fickle nature of animals, right?";
+                return _genderDescriptivePrefix+" growl"+s+" and lashes out at you. That's the fickle nature of animals, right?";
             };
 
         };
@@ -1584,7 +1584,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 if (_affinity >= -1) {
                     self.decreaseAffinity(1);
                     //@todo improve for they/them
-                    return _genderPrefix + " really doesn't appreciate it. I recommend you stop now.";
+                    return _genderPrefix + " really "+dont+" appreciate it. I recommend you stop now.";
                 } else {
                     self.decreaseAffinity(1);
                     return "Seriously. Stop that!";
@@ -1593,7 +1593,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             //only get here if an animal
             self.decreaseAffinity(_affinity - 1);
             //@todo improve for they/them
-            return "I'm pretty sure that counts as animal cruelty. "+_genderPrefix + " growls and lashes out at you.";
+            return "I'm pretty sure that counts as animal cruelty. "+_genderPrefix + " growl"+s+" and lashes out at you.";
 
         };
 
@@ -3321,6 +3321,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     remainderString = someSpeech.substring(someSpeech.indexOf(" ")).trim();
                 };
                 var stringStartsWith = function(string, startsWith) {
+                    string = string;
                     return string.indexOf(startsWith) == 0;
                 };
                 var artefactName = remainderString;
@@ -3335,9 +3336,9 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 artefactName = artefactName.replace(" here ", " ");
                 artefactName = artefactName.trim();
                 
-                if (stringStartsWith(remainderString, "you ")) {
-                    remainderString = remainderString.replace("you ", "");
-                };
+                remainderString = remainderString.replace(/\byou\b/, "");
+                remainderString = remainderString.replace(/\bi\b/, "");
+                remainderString = remainderString.trim();
 
                 switch (firstWord) {
                     case "":
@@ -3384,20 +3385,20 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         };
                         if (stringStartsWith(remainderString, "give ") || stringStartsWith(remainderString, "i have ") || stringStartsWith(remainderString, "tell ")) {
                             var artefactName = remainderString;
-                            artefactName = artefactName.replace("give ", "to give ");
-                            artefactName = artefactName.replace("your ", _genderPossessiveSuffix+" ");
-                            artefactName = artefactName.replace( "me ", "you ");
-                            artefactName = artefactName.replace("tell ", "to ");
-                            artefactName = artefactName.replace("i have ", "for ");
+                            artefactName = artefactName.replace(/\bgive\b/, "to give");
+                            artefactName = artefactName.replace(/\byour\b/, _genderPossessiveSuffix);
+                            artefactName = artefactName.replace(/\bme\b/, "you");
+                            artefactName = artefactName.replace(/\btell\b/, "to");
+                            artefactName = artefactName.replace(/\bi have\b/, "for");
                             artefactName = artefactName.trim();
                             //@todo trap "can you give x to y" here in future.
                             return "You ask " + self.getFirstName() +" "+ artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
                         };
                         if (stringStartsWith(remainderString, "fix ") || stringStartsWith(remainderString, "mend ") || stringStartsWith(remainderString, "repair ")) {
                             var artefactName = remainderString;
-                            artefactName = artefactName.replace("fix ", " ");
-                            artefactName = artefactName.replace("repair ", " ");
-                            artefactName = artefactName.replace("mend ", " ");
+                            artefactName = artefactName.replace(/\bfix\b/, "");
+                            artefactName = artefactName.replace(/\brepair\b/, "");
+                            artefactName = artefactName.replace(/\bmend\b/, "");
                             artefactName = artefactName.trim();
                             //@todo trap "can you give x to y" here in future.
                             return "You ask " + self.getFirstName() + " to repair " + artefactName + ".<br>" + player.ask("repair", self.getName(), artefactName, map);
@@ -3408,7 +3409,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         };
                         if (stringStartsWith(remainderString, "go ")) {
                             var artefactName = remainderString;
-                            artefactName = artefactName.replace("go ", " ");
+                            artefactName = artefactName.replace(/\bgo\b/, "");
                             artefactName = artefactName.replace(" to ", " ");
                             artefactName = artefactName.replace(" the ", " ");
                             artefactName = artefactName.trim();
@@ -3421,24 +3422,24 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             break;
                         };
                     case 'why'://is/are/do
-                        if ((!(remainderString == remainderString.replace(" you", ""))) || remainderString == "that" || remainderString == "is that") {
+                        if ((!(remainderString == remainderString.replace(/\b you\b/, ""))) || remainderString == "that" || remainderString == "is that") {
                             return tools.initCap(self.getFirstName()) + " says 'Well, it's just a thing, you know.'";
                         };
 
                     case 'who': //is/are [character]
                     case 'what': //is/are/can (see can) [object]
-                        if (!(remainderString == remainderString.replace(" you do", ""))) {
+                        if (!(remainderString == remainderString.replace(/\b you do\b/, ""))) {
                             return tools.initCap(self.getFirstName()) + " says 'I'm just doing stuff, being busy, that kinda thing.'<br>'How about you?'";
-                        } else if (!(remainderString == remainderString.replace(" you", ""))) {
+                        } else if (!(remainderString == remainderString.replace(/\b you\b/, ""))) {
                             return tools.initCap(self.getFirstName()) + " says 'I'm "+self.getFirstName()+".'<br>'Is there anything you need?'";
                         };
                     case 'when'://is/are/can (see can)/will [event happen][character arrive be at x]
-                        if (!(remainderString == remainderString.replace(" you", ""))) {
+                        if (!(remainderString == remainderString.replace(/\b you\b/, ""))) {
                             return tools.initCap(self.getFirstName()) + " says 'I'll be around somewhere.'";
                         };
                     case 'how'://is/are/can/will/many/much/about
                         if (stringStartsWith(remainderString, "is ") || stringStartsWith(remainderString, "are ")) {
-                            if (remainderString == remainderString.replace(" you", "")) {
+                            if (remainderString == remainderString.replace(/\b you\b/, "")) {
                                 return tools.initCap(self.getFirstName()) + " says 'Good question.'<br>'I'd love to help you but I'm afraid I just don't know.'<br>'You'll need to work it out yourself.'";
                             } else {
                                 return tools.initCap(self.getFirstName()) + " says 'I'm good thanks.'";
@@ -3454,50 +3455,56 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     case 'do'://you/i think/know/want ??
                         if (stringStartsWith(remainderString, "have ")) {
                             var artefactName = remainderString;
-                            artefactName = artefactName.replace("have ", " ");
+                            artefactName = artefactName.replace(/\bhave\b/, "");
                             artefactName = artefactName.trim();
-                            return "You ask " + self.getFirstName() + " for " + artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
+                            
+                            let ifFor = "if "+self.getPrefix().toLowerCase()+" "+have;
+                            artefactFirstWord = artefactName.split(" ")[0];
+                            if (["a", "an", "some"].includes(artefactFirstWord)) {
+                                ifFor = "for"
+                            };
+                            return "You ask " + self.getFirstName() + " "+ifFor+" " + artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
                         };
                         if (stringStartsWith(remainderString, "know where ")) {
                             var artefactName = remainderString;
-                            artefactName = artefactName.replace("know where ", "");
+                            artefactName = artefactName.replace(/\bknow where \b/, "");
                             artefactName = artefactName.trim();
                             if (stringStartsWith(artefactName, "the ")) {
-                                artefactName = artefactName.replace("the ", "");
+                                artefactName = artefactName.replace(/\bthe \b/, "");
                             };
                             if (stringStartsWith(artefactName, "i can find ")) {
-                                artefactName = artefactName.replace("i can find ", "");
+                                artefactName = artefactName.replace(/\bi can find \b/, "");
                             };
                             if (stringStartsWith(artefactName, "i might find ")) {
-                                artefactName = artefactName.replace("i might find ", "");
+                                artefactName = artefactName.replace(/\bi might find \b/, "");
                             };
                             if (stringStartsWith(artefactName, "theres ")) {
-                                artefactName = artefactName.replace("theres ", "");
+                                artefactName = artefactName.replace(/\btheres \b/, "");
                             };
                             if (stringStartsWith(artefactName, "some ")) {
-                                artefactName = artefactName.replace("some ", "");
+                                artefactName = artefactName.replace(/\bsome \b/, "");
                             };
                             if (stringStartsWith(artefactName, "any ")) {
-                                artefactName = artefactName.replace("any ", "");
+                                artefactName = artefactName.replace(/\bany \b/, "");
                             };
                             artefactName = artefactName.trim();
                             if (artefactName.substr(-3) == " is") {
-                                artefactName = artefactName.replace(" is", "");
+                                artefactName = artefactName.replace(/\b is\b/, "");
                             };
                             if (artefactName.substr(-4) == " are") {
-                                artefactName = artefactName.replace(" are", "");
+                                artefactName = artefactName.replace(/\b are\b/, "");
                             };
                             if (artefactName.substr(-7) == " may be") {
-                                artefactName = artefactName.replace(" may be", "");
+                                artefactName = artefactName.replace(/\b may be\b/, "");
                             };
                             if (artefactName.substr(-8) == " will be") {
-                                artefactName = artefactName.replace(" will be", "");
+                                artefactName = artefactName.replace(/\b will be\b/, "");
                             };
                             if (artefactName.substr(-9) == " could be") {
-                                artefactName = artefactName.replace(" could be", "");
+                                artefactName = artefactName.replace(/\b could be\b/, "");
                             };
                             if (artefactName.substr(-9) == " might be") {
-                                artefactName = artefactName.replace(" might be", "");
+                                artefactName = artefactName.replace(/\b might be\b/, "");
                             };
 
                             return "You ask " + self.getFirstName() + " to find " + artefactName + ".<br>" + player.ask("find", self.getName(), artefactName, map);
@@ -3508,10 +3515,10 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         //handle "a", "some"
                         if (stringStartsWith(remainderString, "a ") || stringStartsWith(remainderString, "some ") || stringStartsWith(remainderString, "the ") || stringStartsWith(remainderString, "this ")) {
                             var artefactName = remainderString;
-                            artefactName = artefactName.replace("a ", " ");
-                            artefactName = artefactName.replace("some ", " ");
-                            artefactName = artefactName.replace("the ", " ");
-                            artefactName = artefactName.replace("this ", " ");
+                            artefactName = artefactName.replace(/\ba \b/, " ");
+                            artefactName = artefactName.replace(/\bsome \b/, " ");
+                            artefactName = artefactName.replace(/\bthe \b/, " ");
+                            artefactName = artefactName.replace(/\bthis \b/, " ");
                             artefactName = artefactName.trim();
                             return player.give("offer", artefactName, "to", self.getName());
                         };

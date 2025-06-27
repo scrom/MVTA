@@ -3158,8 +3158,14 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 };
             };
             artefactName = " "+artefactName
+            artefactName = artefactName.replace(" for some ", "");
             artefactName = artefactName.replace(" for an ", "");
             artefactName = artefactName.replace(" for a ", "");
+            artefactName = artefactName.replace(" a ", " ");
+            artefactName = artefactName.replace(" an ", " ");
+            artefactName = artefactName.replace(" some ", " ");
+            artefactName = artefactName.replace(" any ", " ");
+
             artefactName = artefactName.trim();
 
             var givers = [];

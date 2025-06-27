@@ -1086,7 +1086,18 @@ test('test ask for sale item', () => {
     object.go("", l0);
     engine("talk to man");
     const input = "can I have some ice cream";
-    const expectedResult = "You ask the ice cream man for an ice cream.<br>He says 'You're in luck!' 'I have some for sale right here.'$imageicecreamman.jpg/$image"; 
+    const expectedResult = "You ask the ice cream man for some ice cream.<br>He says 'You're in luck!' 'I have some for sale right here.'$imageicecreamman.jpg/$image"; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test ask for sale item', () => {
+    const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go("", l0);
+    engine("talk to man");
+    const input = "do you have any ice cream";
+    const expectedResult = "You ask the ice cream man if he has any ice cream.<br>He says 'You're in luck!' 'I have some for sale right here.'$imageicecreamman.jpg/$image"; 
     let actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
