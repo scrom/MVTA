@@ -699,7 +699,7 @@ module.exports.Actions = function Actions(parser) {
             return self.off(verb, player, map, po);
           };
           //blow up/on/over - 
-          return self.processResponse("xxx", player, map, po,0); //@todo 
+          return self.processResponse("$fail$Blow not yet fully implemented", player, map, po,0); //@todo 
         };
 
         self.jump = function(verb, player, map, po) { 

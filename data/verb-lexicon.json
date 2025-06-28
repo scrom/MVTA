@@ -837,7 +837,7 @@
   },
   "acknowledge": {
     "category": "communication_meta",
-    "aliases": []
+    "aliases": ["ack"]
   },
   "ignore": {
     "category": "communication_meta",
