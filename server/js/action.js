@@ -1452,7 +1452,6 @@ exports.Action = function Action(player, map, fileManager) {
                             description = "Sorry, try something else.";
                         };
                         break;
-////////Conversion to new engine reached here////////////
                     case 'print':
                         description = "$action use printer";
                         break;

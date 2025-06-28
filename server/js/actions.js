@@ -473,10 +473,10 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.sleep  = function (verb, player, map, po) {
-          return self.processResponse(player.rest(po.action, 25, map), player, map, po ,1);
+          return self.processResponse(player.rest(po.action, 25, map), player, map, po ,0);
         };        
         self.rest  = function (verb, player, map, po) {
-          return self.processResponse(player.rest(po.action, 7, map), player, map, po ,1);
+          return self.processResponse(player.rest(po.action, 7, map), player, map, po ,0);
         };
 
         self.wait = function (verb, player, map, po) {
@@ -673,11 +673,11 @@ module.exports.Actions = function Actions(parser) {
 
         self.on = function(verb, player, map, po) { 
           if (po.originalVerb == "on") {po.originalVerb = "turn"};
-          return self.processResponse(player.onOff(po.originalVerb, "on", po.subject), player, map, po,0);//@todo
+          return self.processResponse(player.onOff(po.originalVerb, "on", po.subject), player, map, po,1);
         };
         self.off = function(verb, player, map, po) { 
           if (po.originalVerb == "off") {po.originalVerb = "turn"};
-          return self.processResponse(player.onOff(po.originalVerb, "off", po.subject), player, map, po,0); //@todo
+          return self.processResponse(player.onOff(po.originalVerb, "off", po.subject), player, map, po,1);
         };
 
         self.switch = function(verb, player, map, po) { 
