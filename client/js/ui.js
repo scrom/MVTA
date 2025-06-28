@@ -81,7 +81,7 @@ function Ui(aBody, aStatusBar, aSpecialReportArea, aStateArea, anInputField, anI
     };
 
     Ui.prototype.setStatus = function(attributes, oldAttributes) {
-        /*attributes are returned to here from player.getClientAttributesString
+        /*attributes are returned to here from player.getClientAttributes
         Current supported attributes are:
         "location":"'+_currentLocation.getDisplayName()+'"';
         "injuriesReceived":'+_injuriesReceived;

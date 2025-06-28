@@ -5,6 +5,7 @@ module.exports.Game = function Game(playerAttributes,aGameID, aMap, mapBuilder, 
         //module deps
         var actionObjectModule = require('./action');
         var playerObjectModule = require('./player');
+        const createEngine = require('./engine.js');
 
 	    var self = this; //closure so we don't lose this reference in callbacks
         var _fm = fileManager;
@@ -14,7 +15,7 @@ module.exports.Game = function Game(playerAttributes,aGameID, aMap, mapBuilder, 
         var _id = aGameID;
         var _log = ''; //log of game script - not currently used
         var _currentLocation; //id of current location
-        var _playerActions = null; //player action object (sort of singleton)
+        var _engine = null; //player action object (sort of singleton)
         var _timeStamp = parseInt(new Date().getTime()); //track when last action ocurred
 
 	    var _objectName = "Game";
@@ -84,12 +85,12 @@ module.exports.Game = function Game(playerAttributes,aGameID, aMap, mapBuilder, 
             _player.incrementSaveCount();
             await _fm.writeGameDataAsync(_filename, self.fullState(), true);
             console.info("game saved as "+_filename);
-            return ('{"username":"'+_player.getUsername()+ '","id":"'+_id+'","description":"'+"Game saved as <b>"+_filename+'</b>.<br>Please make a note of your saved game filename.<br><i>(You\'ll need it if you want to <i>load</i> or recover this game later.)</i>","attributes":'+_player.getClientAttributesString()+',"saveid":"'+_filename+'"}');
+            return ('{"username":"'+_player.getUsername()+ '","id":"'+_id+'","description":"'+"Game saved as <b>"+_filename+'</b>.<br>Please make a note of your saved game filename.<br><i>(You\'ll need it if you want to <i>load</i> or recover this game later.)</i>","attributes":'+JSON.stringify(_player.getClientAttributes())+',"saveid":"'+_filename+'"}');
         };
 
         self.state = function() {
             var resultString = '{"username":"'+_player.getUsername()+ '","id":"'+_id+'","description":"'+locationDescription+'","saveid":"'+_filename+'"';
-            resultString += ',"attributes":'+_player.getClientAttributesString();
+            resultString += ',"attributes":'+JSON.stringify(_player.getClientAttributes());
             if (locationImage) {
                 resultString += ',"image":"'+locationImage+'"';
             };
@@ -109,10 +110,10 @@ module.exports.Game = function Game(playerAttributes,aGameID, aMap, mapBuilder, 
 
         self.userAction = function(actionString) {
             //create single instance of player actions is not previously set
-            if (!(_playerActions)) {
-                _playerActions = new actionObjectModule.Action(_player, _map, _fm);
+            if (!(_engine)) {
+                _engine = createEngine(_player, _map);
             };
-            var responseJson = _playerActions.act(actionString);
+            var responseJson = JSON.stringify(_engine(actionString));
             self.setTimeStamp();
             console.info('responseJson: '+responseJson); 
             return responseJson;

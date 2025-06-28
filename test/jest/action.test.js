@@ -24,7 +24,7 @@ test('can use stub', () => {
 });
 
 test('stub action', () => {
-    const expectedResult = '{"verb":"ask","object0":"violet","object1":"stephen g","description":"function: ask, args[0]:find, args[1]:violet, args[2]:stephen g, args[3]:<Object>function: updateMissions, args[0]:function: calculateTicks, args[0]:1, args[1]:ask, args[1]:<Object>function: tick, args[0]:1, args[1]:<Object>","attributes":function: getClientAttributesString}';
+    const expectedResult = '{"verb":"ask","object0":"violet","object1":"stephen g","description":"function: ask, args[0]:find, args[1]:violet, args[2]:stephen g, args[3]:<Object>function: updateMissions, args[0]:function: calculateTicks, args[0]:1, args[1]:ask, args[1]:<Object>function: tick, args[0]:1, args[1]:<Object>","attributes":"function: getClientAttributes"}';
     const actualResult = a.act("ask violet to find stephen g");
     expect(actualResult).toBe(expectedResult);
 });
@@ -96,12 +96,12 @@ test('go object action', () => {
 
 test('cannot continue playing after end game', () => {
     // For this test, we need to use the real player and map, not the stubs
-    const realP = new player.Player("Tester");
+    const realP = new player.Player({username:"tester"});
     const realM = new map.Map();  
     realP.endGame();    
     const realA = new action.Action(realP, realM);
 
-    const expectedResult = '{"verb":"","object0":"","object1":"","description":"Thanks for playing.<br>There\'s nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.","attributes":{"username":"undefined","money":5,"score":0,"injuriesReceived":0,"bleeding":false,"aggression":0,"health":100,"hp":100,"fed":30,"watered":100,"rested":100,"time": "09:00"}}';
+    const expectedResult = '{"verb":"","object0":"","object1":"","description":"Thanks for playing.<br>There\'s nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.","attributes":{"username":"tester","money":5,"score":0,"injuriesReceived":0,"bleeding":false,"aggression":0,"health":100,"hp":100,"fed":30,"watered":100,"rested":100,"time":"09:00"}}';
     const actualResult = realA.act("look");
     expect(actualResult).toBe(expectedResult);
 });

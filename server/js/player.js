@@ -608,28 +608,28 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
         };
 
         //these attribures are returned to the client as attributes that can be interpretred in the client UI.
-        self.getClientAttributesString = function() {
-            var resultString = '{"username":"'+_username+'"';
-            if (_currentLocation) {
-                resultString += ',"location":"'+_currentLocation.getDisplayName()+'"';
+        self.getClientAttributes = function() {
+            let attributes = {username:_username,
+                                money:_inventory.getCashBalance(),
+                                score:_score,
+                                injuriesReceived:_injuriesReceived,
+                                bleeding:_bleeding,
+                                //resultString += ',"contagion":"'+map.getContagionReport(self)+'"';
+                                aggression:self.getAggression(),
+                                health:self.healthPercent(),
+                                hp:_hitPoints,
+                                fed:self.fedPercent(),
+                                watered:self.wateredPercent(),
+                                rested:self.restedPercent(),
+                                time:self.time()
+                                //popularity + any other interesting attributes?
             };
-            resultString += ',"money":'+_inventory.getCashBalance();
-            resultString += ',"score":'+_score;
-            resultString += ',"injuriesReceived":'+_injuriesReceived;
-            resultString += ',"bleeding":'+_bleeding;
-            //resultString += ',"contagion":"'+map.getContagionReport(self)+'"';
-            resultString += ',"aggression":'+self.getAggression();
-            resultString += ',"health":'+self.healthPercent();
-            resultString += ',"hp":'+_hitPoints;
-            resultString += ',"fed":'+self.fedPercent();
-            resultString += ',"watered":'+self.wateredPercent();
-            resultString += ',"rested":'+self.restedPercent();
-            resultString += ',"time": "'+self.time()+'"';
-            //popularity + any other interesting attributes?
-            resultString +='}';
-            //console.debug("ReturnClientAttributes:"+resultString);
-            return resultString;
 
+            //console.debug("ReturnClientAttributes:"+resultString);
+            if (_currentLocation) {
+                attributes.location = _currentLocation.getDisplayName();
+            };
+            return attributes;
         };
 
         self.getCurrentAttributes = function() {
@@ -3261,6 +3261,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
         };
 
         self.say = function(verb, speech, receiverName, map) {
+                if (!speech && !receiverName) {return "You flap your mouth and move your tongue as if to speak but no sound comes out.<br>I hope everything's ok with you there."}
                 //if (tools.stringIsEmpty(speech)){ return verb+" what?";};
                 if (verb == "sing" || verb == "whistle") {
                     return "It's lovely that you feel the joyful urge to "+verb+". But... ...seriously. Come back when you can hold a tune."
@@ -3312,6 +3313,14 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     return resultString;
                 };
 
+                if (verb == "greet") {
+                    //we are greeting soneone - may or may not be current creature.
+                    if (!(speech.includes(_lastCreatureSpokenTo))) {
+                        receiverName = null; //wipe receiver and check again.
+                    };
+                    verb = "say"
+                };
+
                 if (tools.stringIsEmpty(receiverName)) { 
                     let creatures = _currentLocation.getCreatures();
                     let found = false;
@@ -3344,7 +3353,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 
                 //not found who to speak to...
                 if (tools.stringIsEmpty(receiverName)) {
-                    return "'" + speech + "'" + "<br>" + resultString;     
+                    return "You "+verb+" '" + tools.initCap(speech) + "'" + "<br>" + resultString;     
                 };                    
 
                 //get receiver if it exists and we haven't already fetched them.
