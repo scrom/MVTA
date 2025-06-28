@@ -169,7 +169,7 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.use = function (verb, player, map, po) {
-          let actionResult = player.use(verb, po.subject);
+          let actionResult = player.use(verb, po.subject, po.object);
           if (actionResult) { actionResult = actionResult.trim(); }
           else { actionResult = ""; }; //just in case it comes back undefined.
           return self.processResponse(actionResult, player, map, po,1);
@@ -705,7 +705,7 @@ module.exports.Actions = function Actions(parser) {
             return self.off(verb, player, map, po);
           };
           //blow up/on/over - 
-          return self.processResponse("$fail$Blow not yet fully implemented", player, map, po,0); //@todo 
+          throw "Blow not fully implemented"
         };
 
         self.jump = function(verb, player, map, po) { 
@@ -761,7 +761,31 @@ module.exports.Actions = function Actions(parser) {
           //(verb, text, receiverName)
           return self.processResponse(player.type(verb, po.subject, po.object), player, map, po,1);
         };
-        
+        self.print = function(verb, player, map, po) {
+          po.object = po.subject;
+          po.subject = "printer";
+          return self.use(verb, player, map, po)
+        };
+        self.copy = function(verb, player, map, po) { 
+          po.object = po.subject;
+          po.subject = "copier";
+          return self.use(verb, player, map, po)
+        };
+
+        self.ride = function(verb, player, map, po) { 
+          return self.processResponse(player.ride(po.originalVerb, po.subject, map), player, map, po,1);
+        };
+
+        self.dismount = function(verb, player, map, po) { 
+          return self.processResponse(player.unRide(po.originalVerb, po.subject), player, map, po,1);
+        };
+
+        self.knock = function(verb, player, map, po) { 
+          throw "knock not implpemented"
+        };
+        self.curse = function(verb, player, map, po) { 
+          throw "curse not implemented"
+        };
 
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";

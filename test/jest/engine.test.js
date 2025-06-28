@@ -1338,7 +1338,6 @@ test('test type', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-
 test('test "again" to recall last action', () => {
     const objectJSON  = fm.readFile("artefacts/console.json"); 
     const object = mb.buildArtefact(objectJSON);
@@ -1347,5 +1346,76 @@ test('test "again" to recall last action', () => {
     let firstCall = engine(input);
     const expectedResult = "You type 'hello world' into the console.";
     const actualResult = engine("again"); //recall last input
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "print"', () => {
+    const objectJSON  = fm.readFile("artefacts/console.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "print document";
+    const expectedResult = "You can't see any printer around here.";
+    const actualResult = engine(input); //recall last input
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "copy"', () => {
+    const objectJSON  = fm.readFile("artefacts/console.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "copy document";
+    const expectedResult = "You can't see any copier around here.";
+    const actualResult = engine(input); //recall last input
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "ride"', () => {
+    const objectJSON  = fm.readFile("artefacts/van.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "drive van";
+    const expectedResult = "You'll need to get it running first.";
+    const actualResult = engine(input); //recall last input
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "dismount" when not riding', () => {
+    const objectJSON  = fm.readFile("artefacts/van.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "exit van";
+    const expectedResult = "you're not <i>in</i> it right now.";
+    const actualResult = engine(input); //recall last input
+    expect(actualResult).toBe(expectedResult);
+});
+
+
+test('test get in and drive', () => {
+    const objectJSON  = fm.readFile("artefacts/van.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+
+    let actualResult = engine("get in van");
+    let expectedResult = "You enter the white van.";
+    expect(actualResult).toBe(expectedResult);
+
+    actualResult = engine("start van");
+    expectedResult = "You start the white van.";
+    expect(actualResult).toBe(expectedResult);
+
+    actualResult = engine("drive forward");
+    expectedResult = "There's no way <i>forward</i> from here.";
+    expect(actualResult).toBe(expectedResult);
+
+    actualResult = engine("exit van");
+    expectedResult = "You probably don't want to do that whilst the white van is still running.";
+    expect(actualResult).toBe(expectedResult);
+
+    actualResult = engine("stop van");
+    expectedResult = "You stop the white van.";
+    expect(actualResult).toBe(expectedResult);
+    
+    actualResult = engine("disembark van");
+    expectedResult = "You disembark the white van and leave it here for later.";
     expect(actualResult).toBe(expectedResult);
 });

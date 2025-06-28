@@ -4456,8 +4456,12 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     //it's a vehicle that can hold the player inside...
                     return self.ride("enter", artefact.getName(), map);
                 } else if (splitWord == "out" || splitWord == "out of") {
-                    if (_riding.getName() == artefact.getName()) {
-                        return self.unRide("exit", artefact.getName());
+                    if (_riding) {
+                        if (_riding.getName() == artefact.getName()) {
+                            return self.unRide("exit", artefact.getName());
+                        };
+                    } else {
+                        return "you're not <i>in</i> "+artefact.getSuffix()+" right now."
                     };
                 };
             }; 

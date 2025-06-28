@@ -1443,7 +1443,6 @@ exports.Action = function Action(player, map, fileManager) {
                         if (!_object0) {_object0 = _object1};
                         description = _player.listen(_verb, _object0, _splitWord,  _map);
                         break;
-////////Conversion to new engine reached here////////////
                     case 'repeat':
                     case 'again':
                     case 'g':
@@ -1453,6 +1452,7 @@ exports.Action = function Action(player, map, fileManager) {
                             description = "Sorry, try something else.";
                         };
                         break;
+////////Conversion to new engine reached here////////////
                     case 'print':
                         description = "$action use printer";
                         break;

@@ -111,7 +111,7 @@
   },
   "back": {
     "category": "movement",
-    "aliases": ["b"] 
+    "aliases": ["b", "return", "backward", "reverse"] 
   },
   "forward": {
     "category": "movement",
@@ -149,41 +149,17 @@
     "category": "movement",
     "aliases": []
   },
-  "return": {
-    "category": "movement",
-    "aliases": []
-  },
   "jump": {
-    "category": "movement",
-    "aliases": []
-  },
-  "mount": {
     "category": "movement",
     "aliases": []
   },
   "dismount": {
     "category": "movement",
-    "aliases": ["unmount"]
-  },
-  "board": {
-    "category": "movement",
-    "aliases": []
+    "aliases": ["unmount", "unride", "disembark"]
   },
   "ride": {
     "category": "movement",
-    "aliases": []
-  },
-  "fly": {
-    "category": "movement",
-    "aliases": []
-  },
-  "drive": {
-    "category": "movement",
-    "aliases": []
-  },
-  "sail": {
-    "category": "movement",
-    "aliases": []
+    "aliases": ["board", "mount", "sail", "fly", "drive", "embark"]
   },
   "heal": {
     "category": "interaction_physical",
