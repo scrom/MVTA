@@ -149,7 +149,7 @@ test('a healthy player does full damage to a creature', () => {
             hitcount++;
         }
     }
-    const expectedResult = "He's really not in good shape.";
+    const expectedResult = "He's really not in good shape.<br>It looks like He's bleeding. He's likely to die without some first aid.";
     const actualResult = c0.health();
     expect(actualResult).toBe(expectedResult);
 });

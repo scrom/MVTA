@@ -1503,7 +1503,7 @@ test('receivingFoodWhenFriendlyCreatureIsNotHungryKeepsFoodInInventory', () => {
 test('feedingBleedingCreatureDoesNotIncreaseHealthBeyond50Percent', () => {
     var c0 = new creature.Creature('creature','beastie', 'a big beastie with teeth',{weight:120, attackStrength:50, gender:'male', type:'creature', carryWeight:50, health:75, maxHealth:150});
     c0.feed(50);
-    var expected = "He's really not in good shape.";
+    var expected = "He's really not in good shape.<br>It looks like He's bleeding. He's likely to die without some first aid.";
     var actual = c0.health();
     console.debug("expected:"+expected);
     console.debug("actual:"+actual);
@@ -1514,7 +1514,7 @@ test('feedingBleedingCreatureDoesNotIncreaseHealthBeyond50Percent', () => {
 test('feedingNearlyDeadCreatureMarginallyIncreasesHealth', () => {
     var c0 = new creature.Creature('creature','beastie', 'a big beastie with teeth',{weight:120, attackStrength:50, gender:'male', type:'creature', carryWeight:50, health:5, maxHealth:150});
     c0.feed(500);
-    var expected = "He's really not in good shape.";
+    var expected = "He's really not in good shape.<br>It looks like He's bleeding. He's likely to die without some first aid.";
     var actual = c0.health();
     console.debug("expected:"+expected);
     console.debug("actual:"+actual);
