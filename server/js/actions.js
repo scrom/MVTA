@@ -10,6 +10,7 @@ module.exports.Actions = function Actions(parser) {
 
   const _baseTickSize = tools.baseTickSize; //default base measure of time //assume a move passes time. Some won't - for these, ticks/time will be 0.
   let _failCount = 0; //count the number of consecutive user errors
+  let _lastAction = "";
 
   try{
   /*
@@ -90,6 +91,7 @@ module.exports.Actions = function Actions(parser) {
             if (time) {time = Math.floor(time * _baseTickSize);}
             else { time = 0; };
 
+            _lastAction = po.originalInput;
             return {"response": response, "time": time};
           } catch (err) {
               let input = ""
@@ -156,6 +158,10 @@ module.exports.Actions = function Actions(parser) {
           };
 
           return self.processResponse(result, player, map, po, 1);
+        };
+
+        self.again = function(verb, player, map, po) {
+          return self.reconstructInputAndRecallSelfWithNewVerb(_lastAction, player, map, po, true); //true means replace all with contents of "verb"
         };
 
         self.try = function(verb, player, map, po) {

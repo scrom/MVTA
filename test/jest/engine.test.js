@@ -1337,3 +1337,15 @@ test('test type', () => {
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
+
+
+test('test "again" to recall last action', () => {
+    const objectJSON  = fm.readFile("artefacts/console.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "type hello world into the console";
+    let firstCall = engine(input);
+    const expectedResult = "You type 'hello world' into the console.";
+    const actualResult = engine("again"); //recall last input
+    expect(actualResult).toBe(expectedResult);
+});
