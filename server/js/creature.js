@@ -3504,7 +3504,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             //if creature has incomplete missions - return dialogue.
             var missionsToRemove = [];
             var requestedObject;
-            for (i=0; i< _missions.length; i++) {
+            for (let i=0; i< _missions.length; i++) {
                 if (_missions[i].hasDialogue() && (!(_missions[i].hasParents()))) {
                     if (_missions[i].isFailedOrComplete()) { 
                         missionsToRemove.push(_missions[i].getName());
@@ -3538,7 +3538,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             };
 
             //remove any completed missions (cleanup)
-            for (i=0; i<missionsToRemove.length;i++) {
+            for (let i=0; i<missionsToRemove.length;i++) {
                 self.removeMission(missionsToRemove[i]);
             };
 

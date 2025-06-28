@@ -3317,10 +3317,10 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     let found = false;
                     //can we determine receiver from speech?
                     
-                    for (c=0; c<creatures.length;c++) {
+                    for (let c=0; c<creatures.length;c++) {
                         let names = [creatures[c].getName(), creatures[c].getDisplayName().toLowerCase()].concat(creatures[c].getSyns());
                         names.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words - greatest first
-                        for (n=0; n<names.length; n++) {
+                        for (let n=0; n<names.length; n++) {
                             if (speech.includes(names[n])) {
                                 receiverName = creatures[c].getName();
                                 receiver = creatures[c];
