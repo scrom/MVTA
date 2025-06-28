@@ -66,9 +66,9 @@ module.exports.Actions = function Actions(parser, fileManager) {
         self.tick = function(time, map, player) {
           try {
             let result = "";
-          //  result += self.processCreatureTicks(time, map, player); //perform creature actions.
-          //  result += self.processLocationTicks(time, map, player); //if anything is happening in locations (includes ticks on inventory)
-          //  result += map.updateMissions(time, player); //tick missions
+            result += self.processCreatureTicks(time, map, player); //perform creature actions.
+            result += self.processLocationTicks(time, map, player); //if anything is happening in locations (includes ticks on inventory)
+            result += map.updateMissions(time, player); //tick missions
 
             //if time is passing, what additional things happen to a player?
             //note - player ticks happen last so that we can adjust responses based on current state

@@ -78,7 +78,7 @@ test('"health" verb for player', () => {
 test('"health" verb for creature', () => {
     const objectJSON  = fm.readFile("creatures/cat.json"); 
     const object = mb.buildCreature(objectJSON);
-    l0.addObject(object);
+    object.go(null, l0);
     const input = "triage cat";
     const expectedResult = "It's generally the picture of health.";
     const actualResult = engine(input).description;
@@ -88,7 +88,7 @@ test('"health" verb for creature', () => {
 test('"heal" verb for self', () => {
     const objectJSON  = fm.readFile("creatures/cat.json"); 
     const object = mb.buildCreature(objectJSON);
-    l0.addObject(object);
+    object.go(null, l0);
     const input = "heal self";
     const expectedResult = "You don't need healing at the moment.";
     const actualResult = engine(input).description;
@@ -98,7 +98,7 @@ test('"heal" verb for self', () => {
 test('"heal" verb for creature', () => {
     const objectJSON  = fm.readFile("creatures/cat.json"); 
     const object = mb.buildCreature(objectJSON);
-    l0.addObject(object);
+    object.go(null, l0);
     const input = "heal cat";
     const expectedResult = "You don't have anything to heal with.";
     const actualResult = engine(input).description;
@@ -488,7 +488,7 @@ test('test "water" verb - alternate sentence structure', () => {
 test('test "feed" verb - sentence structure 1', () => {
     const objectJSON  = fm.readFile("creatures/cat.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     l0.addObject(object2);
@@ -501,7 +501,7 @@ test('test "feed" verb - sentence structure 1', () => {
 test('test "feed" verb - sentence structure 2', () => {
     const objectJSON  = fm.readFile("creatures/cat.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     l0.addObject(object2);
@@ -514,7 +514,7 @@ test('test "feed" verb - sentence structure 2', () => {
 test('test "feed" verb - sentence structure 3', () => {
     const objectJSON  = fm.readFile("creatures/cat.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     l0.addObject(object2);
@@ -548,7 +548,7 @@ test('test "drop" verb', () => {
 test('test "drop onto" verb', () => {
     const objectJSON  = fm.readFile("creatures/cat.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     p0.acceptItem(object2);
@@ -562,7 +562,7 @@ test('test "drop onto" verb', () => {
 test('test "give" X to Y verb', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     p0.acceptItem(object2);
@@ -575,7 +575,7 @@ test('test "give" X to Y verb', () => {
 test('test "give me your X', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     const inv = object.getInventoryObject();
@@ -590,7 +590,7 @@ test('test "give me your X', () => {
 test('test "I want your X"', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     const inv = object.getInventoryObject();
@@ -655,7 +655,7 @@ test('test "climb in" direction', () => {
 test('test "follow X"', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "follow aaron";
     const expectedResult = "He's right here."; 
     let actualResult = engine(input).description;
@@ -674,7 +674,7 @@ test('test "take a break"', () => {
 test('test push/shove', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "shove aaron down the stairs";
     const expectedResult = "He really doesn't appreciate being pushed around."; 
     let actualResult = engine(input).description;
@@ -770,10 +770,10 @@ test('test shake', () => {
 test('test attacks - hit', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "hit aaron";
     const expectedResult = "You attempt a bare-knuckle fight with Aaron.<br>He takes exception to your violent conduct.<br>Fortunately for you, you missed. Don't do that again."; 
-    let actualResult = engine(input).description;
+    let actualResult = engine(input).description.substring(0,expectedResult.length);
     
     expect(actualResult).toBe(expectedResult);
 });
@@ -781,10 +781,10 @@ test('test attacks - hit', () => {
 test('test attacks - strangle', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "strangle aaron";
     const expectedResult = "You reach out to grab Aaron but your feeble hands feel more like a caress.<br>He takes exception to your violent conduct.<br>Fortunately for you, you missed. Don't do that again."; 
-    let actualResult = engine(input).description;
+    let actualResult = engine(input).description.substring(0,expectedResult.length);
     
     expect(actualResult).toBe(expectedResult);
 });
@@ -792,7 +792,7 @@ test('test attacks - strangle', () => {
 test('test pay', () => {
     const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "pay man for ice cream";
     const expectedResult = "The ice cream man sells you a 99 flake ice cream."; 
     let actualResult = engine(input).description;
@@ -803,7 +803,7 @@ test('test pay', () => {
 test('test buy', () => {
     const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "buy ice cream";
     const expectedResult = "The ice cream man sells you a 99 flake ice cream."; 
     let actualResult = engine(input).description;
@@ -814,7 +814,7 @@ test('test buy', () => {
 test('test sell', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/ice-cream.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     p0.acceptItem(object2);
@@ -901,7 +901,7 @@ test('test mug', () => {
     //p0.acceptItem(axe);
     objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object2 = mb.buildCreature(objectJSON);
-    object2.go("", l0);
+    object2.go(null, l0);
     const input = "mug aaron";
     const expectedResults = ["He dodges out of the way and attacks you instead. <br>You failed to gain anything but pain for your actions.", "He takes exception to your violent conduct.<br>Fortunately for you, you missed. Don't do that again.<br>"];
     const actualResult = engine(input).description
@@ -916,7 +916,7 @@ test('test wave', () => {
     l0.addObject(object);
     objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object2 = mb.buildCreature(objectJSON);
-    object2.go("", l0);
+    object2.go(null, l0);
     const input = "wave cup at aaron";
     const expectedResult = "You wave the cup at Aaron Prescott. Nothing happens.<br>Your arms get tired and you feel slightly awkward."; 
     let actualResult = engine(input).description;
@@ -927,7 +927,7 @@ test('test wave', () => {
 test('test touch', () => {
     objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object2 = mb.buildCreature(objectJSON);
-    object2.go("", l0);
+    object2.go(null, l0);
     const input = "stroke aaron";
     const expectedResult = "You reach out and stroke Aaron Prescott."; 
     let actualResult = engine(input).description.substring(0,expectedResult.length);
@@ -1005,7 +1005,7 @@ test('test destroy', () => {
 test('test kill', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "kill aaron";
     const expectedResult = "Much as you may like to believe in instant karma. If you <b>have</b> to kill, you'll need to fight it out yourself."; 
     let actualResult = engine(input).description;
@@ -1017,7 +1017,7 @@ test('test kill', () => {
 test('test shout', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "shout hello";
     const expectedResult = "Aaron says 'H"; 
     let actualResult = engine(input).description.substring(0,expectedResult.length);;
@@ -1028,7 +1028,7 @@ test('test shout', () => {
 test('test sing', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "sing la lal lalalal";
     const expectedResult = "It's lovely that you feel the joyful urge to sing. But... ...seriously. Come back when you can hold a tune."; 
     let actualResult = engine(input).description;
@@ -1039,7 +1039,7 @@ test('test sing', () => {
 test('test reply outside conversation', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "reply yes of course I can";
     const expectedResult = "Reply to who??"; 
     let actualResult = engine(input).description;
@@ -1051,7 +1051,7 @@ test('test reply outside conversation', () => {
 test('test reply inside conversation', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     engine("hi aaron");
     const input = "reply yes of course I can";
     const expectedResult = "He says 'OK"; 
@@ -1062,7 +1062,7 @@ test('test reply inside conversation', () => {
 test('test basic "talk"', () => {
     const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const input = "talk to man";
     const expectedResult = "He says 'H"; 
     let actualResult = engine(input).description.substring(0,expectedResult.length);
@@ -1072,7 +1072,7 @@ test('test basic "talk"', () => {
 test('test ask for sale item', () => {
     const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     engine("talk to man");
     const input = "can I have an ice cream";
     const expectedResult = "You ask the ice cream man for an ice cream.<br>He says 'You're in luck!' 'I have some for sale right here.'"; 
@@ -1083,7 +1083,7 @@ test('test ask for sale item', () => {
 test('test ask for sale item', () => {
     const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     engine("talk to man");
     const input = "can I have some ice cream";
     const expectedResult = "You ask the ice cream man for some ice cream.<br>He says 'You're in luck!' 'I have some for sale right here.'"; 
@@ -1094,7 +1094,7 @@ test('test ask for sale item', () => {
 test('test ask for sale item', () => {
     const objectJSON  = fm.readFile("creatures/ice-cream-man.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     engine("talk to man");
     const input = "do you have any ice cream";
     const expectedResult = "You ask the ice cream man if he has any ice cream.<br>He says 'You're in luck!' 'I have some for sale right here.'"; 
@@ -1105,7 +1105,7 @@ test('test ask for sale item', () => {
 test('test ask find', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/guitar.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     p0.acceptItem(object2);
@@ -1118,7 +1118,7 @@ test('test ask find', () => {
 test('test ask for repair', () => {
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
-    object.go("", l0);
+    object.go(null, l0);
     const object2JSON  = fm.readFile("artefacts/guitar.json"); 
     const object2 = mb.buildArtefact(object2JSON);
     p0.acceptItem(object2);
