@@ -1,16 +1,15 @@
 // actions.js
   // To reference any of the functions in this file from within another function -  inside any function, we can call another function like: actions.help();
-module.exports.Actions = function Actions(parser) {
+module.exports.Actions = function Actions(parser, fileManager) {
   const self = this; //closure so we don't lose this reference in callbacks
   const lp = parser; //so we can re-parse inputs when needed before returning to engine.
-  const dialogueModule = require('./dialogueparser.js');
-  const dp = new dialogueModule.DialogueParser();
+  const fm = fileManager; //for checking images
   const tools = require('./tools.js');
   const customAction = require('./customaction.js');
 
   const _baseTickSize = tools.baseTickSize; //default base measure of time //assume a move passes time. Some won't - for these, ticks/time will be 0.
   let _failCount = 0; //count the number of consecutive user errors
-  let _lastAction = "";
+  self.lastAction = "";
 
   try{
   /*
@@ -24,21 +23,140 @@ module.exports.Actions = function Actions(parser) {
         object: objects[1] || null,
         preposition: preposition || null
   */
+        
+        //after player has performed an action, each creature in the room has an opportunuty to react
+        self.processCreatureTicks = function(time, map, player) {
+          try {
+            var result = "";
+            if (time>0) {
+                var creatures = map.getAllCreatures();
+                if (typeof(creatures) == "string") {return "";}; //mainly for stub testability - prevents crashing
+                for(var i=0; i < creatures.length; i++) {
+                    result += creatures[i].tick(time, map, player);
+                };
+            };
+            return result;
+
+          } catch (err) {
+              result = "Something bad happened on the server. If this happens again, you've probably found a bug. (Thanks for finding it!)";
+              console.error("Error: During creature ticks. Last action: "+self.lastAction+". Error message/stack: " + err.stack);
+              throw err;
+          };	
+        };
+
+        self.processLocationTicks = function(time, map, player) {
+          try {
+            var result = "";
+            if (time>0) {
+                var locations = map.getLocations();
+                if (typeof(locations) == "string") {return "";}; //mainly for stub testability - prevents crashing
+                for(var i=0; i < locations.length; i++) {
+                    result += locations[i].tick(time, map, player);
+                };
+            };
+            return result;
+
+          } catch (err) {
+              result = "Something bad happened on the server. If this happens again, you've probably found a bug. (Thanks for finding it!)";
+              console.error("Error: During location ticks. Last action: "+self.lastAction+". Error message/stack: " + err.stack);
+              throw err;
+          };	
+        };
+
+        self.tick = function(time, map, player) {
+          try {
+            let result = "";
+          //  result += self.processCreatureTicks(time, map, player); //perform creature actions.
+          //  result += self.processLocationTicks(time, map, player); //if anything is happening in locations (includes ticks on inventory)
+          //  result += map.updateMissions(time, player); //tick missions
+
+            //if time is passing, what additional things happen to a player?
+            //note - player ticks happen last so that we can adjust responses based on current state
+            //(wait/sleep) are explicitly covered elsewhere so return 0 for time
+            if (time > 0) {
+              result += player.tick(time, map);
+            };
+
+            return result;
+                      
+          } catch (err) {
+              result = "Something bad happened on the server. If this happens again, you've probably found a bug. (Thanks for finding it!)";
+              console.error("Error: During game tick. Last action: "+self.lastAction+". Error message/stack: " + err.stack);
+              throw err;
+          };	
+        };
+
+        self.substitutePlayerName = function(player, result) {
+          //replace any player substitution variables
+          let username = tools.initCap(player.getUsername());
+          username = username.replaceAll("%20"," ");
+          result = result.replaceAll("$player",username);
+
+          return result;
+        };
+
+        self.extractImageName = function(player, result) {
+          var imageName = "";
+          let imageIndex = result.indexOf("$image");
+          if (imageIndex>-1) {
+            var endIndex = result.indexOf("/$image"),
+            imageName = result.substring(imageIndex+6, endIndex);
+            //console.debug("imageName:"+imageName);
+          };
+
+          if (imageName) {
+            result = result.replaceAll("$image"+imageName+"/$image","");
+          };  
+
+          //get image from location if not already set
+          if (!(imageName)) {
+            let location = player.getCurrentLocation();
+            if (location) {
+              try { //if this fails, it's not the end of the world. check getImageNameFunction exists (test stub support)
+                if (location.getImageName) {
+                  imageName = location.getImageName();
+                };
+              } catch (err) {console.error(err.stack);};
+            };
+          };
+
+          return {result, imageName};
+        };
+
+        self.buildResultJSON = function(result, imageName, player, po) {
+            let resultJson = {action: po.action,
+                              originalVerb: po.originalVerb,
+                              originalInput:po.originalInput,
+                              subject:po.subject,
+                              object:po.object,
+                              preposition:po.preposition,
+                              adverb:po.adverb,
+                              description:result,
+                              attributes:player.getClientAttributesString()}
+            if (imageName) {
+              if (fm){
+                //check image exists and only add to response if it does
+                if (fm.imageExists(imageName)) {
+                  resultJson.image = imageName;
+                };
+              };
+            };
+
+            return resultJson
+        };
+        
         self.processResponse = function (response, player, map, po, time) {
           try {
 
             if (response) {
               if (response.includes("$cheat$")) {
                 response = response.replace("$cheat$", "");
-                return {response: response, time: 0};
               };
               if (response.includes("$inactive$")) {
                 response = response.replace("$inactive$", "Thanks for playing.<br>There's nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.");
-                return {response: response, time: 0};
               };
               if (response.includes("$dead$")) {
                 response = response.replace("$dead$", "You're dead. Game over.<br>There's nothing more you can do here.<br><br>You either need to <i>quit</i> and restart a game or <i>load</i> a previously saved game.");
-                return {response: response, time: 0};
               };
             };
             if (po) {
@@ -91,8 +209,21 @@ module.exports.Actions = function Actions(parser) {
             if (time) {time = Math.floor(time * _baseTickSize);}
             else { time = 0; };
 
-            _lastAction = po.originalInput;
-            return {"response": response, "time": time};
+            player.increaseTotalTimeTaken(time);
+            self.lastAction = po.originalInput;
+
+            //game tick
+            response += self.tick(time, map, player);
+            //swap in username placeholders
+            response = self.substitutePlayerName(player, response);
+
+            let {result, imageName} = self.extractImageName(player, response);
+
+            let resultJSON = self.buildResultJSON(result, imageName, player, po);
+
+            return resultJSON;
+
+            //return {"response": response, "time": time};
           } catch (err) {
               let input = ""
               if (po) {input = po.originalInput}
@@ -161,7 +292,7 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.again = function(verb, player, map, po) {
-          return self.reconstructInputAndRecallSelfWithNewVerb(_lastAction, player, map, po, true); //true means replace all with contents of "verb"
+          return self.reconstructInputAndRecallSelfWithNewVerb(self.lastAction, player, map, po, true); //true means replace all with contents of "verb"
         };
 
         self.try = function(verb, player, map, po) {
