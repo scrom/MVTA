@@ -703,22 +703,32 @@ module.exports.Actions = function Actions(parser) {
         };
 
         self.jump = function(verb, player, map, po) { 
-          return self.processResponse(player.goObject(po.originalVerb, po.preposition, po.subject, map), player, map, po,3);
+          return self.processResponse(player.goObject(po.originalVerb, po.preposition, po.subject, map), player, map, po,1);
         };
 
         self.write = function(verb, player, map, po) { 
-          return self.processResponse(player.writeOrDraw(po.originalVerb, po.subject, po.object), player, map, po,3);
+          return self.processResponse(player.writeOrDraw(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
         
         self.draw = function(verb, player, map, po) { 
-          return self.processResponse(player.writeOrDraw(po.originalVerb, po.subject, po.object), player, map, po,3);
+          return self.processResponse(player.writeOrDraw(po.originalVerb, po.subject, po.object), player, map, po,2);
         };
     
         self.sign = function(verb, player, map, po) { 
           //allows sign in/sign up (assuming relevant object has in/up as a synonym)
           if (!po.object && po.subject) {po.object = po.subject;}; 
           if (!po.object && !po.subject) {po.object = po.preposition;}; 
-          return self.processResponse(player.writeOrDraw(verb, "$player", po.object), player, map, po,3);
+          return self.processResponse(player.writeOrDraw(verb, "$player", po.object), player, map, po,1);
+        };
+
+        self.clean = function(verb, player, map, po) { 
+          if (po.object && po.preposition) {
+            //if we have 2 items, swap subject and object
+            let temp = po.subject;
+            po.subject = po.object;
+            po.object = temp;
+          }
+          return self.processResponse(player.clean(verb, po.subject, po.object), player, map, po,2);
         };
 
         self.cheatcode = function (verb, player, map, po) {

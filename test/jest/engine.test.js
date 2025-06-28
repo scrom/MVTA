@@ -1273,3 +1273,10 @@ test('test writing', () => {
     let actualResult = engine(input).substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test cleaning', () => {
+    const input = "clear dirt off walls";
+    const expectedResult = "You can't find anything to clean the wall with."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
