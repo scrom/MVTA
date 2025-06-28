@@ -1452,3 +1452,22 @@ test('test typing', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+
+test('test looking with adverb', () => {
+    const input = "look closely at the console";
+
+    const expectedResult = {
+      "action": "examine",
+      "adverb": "closely",
+      "category": "examination",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "look",
+      "preposition": "at",
+      "subject": "console",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});

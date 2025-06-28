@@ -164,6 +164,11 @@ module.exports.Actions = function Actions(parser, fileManager) {
         self.processResponse = function (response, player, map, po, time) {
           let resultJSON = "";
           try {
+            if (po.subject && po.object) {
+              if (po.subject == po.object) {
+                return self.buildResultJSON("Are you a tester? This is totally the kind of crazy thing great testers might try.<br>You possibly <i>could</i> '"+po.originalInput+"' in real life but that's not something I'm able to do for you here.", null, player, po);
+              };
+            };
 
             if (response) {
               if (response.includes("$cheat$")) {
@@ -171,11 +176,11 @@ module.exports.Actions = function Actions(parser, fileManager) {
               };
               if (response.includes("$inactive$")) {
                 response = response.replace("$inactive$", "Thanks for playing.<br>There's nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.");
-                return self.buildResultJSON(result, imageName, player, po);
+                return self.buildResultJSON(result, null, player, po);
               };
               if (response.includes("$dead$")) {
                 response = response.replace("$dead$", "You're dead. Game over.<br>There's nothing more you can do here.<br><br>You either need to <i>quit</i> and restart a game or <i>load</i> a previously saved game.");
-                return self.buildResultJSON(result, imageName, player, po);
+                return self.buildResultJSON(result, null, player, po);
               };
             };
 
@@ -210,8 +215,6 @@ module.exports.Actions = function Actions(parser, fileManager) {
               //strip out any instances of $action
               //we already don't have $result$ so has to be an action already
               response = response.replace("$action","").trim();
-                    
-              if (response == 'use') {response = 'examine'}; //avoid infinite loop
 
               let replaceAll = false;
               //if default action is more than just a single word verb, overwrite the entire original action.
@@ -264,8 +267,15 @@ module.exports.Actions = function Actions(parser, fileManager) {
           console.debug ("Adverb: "+po.adverb);
 
           let newInputString ="";
-          if (replaceAll) {newInputString = verb; } 
-          else { newInputString = po.adverb+" "+po.subject+" "+po.preposition+" "+po.object; };
+          if (replaceAll) {newInputString = verb; }    
+          else { 
+            newInputString = verb;
+            if (po.adverb) {newInputString += " "+po.adverb};
+            if (po.subject) {newInputString += " "+po.subject};
+            if (po.preposition) {newInputString += " "+po.preposition};
+            if (po.object) {newInputString += " "+po.object};
+          };
+
 
           let newParsedInput = lp.parseInput(newInputString);
           if (newParsedInput.error) { return newParsedInput.error; };
@@ -876,7 +886,10 @@ module.exports.Actions = function Actions(parser, fileManager) {
     
         self.sign = function(verb, player, map, po) { 
           //allows sign in/sign up (assuming relevant object has in/up as a synonym)
-          if (!po.object && po.subject) {po.object = po.subject;}; 
+          if (!po.object && po.subject) {
+            po.object = po.subject;
+            po.subject = null;
+          }; 
           if (!po.object && !po.subject) {po.object = po.preposition;}; 
           return self.processResponse(player.writeOrDraw(verb, "$player", po.object), player, map, po,1);
         };

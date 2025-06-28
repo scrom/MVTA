@@ -163,14 +163,14 @@ test('test "look at" gets the right words', () => {
 
 test('test "look at" with an adverb gets the right words', () => {
     const input = "look carefully at floor";
-    const expectedResult = "You carefully look at the floor and discover nothing new.";
+    const expectedResult = "You look carefully at the floor and discover nothing new.";
     const actualResult = engine(input).description;
     expect(actualResult).toBe(expectedResult);
 });
 
 test('test "look over" with an adverb gets the right words', () => {
     const input = "look over the floor carefully";
-    const expectedResult = "You carefully look over the floor and discover nothing new.";
+    const expectedResult = "You look carefully over the floor and discover nothing new.";
     const actualResult = engine(input).description;
     expect(actualResult).toBe(expectedResult);
 });
@@ -1481,5 +1481,35 @@ test('test get in and drive', () => {
     
     actualResult = engine("disembark van").description;
     expectedResult = "You disembark the white van and leave it here for later.";
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "go" with no direction', () => {
+    const objectJSON  = fm.readFile("artefacts/van.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "go";
+    const expectedResult = "Go where?";
+    const actualResult = engine(input).description; 
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test look closely performs search', () => {
+    const objectJSON  = fm.readFile("artefacts/morpheus-chair.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "look closely at chair";
+    const expectedResult = "You look closely at the red leather chair and discover a door key.<br>You collect the door key.";
+    const actualResult = engine(input).description; 
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test self-referencing is trapped', () => {
+    const objectJSON  = fm.readFile("artefacts/salad.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "eat salad with salad";
+    const expectedResult = "Are you a tester? This is totally the kind of crazy thing great testers might try.<br>You possibly <i>could</i> 'eat salad with salad' in real life but that's not something I'm able to do for you here.";
+    const actualResult = engine(input).description; 
     expect(actualResult).toBe(expectedResult);
 });

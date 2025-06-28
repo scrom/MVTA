@@ -426,16 +426,15 @@ describe('Artefact Tests', () => {
         const p0 = new player.Player({username: "player", carryWeight:25},m,testmb);
         loc = m.getLocation('atrium');
         p0.setLocation(loc);
-
-        const action = require('../../server/js/action.js');
-        let a = new action.Action(p0, m);
+        const createEngine = require('../../server/js/engine.js');
+        engine = createEngine(p0, m);
 
         const inv = p0.getInventoryObject();
         inv.add(bad);
 
         const expectedResult = "Default Action and Result are both *USE* - we shouldn't ever have this but need to handle bad data";
-        const actualResult = a.act("use bad"); // this is the main action call when a player performs an action
-        const actualResultObject = JSON.parse(actualResult);
+        const actualResult = engine("use bad"); // this is the main action call when a player performs an action
+        const actualResultObject = actualResult;
         expect(actualResultObject.description).toBe(expectedResult);
     });
 
@@ -447,15 +446,15 @@ describe('Artefact Tests', () => {
         loc = m.getLocation('atrium');
         p0.setLocation(loc);
 
-        const action = require('../../server/js/action.js');
-        let a = new action.Action(p0, m);
+        const createEngine = require('../../server/js/engine.js');
+        engine = createEngine(p0, m);
 
         const inv = p0.getInventoryObject();
         inv.add(lighter);
 
         const expectedResult = "You strike the flint a few times and see a small flicker of flame. It gutters out quickly.<br>You'd best only use it to light things when you really need to as you can't see an obvious way to refill it when it's empty.<br>";
-        const actualResult = a.act("use lighter"); // this is the main action call when a player performs an action
-        const actualResultObject = JSON.parse(actualResult);
+        const actualResult = engine("use lighter"); // this is the main action call when a player performs an action
+        const actualResultObject = actualResult;
         expect(actualResultObject.description).toBe(expectedResult);
     });
 });

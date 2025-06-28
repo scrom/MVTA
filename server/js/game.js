@@ -3,7 +3,6 @@
 module.exports.Game = function Game(playerAttributes,aGameID, aMap, mapBuilder, fileName, fileManager) {
     try{
         //module deps
-        var actionObjectModule = require('./action');
         var playerObjectModule = require('./player');
         const createEngine = require('./engine.js');
 

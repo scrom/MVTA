@@ -1211,7 +1211,15 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             var action = artefact.getDefaultAction();
             if (action !="read") { //@todo hack - this needs a proper test to decide what order default actions and results are handled when both are set.
                 var result = artefact.performCustomAction(action);
-                if (result) {return result;};
+                if (result) {
+                    if (result.includes("$action use")) {
+                        if (result == "$action use" || artefact.syn(result.replace("$action use ", "").trim())) {
+                            //we're self-referencing - avoid loop.
+                            result = result.replace("$action use", "$action examine");
+                        };
+                    };
+                    return result;
+                };
             };            
             return artefact.getDefaultAction();
         };
@@ -3527,7 +3535,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             //an object hidden in a location cannot be searched for (but can be interacted with).
             //this is deliberate as this is how scenery items are implemented.
             if (!position) {position = ""};
-            if (!adverb) {adverb = ""} else {adverb = adverb+" "};
+            if (!adverb) {adverb = " "} else {adverb = " "+adverb+" "};
 
             if (!(self.canSee())) {return "It's too dark to see anything here.";};
             if (tools.stringIsEmpty(artefactName)){ return tools.initCap(verb)+" what?";};
@@ -3551,10 +3559,16 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                         positionName = "under";
                     };
                 };  
+            };
+            let tokens = verb.split(" ");
+            if (["at", "for"].includes(tokens[tokens.length-1])) {
+                position = tokens[tokens.length-1];
+                tokens.pop();
+                verb = tokens.join(" ").trim();
             };     
-            if (position == "at" || !position ) {position = " "}
-            else { position = " "+position+" ";};
-            var resultString =  "You "+adverb+verb+position+artefact.getDisplayName();
+            if (!position ) {position = ""}
+            else { position = position+" ";};
+            var resultString =  "You "+verb+adverb+position+artefact.getDisplayName();
             var hiddenObjectsList = " and discover " + artefact.listHiddenObjects(positionName, _currentLocation);
 
             if (position != "on") {
@@ -4573,7 +4587,9 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
         };
 
         self.go = function(verb, direct, map) {//(aDirection, aLocation) {
-            if (tools.stringIsEmpty(verb) || verb == direct || verb == direct.substring(0, 1)) {verb = "go";};
+            if (tools.stringIsEmpty(verb) || verb == direct) {verb = "go";};
+            if (!direct) {return tools.initCap(verb)+" where?"}
+            if (verb == direct.substring(0, 1)) {verb = "go";};
     
             //trim direct down to first letter then rebuild "direct"...
             var direction = direct.substring(0, 1);
