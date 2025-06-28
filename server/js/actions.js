@@ -1,4 +1,5 @@
 // actions.js
+
   // To reference any of the functions in this file from within another function -  inside any function, we can call another function like: actions.help();
 module.exports.Actions = function Actions(parser, fileManager) {
   const self = this; //closure so we don't lose this reference in callbacks
@@ -411,6 +412,47 @@ module.exports.Actions = function Actions(parser, fileManager) {
             po.preposition = "out";
             return self.go(verb, player, map, po);
         };
+        self.north = function (verb, player, map, po) {
+          po.preposition = "north";
+          return self.go("go", player, map, po)
+        };
+        self.south = function (verb, player, map, po) {
+          po.preposition = "south";
+          return self.go("go", player, map, po)
+        };
+        self.east = function (verb, player, map, po) {
+          po.preposition = "east";
+          return self.go("go", player, map, po)
+        };
+        self.west = function (verb, player, map, po) {
+          po.preposition = "west";
+          return self.go("go", player, map, po)
+        };
+        self.up = function (verb, player, map, po) {
+          po.preposition = "up";
+          return self.go("go", player, map, po)
+        };
+        self.down = function (verb, player, map, po) {
+          po.preposition = "down";
+          return self.go("go", player, map, po)
+        };     
+        self.forward = function (verb, player, map, po) {
+          po.preposition = "forward";
+          return self.go("go", player, map, po)
+        };       
+        self.back = function (verb, player, map, po) {
+          po.preposition = "back";
+          return self.go("go", player, map, po)
+        };        
+        self.left = function (verb, player, map, po) {
+          po.preposition = "left";
+          return self.go("go", player, map, po)
+        };
+        self.right = function (verb, player, map, po) {
+          po.preposition = "right";
+          return self.go("go", player, map, po)
+        };  
+
         self.follow = function (verb, player, map, po) {
           let time = 0;
           switch (po.originalVerb) {
