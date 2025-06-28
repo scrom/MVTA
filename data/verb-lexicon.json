@@ -681,11 +681,7 @@
   },
   "type": {
     "category": "writing",
-    "aliases": []
-  },
-  "input": {
-    "category": "writing",
-    "aliases": []
+    "aliases": ["input"]
   },
   "log": {
     "category": "tech",

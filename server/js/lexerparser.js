@@ -347,6 +347,15 @@ module.exports.LexerParser = function LexerParser() {
                 };
             };
 
+            //if we're writing something, then we go with that.
+            let testVerb = self.normaliseVerb(inputVerbs[0]);
+            if (verbs[testVerb].category) {
+                if (verbs[testVerb].category == "writing") {
+                    verbIndex = tokens.indexOf(inputVerbs[0]);
+                    return {inputVerbs, verbIndex};
+                };
+            };
+
             //we have more than one potential verb...
             //try all the verbs in reverse order, ditch any we don't know - if any left are dialogue, we'll use the *earliest* of those.
             let dialogueVerb = "";

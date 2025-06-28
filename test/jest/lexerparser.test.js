@@ -1417,7 +1417,6 @@ test('test writing', () => {
     expect(actualResult).toStrictEqual(expectedResult);
 });
 
-
 test('test drawing', () => {
     const input = "draw a large flower in the book";
 
@@ -1430,6 +1429,24 @@ test('test drawing', () => {
       "originalVerb": "draw",
       "preposition": "in",
       "subject": "a large flower",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('test typing', () => {
+    const input = "type hello world into the console";
+
+    const expectedResult = {
+      "action": "type",
+      "adverb": null,
+      "category": "writing",
+      "object": "console",
+      "originalInput": input,
+      "originalVerb": "type",
+      "preposition": "into",
+      "subject": "hello world",
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);

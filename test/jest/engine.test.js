@@ -1327,3 +1327,13 @@ test('test inject', () => {
     const actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test type', () => {
+    const objectJSON  = fm.readFile("artefacts/console.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "type hello world into the console";
+    const expectedResult = "You type 'hello world' into the console.";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});

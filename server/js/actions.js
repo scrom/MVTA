@@ -751,6 +751,12 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.inject(po.subject, po.object), player, map, po,1);
         };
 
+        self.type = function(verb, player, map, po) { 
+          //(verb, text, receiverName)
+          return self.processResponse(player.type(verb, po.subject, po.object), player, map, po,1);
+        };
+        
+
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";
           let ticks = 1; //can't completely cheat for free.
