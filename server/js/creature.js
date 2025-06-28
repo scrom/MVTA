@@ -290,6 +290,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
         const have = (_genderPrefix == "They") ? "have" : "has";
         const arent = (_genderPrefix == "They") ? "aren't" : "isn't";
         const are = (_genderPrefix == "They") ? "are" : "is";
+        const sre = (_genderPrefix == "They") ? "re" : "s";
 
         //return right prefix for item       
         self.descriptionWithCorrectPrefix = function (anItemDescription, plural) {

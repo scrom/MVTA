@@ -2954,7 +2954,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 //@todo issues #107 and #351 - loop back to creature for reasins here.
                 var affinityModifier = artefact.getAffinityModifier();
                 if (affinityModifier >= 99 || affinityModifier <= -99) {
-                    return tools.initCap(receiver.getPrefix()) + " doesn't want "+artefact.getSuffix()+".";
+                    let dont = (receiver.getPrefix() == "They") ? "don't" : "doesn't";
+                    return tools.initCap(receiver.getPrefix()) + " "+dont+" want "+artefact.getSuffix()+".";
                 };
                 return tools.initCap(receiver.getDescriptivePrefix()) + " not willing to accept gifts from you at the moment.";
             };
@@ -4940,7 +4941,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
             //initial dead/destroyed checks and affinity impact.
             if (receiver.getType() == "creature") {
-                if (receiver.isDead()) {return receiver.getPrefix()+"'s dead already."};
+                let sre = (receiver.getPrefix() == "They") ? "re" : "s";
+                if (receiver.isDead()) {return receiver.getPrefix()+"'"+sre+" dead already."};
                 
                 //regardless of outcome, you're not making yourself popular
                 receiver.decreaseAffinity(1);
