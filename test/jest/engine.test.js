@@ -1307,3 +1307,23 @@ test('test listen', () => {
     let actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test play', () => {
+    const objectJSON  = fm.readFile("artefacts/guitar.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "play guitar";
+    const expectedResult = "You attempt to strum a few notes but virtual music doesn't seem to be your forte.<br>";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test inject', () => {
+    const objectJSON  = fm.readFile("artefacts/biro.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "inject myself with a biro";
+    const expectedResult = "It's not designed for that kind of personal medical use.";
+    const actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
