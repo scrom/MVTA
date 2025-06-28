@@ -1513,3 +1513,29 @@ test('test self-referencing is trapped', () => {
     const actualResult = engine(input).description; 
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test fill X with Y', () => {
+    let objectJSON  = fm.readFile("artefacts/coco-pops.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    objectJSON  = fm.readFile("artefacts/bowl.json"); 
+    const object2 = mb.buildArtefact(objectJSON);
+    l0.addObject(object2);
+    const input = "fill bowl with coco pops";
+    const expectedResult = "You pour some coco pops into the bowl.<br>";
+    const actualResult = engine(input).description; 
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test fill X with X - should catchg circular reference', () => {
+    let objectJSON  = fm.readFile("artefacts/coco-pops.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    objectJSON  = fm.readFile("artefacts/bowl.json"); 
+    const object2 = mb.buildArtefact(objectJSON);
+    l0.addObject(object2);
+    const input = "fill bowl with bowl";
+    const expectedResult = "Are you a tester? This is totally the kind of crazy thing great testers might try.<br>You possibly <i>could</i> 'fill bowl with bowl' in real life but that's not something I'm able to do for you here.";
+    const actualResult = engine(input).description; 
+    expect(actualResult).toBe(expectedResult);
+});

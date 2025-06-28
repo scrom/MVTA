@@ -161,15 +161,27 @@ module.exports.Actions = function Actions(parser, fileManager) {
 
             return resultJson
         };
-        
-        self.processResponse = function (response, player, map, po, time) {
-          let resultJSON = "";
-          try {
+
+        self.checkForCircularReference = function (player, po) {
             if (po.subject && po.object) {
               if (po.subject == po.object) {
                 return self.buildResultJSON("Are you a tester? This is totally the kind of crazy thing great testers might try.<br>You possibly <i>could</i> '"+po.originalInput+"' in real life but that's not something I'm able to do for you here.", null, player, po);
               };
-            };
+            };  
+            
+            return false;
+        };
+
+        self.precheckFail = function (player, map, po) {
+          let fail = self.checkForCircularReference(player, po);
+          return fail ? fail : false;
+        };
+        
+        self.processResponse = function (response, player, map, po, time) {
+          let resultJSON = "";
+          try {
+            let fail = self.precheckFail(player, map, po);
+            if (fail) { return fail;};
 
             if (response) {
               if (response.includes("$cheat$")) {
@@ -291,7 +303,9 @@ module.exports.Actions = function Actions(parser, fileManager) {
 
         };
 
-        self.null = function(verb, player, map, po) {
+        self.null = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           //console.debug("fail count: "+_failCount);
           if (_failCount >=3) { //help on 3 or more fails
             verb = "help";
@@ -313,7 +327,9 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return  self.processResponse("$fail$Sorry, I didn't "+notUnderstood+" you there. " + randomReplies[randomIndex], player, map, po, 0);
         };
 
-        self.customaction = function(verb, player, map, po) {
+        self.customaction = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           let result = player.customAction(po.originalVerb, po.subject, po.object);
           if (!tools.stringIsEmpty(result)) {
             if (typeof (result) == 'object') {
@@ -325,15 +341,21 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return self.processResponse(result, player, map, po, 1);
         };
 
-        self.again = function(verb, player, map, po) {
+        self.again = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.reconstructInputAndRecallSelfWithNewVerb(self.lastAction, player, map, po, true); //true means replace all with contents of "verb"
         };
 
-        self.try = function(verb, player, map, po) {
+        self.try = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.reconstructInputAndRecallSelfWithNewVerb(verb, player, map, po)
         };
 
         self.use = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           let actionResult = player.use(verb, po.subject, po.object);
           if (actionResult) { actionResult = actionResult.trim(); }
           else { actionResult = ""; }; //just in case it comes back undefined.
@@ -341,6 +363,8 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
 
         self.go = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           let time = 1;
           if (tools.directions.includes(verb)) {
             time = 1;
@@ -386,74 +410,112 @@ module.exports.Actions = function Actions(parser, fileManager) {
           }
         };
         self.run = function (verb, player, map, po) {
-            return self.go(verb, player, map, po);
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+          return self.go(verb, player, map, po);
         };
         self.swim = function (verb, player, map, po) {
-            return self.go(verb, player, map, po);
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+          return self.go(verb, player, map, po);
         };
         self.crawl = function (verb, player, map, po) {
-            return self.go(verb, player, map, po);
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+          return self.go(verb, player, map, po);
         };
         self.climb = function (verb, player, map, po) {
-            return self.go(verb, player, map, po);
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+          return self.go(verb, player, map, po);
         };
         self.descend = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
             po.preposition = "down";
-            return self.go(verb, player, map, po);
+          return self.go(verb, player, map, po);
         };
         self.sneak = function (verb, player, map, po) {
-            return self.go(verb, player, map, po);
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+          return self.go(verb, player, map, po);
         };
         self.enter = function (verb, player, map, po) {
-            po.preposition = "in";
-            return self.go(verb, player, map, po);
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+          po.preposition = "in";
+          return self.go(verb, player, map, po);
         };
         self.leave = function (verb, player, map, po) {
-            po.preposition = "out";
-            return self.go(verb, player, map, po);
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+          po.preposition = "out";
+          return self.go(verb, player, map, po);
         };
         self.north = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "north";
           return self.go("go", player, map, po)
         };
         self.south = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "south";
           return self.go("go", player, map, po)
         };
         self.east = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "east";
           return self.go("go", player, map, po)
         };
         self.west = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "west";
           return self.go("go", player, map, po)
         };
         self.up = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "up";
           return self.go("go", player, map, po)
         };
         self.down = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "down";
           return self.go("go", player, map, po)
         };     
         self.forward = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "forward";
           return self.go("go", player, map, po)
         };       
         self.back = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "back";
           return self.go("go", player, map, po)
         };        
         self.left = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "left";
           return self.go("go", player, map, po)
         };
         self.right = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.preposition = "right";
           return self.go("go", player, map, po)
         };  
 
         self.follow = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           let time = 0;
           switch (po.originalVerb) {
             case "chase":
@@ -471,6 +533,8 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
       
         self.say = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           if (lp.topLevelVerbs.includes(po.originalVerb) && lp.lexicon[po.originalVerb].category == "dialogue") {
             verb = po.originalVerb
           };
@@ -478,19 +542,29 @@ module.exports.Actions = function Actions(parser, fileManager) {
           //return dp.parseDialogue(verb, player, map, po);
         };
         self.talk = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
             return self.say(verb, player, map, po);
         };
         self.reply = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
             return self.say(verb, player, map, po);
         };
         self.shout = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
             return self.say(verb, player, map, po);
         };
         self.sing = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
             return self.say(verb, player, map, po);
         };
       
         self.ask = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           let request = po;
           if (po.object) {
             request = lp.parseInput(po.object); //re-parse now we have subject and "ask" to find what we're asking for
@@ -501,15 +575,22 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
               
         self.greet = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
           //return dp.parseDialogue(verb, player, map, po);
         };
         
-        self.cheat = function(verb, player, map, po) {
+        self.cheat = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+
            return self.processResponse("Hmmm. I'm sure I heard about some cheat codes somewhere...<br><br>...Nope, I must have imagined it.<br>Looks like it's just you and your brain for now.", player, map, po,1);
         };
 
-        self.help = function(verb, player, map, po) {
+        self.help = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           let stuck = "";
           if (_failCount <3 ) {
             stuck = "Stuck already? Ok...";
@@ -529,18 +610,26 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
 
         self.map = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return  self.processResponse("Oh dear, are you lost? This is a text adventure you know.<br>Time to get some graph paper, a pencil and start drawing!", player, map, po ,0);
         };
 
         self.health  = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return  self.processResponse(player.health(po.subject), player, map, po ,0);
         };
 
         self.heal  = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return  self.processResponse(player.healCharacter(po.subject), player, map, po ,2);
         };
 
         self.stats = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return  self.processResponse(player.stats(map), player, map, po ,0);
         };
 
@@ -549,14 +638,20 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
 
         self.visits  = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return  self.processResponse(player.getVisits(), player, map, po ,0);
         };
 
         self.inventory  = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return  self.processResponse(player.describeInventory(), player, map, po ,1);
         };
 
         self.examine  = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           let actionTicks = 2;
           //trap a few junk words - will return "look" with no object. 
           const junkWords = ["exits", "objects", "artefacts", "creatures", "artifacts"]
@@ -590,42 +685,73 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
 
         self.search = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.search(verb, po.subject, po.adverb, po.preposition), player, map, po ,3)
         };
         self.find = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.hunt(po.originalVerb, po.subject, map), player, map, po ,2);
         };
         self.put = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
         self.pour = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+          return self.put(verb, player, map, po);
+        };
+        self.fill = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.put(verb, player, map, po);
         };
         self.combine = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.put(verb, player, map, po);
         };
         self.hide = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.put(verb, po.subject, po.preposition, po.object), player, map, po ,3);
         };
         self.place = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
         self.move = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
         self.empty = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.empty(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
         self.water = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,2);
         };
         self.give = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.give(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };        
         self.feed = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.give(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,2);
         };  
         self.get = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           if (po.preposition == "apart") {
             po.originalVerb = "dismantle";
             return self.dismantle(verb, player, map, po);
@@ -637,6 +763,8 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
 
         self.pick  = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           if (po.preposition == "up" || po.originalVerb == "pick up") {
             return self.take(verb, player, map, po);
           };
@@ -645,6 +773,8 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
 
         self.take = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           if (po.preposition == "apart") {
             po.originalVerb = "dismantle";
             return self.dismantle(verb, player, map, po);
@@ -654,14 +784,20 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
 
         self.hold = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.take(verb, player, map, po);
         };
 
         self.dismantle = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
             return self.processResponse(player.dismantle(po.originalVerb, po.subject), player, map, po ,2);
         };
 
         self.throw  = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           if (po.preposition === "at" && po.object != null) {
             return self.processResponse(player.hit(verb, po.object, po.subject), player, map, po ,1);
           } else if (["in", "into", "in to", "inside", 'onto', 'on to', 'on top of', 'on'].includes(po.preposition) && po.object != null) {
@@ -671,6 +807,8 @@ module.exports.Actions = function Actions(parser, fileManager) {
           };
         };
         self.drop = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           if (["in", "into", "in to", "inside", 'onto', 'on to', 'on top of', 'on'].includes(po.preposition) && po.object != null) {
             return self.processResponse(player.put(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
           } else {
@@ -679,24 +817,36 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
 
         self.sleep  = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.rest(po.action, 25, map), player, map, po ,0);
         };        
         self.rest  = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.rest(po.action, 7, map), player, map, po ,0);
         };
 
         self.wait = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.wait(1, map), player, map, po ,1);
         };
 
         self.push = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.shove(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
         self.shove = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.shove(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
         };
 
         self.open = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           ticks = 1;
           let response = player.open(po.originalVerb, po.subject);
           //don't consume time if already open
@@ -704,13 +854,19 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return self.processResponse(response, player, map, po ,ticks);
         };
         self.pull = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.open(verb, player, map, po);
         };
         self.raise = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.open(verb, player, map, po);
         };
 
         self.close = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           ticks = 1;
           let response = player.close(po.originalVerb, po.subject);
           //don't consume time if already open
@@ -718,33 +874,49 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return self.processResponse(response, player, map, po ,ticks);
         };
         self.lower = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.close(verb, player, map, po);
         };
         self.roll = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.close(verb, player, map, po);
         };      
         self.seal = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.close(verb, player, map, po);
         };
 
-        self.drink = function(verb, player, map, po) {
+        self.drink = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return  self.processResponse(player.drink(po.originalVerb, po.subject), player, map, po,1);
         };       
-        self.eat = function(verb, player, map, po) {
+        self.eat = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           let response = "";
           if (po.object) {response = player.eat(po.originalVerb+" "+po.preposition,po.object);}
           else {response = player.eat(po.originalVerb, po.subject);};
           return  self.processResponse(response, player, map, po,1);
         };
-        self.taste = function(verb, player, map, po) {
+        self.taste = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return  self.eat(verb, player, map, po);
         };   
 
-        self.shake = function(verb, player, map, po) {
+        self.shake = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return  self.processResponse(player.shake(po.originalVerb, po.subject), player, map, po,1);
         };   
 
-        self.attack = function(verb, player, map, po) {
+        self.attack = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           //verb, receiverName, artefactName           
           if (po.subject && po.object && (["on", "onto", "on to", "on top of"].includes(po.preposition))) {
             // handle //smash bottle on floor etc       
@@ -756,41 +928,65 @@ module.exports.Actions = function Actions(parser, fileManager) {
                             
           return  self.processResponse(player.hit(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
-        self.stab = function(verb, player, map, po) {
+        self.stab = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.smash = function(verb, player, map, po) {
+        self.smash = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.whip = function(verb, player, map, po) {
+        self.whip = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.choke = function(verb, player, map, po) {
+        self.choke = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.fire = function(verb, player, map, po) {
+        self.fire = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.blast = function(verb, player, map, po) {
+        self.blast = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.zap = function(verb, player, map, po) {
+        self.zap = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.shoot = function(verb, player, map, po) {
+        self.shoot = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.kick = function(verb, player, map, po) {
+        self.kick = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.punch = function(verb, player, map, po) {
+        self.punch = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
-        self.slap = function(verb, player, map, po) {
+        self.slap = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.attack(verb, player, map, po);
         };
 
-        self.steal = function(verb, player, map, po) {
+        self.steal = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           if (!po.object) {
             //if we're not stealing anything specific = make sure we pass in creature name in correct parameter.
             po.object = po.subject;
@@ -799,94 +995,144 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return self.processResponse(player.steal(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
 
-        self.pay = function(verb, player, map, po) {
+        self.pay = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.pay(po.originalVerb, po.subject, po.object, map), player, map, po,1);
         };
-        self.buy = function(verb, player, map, po) {
+        self.buy = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.buy(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
-        self.sell = function(verb, player, map, po) {
+        self.sell = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.sell(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
-        self.wave = function(verb, player, map, po) {
+        self.wave = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.wave(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
-        self.wink = function(verb, player, map, po) {
+        self.wink = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse("It's not the 20th century any more.<br>Winking at anyone <i>(or anything)</i> is just weird and creepy now.", player, map, po,1);
         };    
 
-        self.touch = function(verb, player, map, po) {
+        self.touch = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.touch(po.originalVerb, po.subject, po.object), player, map, po,1);
         };          
-        self.pat = function(verb, player, map, po) {   
+        self.pat = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};   
           return self.touch(verb, player, map, po);
         };
-        self.stroke = function(verb, player, map, po) {   
+        self.stroke = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};   
           return self.touch(verb, player, map, po);      
         };
-        self.hug = function(verb, player, map, po) {   
+        self.hug = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};   
           return self.touch(verb, player, map, po);      
         };
-        self.snuggle = function(verb, player, map, po) {   
+        self.snuggle = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};   
           return self.touch(verb, player, map, po);      
         };
-        self.kiss = function(verb, player, map, po) {   
+        self.kiss = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};   
           return self.touch(verb, player, map, po);      
         };
-        self.squeeze = function(verb, player, map, po) {   
+        self.squeeze = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};   
           return self.touch(verb, player, map, po);      
         };
 
-        self.rub = function(verb, player, map, po) {
+        self.rub = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.rub(po.originalVerb, po.preposition, po.subject, po.object), player, map, po,2);
         }; 
         
-        self.think = function(verb, player, map, po) {
+        self.think = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.think(po.originalVerb, po.preposition, po.subject, po.object, po.originalInput), player, map, po,2);
         }; 
         
-        self.imagine = function(verb, player, map, po) {
+        self.imagine = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.think(verb, player, map, po);
         }; 
 
-        self.unlock = function(verb, player, map, po) {
+        self.unlock = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.unlock(po.originalVerb, po.subject), player, map, po,1);
         }; 
 
-        self.lock = function(verb, player, map, po) {
+        self.lock = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.lock(po.originalVerb, po.subject), player, map, po,1);
         }; 
         
-        self.break = function(verb, player, map, po) {
+        self.break = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.breakOrDestroy(po.originalVerb, po.subject), player, map, po,1);
         }; 
                 
-        self.destroy = function(verb, player, map, po) {
+        self.destroy = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse(player.breakOrDestroy(po.originalVerb, po.subject), player, map, po,1);
         }; 
 
-        self.kill = function(verb, player, map, po) { 
+        self.kill = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse("Much as you may like to believe in instant karma. If you <b>have</b> to kill, you'll need to fight it out yourself.", player, map, po,0);
         };
 
-        self.read = function(verb, player, map, po) { 
+        self.read = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.read(po.originalVerb, po.subject,map), player, map, po,7);
         };
 
-        self.repair = function(verb, player, map, po) { 
+        self.repair = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.repair(po.originalVerb, po.subject), player, map, po,3);
         };
 
-        self.on = function(verb, player, map, po) { 
+        self.on = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           if (po.originalVerb == "on") {po.originalVerb = "turn"};
           return self.processResponse(player.onOff(po.originalVerb, "on", po.subject), player, map, po,1);
         };
-        self.off = function(verb, player, map, po) { 
+        self.off = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           if (po.originalVerb == "off") {po.originalVerb = "turn"};
           return self.processResponse(player.onOff(po.originalVerb, "off", po.subject), player, map, po,1);
         };
 
-        self.switch = function(verb, player, map, po) { 
+        self.switch = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           if (po.preposition == "on") {
             return self.on(verb, player, map, po);
           };
@@ -896,7 +1142,9 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return self.processResponse(player.turn(po.originalVerb, po.subject,po.preposition), player, map, po,1); //@todo clean up "turn"
         };
 
-        self.turn = function(verb, player, map, po) { 
+        self.turn = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           if (po.preposition == "on") {
             return self.on(verb, player, map, po);
           };
@@ -906,7 +1154,9 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return self.processResponse(player.turn(po.originalVerb, po.subject,po.preposition), player, map, po,1); //@todo clean up "turn"
         };
 
-        self.blow = function(verb, player, map, po) { 
+        self.blow = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           if (po.preposition == "out") {
             return self.off(verb, player, map, po);
           };
@@ -914,19 +1164,27 @@ module.exports.Actions = function Actions(parser, fileManager) {
           throw "Blow not fully implemented"
         };
 
-        self.jump = function(verb, player, map, po) { 
+        self.jump = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.goObject(po.originalVerb, po.preposition, po.subject, map), player, map, po,1);
         };
 
-        self.write = function(verb, player, map, po) { 
+        self.write = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.writeOrDraw(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
         
-        self.draw = function(verb, player, map, po) { 
+        self.draw = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.writeOrDraw(po.originalVerb, po.subject, po.object), player, map, po,2);
         };
     
-        self.sign = function(verb, player, map, po) { 
+        self.sign = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           //allows sign in/sign up (assuming relevant object has in/up as a synonym)
           if (!po.object && po.subject) {
             po.object = po.subject;
@@ -936,7 +1194,9 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return self.processResponse(player.writeOrDraw(verb, "$player", po.object), player, map, po,1);
         };
 
-        self.clean = function(verb, player, map, po) { 
+        self.clean = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           if (po.object && po.preposition) {
             //if we have 2 items, swap subject and object
             let temp = po.subject;
@@ -946,66 +1206,96 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return self.processResponse(player.clean(verb, po.subject, po.object), player, map, po,2);
         };
 
-        self.noise = function(verb, player, map, po) {
+        self.noise = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           return self.processResponse("You attempt to "+po.originalVerb+" and manage to emit a tuneless, annoying noise.<br>Thanks for that then.", player, map, po,1);
         };
 
-        self.smell = function(verb, player, map, po) { 
+        self.smell = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.smell(po.originalVerb, po.subject), player, map, po,1);
         };
 
-        self.listen = function(verb, player, map, po) { 
+        self.listen = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.listen(po.originalVerb, po.subject, po.preposition, map), player, map, po,1);
         };
 
-        self.play = function(verb, player, map, po) { 
+        self.play = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.play(po.originalVerb, po.subject, po.object), player, map, po,2);
         };
 
-        self.inject = function(verb, player, map, po) { 
+        self.inject = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.inject(po.subject, po.object), player, map, po,1);
         };
 
-        self.type = function(verb, player, map, po) { 
+        self.type = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           //(verb, text, receiverName)
           return self.processResponse(player.type(verb, po.subject, po.object), player, map, po,1);
         };
-        self.print = function(verb, player, map, po) {
+        self.print = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           po.object = po.subject;
           po.subject = "printer";
           return self.use(verb, player, map, po)
         };
-        self.copy = function(verb, player, map, po) { 
+        self.copy = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           po.object = po.subject;
           po.subject = "copier";
           return self.use(verb, player, map, po)
         };
 
-        self.ride = function(verb, player, map, po) { 
+        self.ride = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.ride(po.originalVerb, po.subject, map), player, map, po,1);
         };
 
-        self.dismount = function(verb, player, map, po) { 
+        self.dismount = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           return self.processResponse(player.unRide(po.originalVerb, po.subject), player, map, po,1);
         };
 
-        self.knock = function(verb, player, map, po) { 
+        self.knock = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           throw "knock not implpemented"
         };
-        self.curse = function(verb, player, map, po) { 
+        self.curse = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           throw "curse not implemented"
         };
 
-        self.accept = function(verb, player, map, po) { 
+        self.accept = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           if (!po.subject) {po.subject = po.originalInput};
           return self.say(verb, player, map, po);
         };
-        self.reject = function(verb, player, map, po) { 
+        self.reject = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;}; 
           if (!po.subject) {po.subject = po.originalInput};
           return self.say(verb, player, map, po);
         };
 
         self.cheatcode = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
           let response = "cheat!";
           let ticks = 1; //can't completely cheat for free.
           try {

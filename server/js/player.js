@@ -2379,10 +2379,10 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (splitWord == "down") { return self.drop(verb, artefactName, _map);};
             if (splitWord == "out") { return self.turn(verb, artefactName, splitWord);};
             
-            if (["spray","douse", "quench", "squirt", "water"].includes(verb)) {
+            if (["spray","douse", "quench", "squirt", "water","fill"].includes(verb)) {
                 verb = "pour";
                 if (artefactName && receiverName && splitWord == "with") {
-                    //water X with Y
+                    //water/fill X with Y
                     let tempArtefactName = artefactName;
                     artefactName = receiverName;
                     receiverName = tempArtefactName;
