@@ -731,6 +731,18 @@ module.exports.Actions = function Actions(parser) {
           return self.processResponse(player.clean(verb, po.subject, po.object), player, map, po,2);
         };
 
+        self.noise = function(verb, player, map, po) {
+          return self.processResponse("You attempt to "+po.originalVerb+" and manage to emit a tuneless, annoying noise.<br>Thanks for that then.", player, map, po,1);
+        };
+
+        self.smell = function(verb, player, map, po) { 
+          return self.processResponse(player.smell(po.originalVerb, po.subject), player, map, po,1);
+        };
+
+        self.listen = function(verb, player, map, po) { 
+          return self.processResponse(player.listen(po.originalVerb, po.subject, po.preposition, map), player, map, po,1);
+        };
+
         self.cheatcode = function (verb, player, map, po) {
           let response = "cheat!";
           let ticks = 1; //can't completely cheat for free.

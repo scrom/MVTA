@@ -1280,3 +1280,30 @@ test('test cleaning', () => {
     let actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test noise', () => {
+    const input = "growl at the dog";
+    const expectedResult = "You attempt to growl and manage to emit a tuneless, annoying noise.<br>Thanks for that then."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test smell', () => {
+    let objectJSON  = fm.readFile("artefacts/air.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "smell air";
+    const expectedResult = "You detect the slightly warm, damp, youthful smell of Cambridge graduates."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test listen', () => {
+    let objectJSON  = fm.readFile("artefacts/air-plant-room.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    const input = "listen";
+    const expectedResult = "You hear a mix of occasional clanking, a low level generator hum, and the odd burst of a boiler firing up."; 
+    let actualResult = engine(input);
+    expect(actualResult).toBe(expectedResult);
+});
