@@ -1034,3 +1034,25 @@ test('canFailCounterIntuitiveDestroyScreenMission', () => {
     const actualResult = resultString;
     expect(actualResult).toBe(expectedResult);
 });
+
+  
+test('can Sign In and get keyfobMission', () => {
+    const reception = m0.getLocation("reception")
+
+    p0.setLocation(reception);
+    var say = p0.say("talk", "", "vi", m0);
+    const expectedSay = "'Good morning. You must be $player.'<br>'Welcome aboard!'$imagevioletwilmott.jpg/$image<br>"
+    expect(say).toBe(expectedSay);
+    m0.updateMissions(2, p0);
+
+    const mc = new missionController.MissionController();
+    var activated = mc.activateNamedMission("mission-keyfob", [reception], p0);
+    console.debug(activated);
+    var destroy = p0.writeOrDraw("sign", "$player", "visitors book");
+    console.debug(destroy);
+
+    const resultString = m0.updateMissions(1, p0);
+    const expectedResult = "<br><br>Violet Says 'Here's your key fob.'<br>'You'll need it to get in and out of some parts of the office.'<br>";
+    const actualResult = resultString;
+    expect(actualResult).toBe(expectedResult);
+});

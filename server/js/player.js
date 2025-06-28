@@ -4367,7 +4367,15 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
         self.goObject = function (verb, splitWord, artefactName, map) {
             if (verb == "head") {verb = "go";};
-            if (tools.stringIsEmpty(artefactName)){ return verb+" where?";};
+            if (verb == "jump" && !artefactName && !splitWord) {
+                return "You jump up and down repeatedly on the spot.<br>Other than making you feel slightly foolish and out of breath, nothing happens."
+            };
+            if (tools.stringIsEmpty(artefactName)){ 
+                if (tools.directions.includes(splitWord)) {
+                    return self.go(verb, splitWord, map);
+                };
+                return verb+" where?";
+            };
 
             var artefact = getObjectFromLocation(artefactName);
             if (!(artefact)) {

@@ -1398,3 +1398,40 @@ test('test ask', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+test('test writing', () => {
+    const input = "write i am a bad person on the walls";
+
+    const expectedResult = {
+      "action": "write",
+      "adverb": null,
+      "category": "writing",
+      "object": "walls",
+      "originalInput": input,
+      "originalVerb": "write",
+      "preposition": "on",
+      "subject": "i am a bad person",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('test drawing', () => {
+    const input = "draw a large flower in the book";
+
+    const expectedResult = {
+      "action": "draw",
+      "adverb": null,
+      "category": "writing",
+      "object": "book",
+      "originalInput": input,
+      "originalVerb": "draw",
+      "preposition": "in",
+      "subject": "a large flower",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});

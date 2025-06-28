@@ -599,6 +599,9 @@ module.exports.Actions = function Actions(parser) {
         self.wave = function(verb, player, map, po) {
           return self.processResponse(player.wave(po.originalVerb, po.subject, po.object), player, map, po,1);
         };
+        self.wink = function(verb, player, map, po) {
+          return self.processResponse("It's not the 20th century any more.<br>Winking at anyone <i>(or anything)</i> is just weird and creepy now.", player, map, po,1);
+        };    
 
         self.touch = function(verb, player, map, po) {
           return self.processResponse(player.touch(po.originalVerb, po.subject, po.object), player, map, po,1);
@@ -613,6 +616,12 @@ module.exports.Actions = function Actions(parser) {
           return self.touch(verb, player, map, po);      
         };
         self.snuggle = function(verb, player, map, po) {   
+          return self.touch(verb, player, map, po);      
+        };
+        self.kiss = function(verb, player, map, po) {   
+          return self.touch(verb, player, map, po);      
+        };
+        self.squeeze = function(verb, player, map, po) {   
           return self.touch(verb, player, map, po);      
         };
 
@@ -691,6 +700,25 @@ module.exports.Actions = function Actions(parser) {
           };
           //blow up/on/over - 
           return self.processResponse("xxx", player, map, po,0); //@todo 
+        };
+
+        self.jump = function(verb, player, map, po) { 
+          return self.processResponse(player.goObject(po.originalVerb, po.preposition, po.subject, map), player, map, po,3);
+        };
+
+        self.write = function(verb, player, map, po) { 
+          return self.processResponse(player.writeOrDraw(po.originalVerb, po.subject, po.object), player, map, po,3);
+        };
+        
+        self.draw = function(verb, player, map, po) { 
+          return self.processResponse(player.writeOrDraw(po.originalVerb, po.subject, po.object), player, map, po,3);
+        };
+    
+        self.sign = function(verb, player, map, po) { 
+          //allows sign in/sign up (assuming relevant object has in/up as a synonym)
+          if (!po.object && po.subject) {po.object = po.subject;}; 
+          if (!po.object && !po.subject) {po.object = po.preposition;}; 
+          return self.processResponse(player.writeOrDraw(verb, "$player", po.object), player, map, po,3);
         };
 
         self.cheatcode = function (verb, player, map, po) {

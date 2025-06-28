@@ -454,11 +454,24 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
         //return right prefix for item       
         self.descriptionWithCorrectPrefix = function (anItemDescription, plural) {
             var state = " ";
+            if (anItemDescription) {
+                //before we go any futher, we need to remove any spurious prefixes here (an, a, some, the)
+                let tokens = anItemDescription.split(" ");
+                if (["some", "an", "a"].includes(tokens[0])) {
+                    tokens.shift();
+                    anItemDescription = tokens.join(" ");
+                };
+            };
             if (!anItemDescription) {
                 //we're referencing self instead
                 anItemDescription = self.getRawDescription();
                 
                 //before we go any futher, we need to remove any spurious prefixes here (an, a, some, the)
+                let tokens = anItemDescription.split(" ");
+                if (["some", "an", "a"].includes(tokens[0])) {
+                    tokens.shift();
+                    anItemDescription = tokens.join(" ");
+                };
 
                 plural = _plural;
                 if (self.isDestroyed()) {

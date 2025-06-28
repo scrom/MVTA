@@ -1349,7 +1349,6 @@ exports.Action = function Action(player, map, fileManager) {
                             return self.processAction(_actionString);
                         };
                         break;
-////////Conversion to new engine reached here////////////
                     case 'kiss':
                     case 'smooch':
                     case 'snog':
@@ -1372,6 +1371,7 @@ exports.Action = function Action(player, map, fileManager) {
                             description = "You jump up and down repeatedly on the spot.<br>Other than making you feel slightly foolish and out of breath, nothing happens.";
                         };
                         break;
+////////skipped these next ones ///////////////////
                     case 'who':
                         //if we have met the character, return what their job/role is.
                         //if we are in conversation and the character likes or dislikes the one we mention, return an appropriate response (along with their job/role)
@@ -1423,6 +1423,7 @@ exports.Action = function Action(player, map, fileManager) {
                         };
                         description = _player.writeOrDraw('sign', "$player", _object0);
                         break;
+////////Conversion to new engine reached here////////////
                     case 'clear':
                     case 'wipe':
                     case 'scrub':

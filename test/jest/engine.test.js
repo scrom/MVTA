@@ -1220,3 +1220,56 @@ test('test turning wrong item off', () => {
     let actualResult = engine(input);
     expect(actualResult).toBe(expectedResult);
 });
+
+
+test('test "sign in"', () => {
+    let objectJSON  = fm.readFile("artefacts/visitors-book.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    objectJSON  = fm.readFile("artefacts/biro-reception-desk.json"); 
+    const object2 = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    l0.addObject(object2);
+    const input = "sign my name in the visitors book";
+    const expectedResult = "You sign '$player' in the visitor's book."; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test "sign in"', () => {
+    let objectJSON  = fm.readFile("artefacts/visitors-book.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    objectJSON  = fm.readFile("artefacts/biro-reception-desk.json"); 
+    const object2 = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    l0.addObject(object2);
+    const input = "sign in";
+    const expectedResult = "You sign '$player' in the visitor's book."; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test drawing', () => {
+    let objectJSON  = fm.readFile("artefacts/visitors-book.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    objectJSON  = fm.readFile("artefacts/biro-reception-desk.json"); 
+    const object2 = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    l0.addObject(object2);
+    const input = "draw a large flower in the book";
+    const expectedResult = "You draw a large flower in the visitor's book."; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test writing', () => {
+    let objectJSON  = fm.readFile("artefacts/visitors-book.json"); 
+    const object = mb.buildArtefact(objectJSON);
+    objectJSON  = fm.readFile("artefacts/biro-reception-desk.json"); 
+    const object2 = mb.buildArtefact(objectJSON);
+    l0.addObject(object);
+    l0.addObject(object2);
+    const input = "write i am a bad person on the walls";
+    const expectedResult = "You write 'i am a bad person' on the wall."; 
+    let actualResult = engine(input).substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});

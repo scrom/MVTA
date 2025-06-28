@@ -58,7 +58,7 @@ module.exports.LexerParser = function LexerParser() {
         allPrepositions = Array.from(new Set(allPrepositions)); //remove duplicates.
         allPrepositions.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words greatest first
         
-        verbs = fm.readFile("verb-lexicon.json");  //add  'ignore','blank','squeeze','grasp','clutch','clasp','hold','smoosh', 'smear','squish', 'chirp', 'tweet', 'bark', 'meow', 'moo','growl'
+        const verbs = fm.readFile("verb-lexicon.json");  //add  'ignore','blank','squeeze','grasp','clutch','clasp','hold','smoosh', 'smear','squish', 'chirp', 'tweet', 'bark', 'meow', 'moo','growl'
         self.lexicon = verbs;
         self.topLevelVerbs = Object.keys(verbs);
         const allAliases = [];
@@ -127,13 +127,15 @@ module.exports.LexerParser = function LexerParser() {
             return {"adverb": null, "remainder": rest}
         };
 
-        self.extractObjectsAndPrepositions = function(input) {
+        self.extractObjectsAndPrepositions = function(input, verb) {
             let tokens = input.split(/\s+/);
 
             //remove firstPersonPronouns
-            tokens = tokens.filter(function (value, index, array) {
-                return (!(firstPersonPronouns.includes(value)))
-            });
+            if (verbs[verb].category != "writing") { //we don't modify these for writing
+                tokens = tokens.filter(function (value, index, array) {
+                    return (!(firstPersonPronouns.includes(value)))
+                });
+            };
 
             const rest = tokens.join(' ');
             let objects = [rest];
@@ -495,11 +497,23 @@ module.exports.LexerParser = function LexerParser() {
                 if (verbInd > -1) {
                     //only do this if we had an original verb match, otherwise it's all dialogue
                     rest = tokens.slice(1).join(' ');
-                    rest = self.removeStopWords(rest);
                 };
                 
                 //split what's left by preposition to get objects   
-                let { objects, preposition} = self.extractObjectsAndPrepositions(rest);
+                let { objects, preposition} = self.extractObjectsAndPrepositions(rest, verb);
+
+                //remove stopwords 
+                if (verbInd > -1) {
+                    if (verbs[verb].category != "writing") { //we don't modify these for writing
+                        objects[0] = self.removeStopWords(objects[0]);
+                    };
+                    if (objects[1]) {
+                        objects[1] = self.removeStopWords(objects[1]);
+                    };
+                };
+
+
+
 
                 //split by modal verbs
                 if (verb && verbs[verb].category == "dialogue" && objects.length == 1 && !preposition)  {

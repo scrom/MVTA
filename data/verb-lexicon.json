@@ -324,11 +324,15 @@
     "aliases": ["study", "reda"]
   },
   "write": {
-    "category": "item_use",
-    "aliases": ["sign", "signature","scrawl", "scribble", "scribe", "autograph", "tag"]
+    "category": "writing",
+    "aliases": ["scrawl", "scribble", "scribe"]
+  },
+  "sign": {
+    "category": "writing",
+    "aliases": ["sign", "signature","autograph", "tag"]
   },
   "draw": {
-    "category": "item_use",
+    "category": "writing",
     "aliases": ["sketch", "doodle","scribble"]
   },
   "clean": {
@@ -676,11 +680,11 @@
     "aliases": []
   },
   "type": {
-    "category": "tech",
+    "category": "writing",
     "aliases": []
   },
   "input": {
-    "category": "tech",
+    "category": "writing",
     "aliases": []
   },
   "log": {

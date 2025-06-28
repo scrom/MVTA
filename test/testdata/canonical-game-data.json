@@ -15974,6 +15974,7 @@
                                         "detailedDescription": "It looks like you're the first newcomer today.",
                                         "attributes": {
                                             "weight": 1,
+                                            "type": "book",
                                             "position": "on",
                                             "customAction": [
                                                 "get"
