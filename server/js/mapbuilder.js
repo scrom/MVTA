@@ -117,6 +117,11 @@ exports.MapBuilder = function MapBuilder(mapDataPath, mapDataFile) {
                         artefactData.attributes.defaultResult = self.unpackReward(artefactData.attributes.defaultResult);
                     };
                 };
+                if (artefactData.attributes.type) {
+                    if (artefactData.attributes.type == "creature") {
+                        console.error("Cannot build Artefact '"+artefactData.name+"' type is 'creature'");
+                    };
+                };
             };
 
             try {

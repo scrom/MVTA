@@ -646,6 +646,10 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             _taste = taste;
         };
 
+        self.setCurrentLocation = function(location) {
+           _currentLocation = location;
+        };
+
         self.getCurrentLocation = function() {
             return _currentLocation;
         };
@@ -3155,7 +3159,8 @@ exports.Creature = function Creature(name, description, detailedDescription, att
 
             var replyName = tools.initCap(self.getPrefix());
             var ss = s;
-            if (player.getLastCreatureSpokenTo() != self.getName()) {
+            var creatureCount = _currentLocation.liveCreaturesExist(true);
+            if (player.getLastCreatureSpokenTo() != self.getName() || creatureCount > 1) {
                 replyName = self.getFirstName();
                 ss = "s";
             };
@@ -3268,7 +3273,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 default:
                     if (self.syn(someSpeech)) {
                         player.setLastCreatureSpokenTo(self.getName());
-                        return self.reply("hi", player, keyword, map);
+                        return self.reply("Hi", player, keyword, map);
                     };
                     var talkingToOtherObject = _currentLocation.getObject(someSpeech, false, false);
                     if (talkingToOtherObject) {

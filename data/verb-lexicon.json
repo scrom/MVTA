@@ -445,7 +445,7 @@
   },
   "greet": {
     "category": "dialogue",
-    "aliases": ["hello", "hi", "hey", "ahoy", "hiya"]
+    "aliases": ["hello", "yo", "hi", "hey", "heys", "hiya", "ahoy", "good morning", "good afternoon", "good evening"]
   },
    "goodbye": {
     "category": "dialogue",
@@ -820,11 +820,11 @@
     "aliases": []
   },
   "accept": {
-    "category": "communication_meta",
+    "category": "dialogue",
     "aliases": ["confirm", "yes", "y", "positive", "affirmed", "affirmative", "ok", "okay", "okey", "sure", "thanks", "thankyou"]
   },
   "reject": {
-    "category": "communication_meta",
+    "category": "dialogue",
     "aliases": ["cancel", "no", "n", "negative", "negatory", "dismiss"]
   },
   "cheat": {

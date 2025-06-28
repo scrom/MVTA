@@ -524,7 +524,7 @@ test('greetings are regognised and handled', () => {
     const input = "hi there dave how are you today";
 
     const expectedResult = {
-      "action": "say",
+      "action": "greet",
       "adverb": null,
       "category": "dialogue",
       "object": null,
@@ -542,7 +542,7 @@ test('greetings are regognised and handled', () => {
     const input = "ahoy";
 
     const expectedResult = {
-      "action": "say",
+      "action": "greet",
       "adverb": null,
       "category": "dialogue",
       "object": null,
@@ -560,7 +560,7 @@ test('greetings are regognised and handled', () => {
     const input = "ahoy there";
 
     const expectedResult = {
-      "action": "say",
+      "action": "greet",
       "adverb": null,
       "category": "dialogue",
       "object": null,
@@ -578,7 +578,7 @@ test('greetings are regognised and handled', () => {
     const input = "hiya adam";
 
     const expectedResult = {
-      "action": "say",
+      "action": "greet",
       "adverb": null,
       "category": "dialogue",
       "object": null,

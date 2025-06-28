@@ -327,7 +327,7 @@ test('test initate dialogue with open salutation when only one creature present'
 
 test('test saying things out loud when no characters nearby', () => {
     const input = "ahoy there";
-    const expectedResult = "'ahoy there'<br>";
+    const expectedResult = "You say 'Ahoy there'<br>";
     const actualResult = engine(input).description;
     expect(actualResult).toBe(expectedResult);
 });
@@ -384,6 +384,68 @@ test('test revert to actions from active conversation', () => {
     const actualResult = engine(input).description;
     expect(actualResult).toBe(expectedResult);
 });
+
+test('test test switch dialogue to second creature whilst talking to first', () => {
+    let objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go(null, l0);
+
+    objectJSON  = fm.readFile("creatures/chris-maddox.json"); 
+    const object2 = mb.buildCreature(objectJSON);
+    object2.go(null,l0);
+
+    const firstInput = "say hello to aaron";
+
+    const expectedFirstResult = "Aaron says";
+    const actualFirstResult = engine(firstInput).description.substring(0,expectedFirstResult.length);
+    expect(actualFirstResult).toBe(expectedFirstResult);
+
+    const input = "hi chris";
+    const result = engine(input);
+
+    const expectedImage = "chrismaddox.jpg";   
+    const actualImage = result.image;
+    expect(actualImage).toBe(expectedImage);
+
+    const expectedResult = "Chris says";
+    const actualResult = result.description.substring(0,expectedFirstResult.length);
+    expect(actualResult).toBe(expectedResult);
+
+});
+
+test('test initiating anonymous dialogue with 2 creatures in location fails gracefully', () => {
+    let objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go(null, l0);
+
+    objectJSON  = fm.readFile("creatures/chris-maddox.json"); 
+    const object2 = mb.buildCreature(objectJSON);
+    object2.go(null,l0);
+
+    const firstInput = "hi";
+
+    const expectedFirstResult = "You say 'Hi'<br>";
+    const actualFirstResult = engine(firstInput).description.substring(0,expectedFirstResult.length);
+    expect(actualFirstResult).toBe(expectedFirstResult);
+
+});
+
+test('test initiating named dialogue with 2 creatures in location selects correct creature', () => {
+    let objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go(null, l0);
+
+    objectJSON  = fm.readFile("creatures/chris-maddox.json"); 
+    const object2 = mb.buildCreature(objectJSON);
+    object2.go(null,l0);
+
+    const firstInput = "hi chris";
+
+    const expectedFirstResult = "Chris says";
+    const actualFirstResult = engine(firstInput).description.substring(0,expectedFirstResult.length);
+    expect(actualFirstResult).toBe(expectedFirstResult);
+});
+
 
 test('test "wait" verb', () => {
     const objectJSON  = fm.readFile("artefacts/hammock.json"); 
@@ -904,7 +966,9 @@ test('test mug', () => {
     object2.go(null, l0);
     const input = "mug aaron";
     const expectedResults = ["He dodges out of the way and attacks you instead. <br>You failed to gain anything but pain for your actions.", "He takes exception to your violent conduct.<br>Fortunately for you, you missed. Don't do that again.<br>"];
-    const actualResult = engine(input).description
+    let actualResult = engine(input).description;
+    let index = actualResult.indexOf("<br>Aaron Prescott pushes past you");
+    if (index >= 0) {actualResult = actualResult.substring(0, index)};
     console.debug(actualResult);
     expect(expectedResults.includes(actualResult)).toBe(true);
 });

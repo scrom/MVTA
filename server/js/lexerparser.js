@@ -441,7 +441,7 @@ module.exports.LexerParser = function LexerParser() {
                 };
 
                 if (salutations.some((e) => input.split(" ")[0] == e)) { //will only match single words
-                    verb = "say";
+                    verb = "greet";
                     verbInd = -1; //don't trim input
                 };
 

@@ -34,7 +34,7 @@ afterEach(done => {
 test('test a conversation that fails a mission', () => {
     //say no, then yes to the ice cream man
     var character = mb.buildCreature({ "file": "ice-cream-man" });
-    l0.addObject(character);
+    character.go(null, l0);
     var missions = character.getMissions(true);
     var testMission = missions[0];
     testMission.clearParent();
@@ -61,7 +61,7 @@ test('test a conversation that fails a mission', () => {
 test('test a conversation that passes a mission', () => {
     //try fix chris; bike mission
     var character = mb.buildCreature({ "file": "chris-maddox" });
-    l0.addObject(character);
+    character.go(null, l0);
     var missions = character.getMissions(true);
     var testMission = missions[0];
     testMission.clearParent();
@@ -91,7 +91,7 @@ test('test a conversation that passes a mission', () => {
 test('test a single message conversation passes', () => {
     //say yes to Angelina
     var character = mb.buildCreature({ "file": "angelina-morrison" });
-    l0.addObject(character);
+    character.go(null, l0);
     var missions = character.getMissions(true);
     var testMission = missions[0];
     testMission.clearParent();
@@ -117,7 +117,7 @@ test('test we can check for failed conversation', () => {
     //try this with destroy maracas
     //player.say(verb, speech, receiverName, map)
     var character = mb.buildCreature({ "file": "chris-warrington" });
-    l0.addObject(character);
+    character.go(null, l0);
     var missions = character.getMissions(true);
     var testMission = missions[0];
     testMission.clearParent();
@@ -167,7 +167,6 @@ test('test a creature will initiate conversation', () => {
 test('test what happens when a creature does not understand a player', () => {
     //not actually mission related - making sure plyer not bing understood works in test
     var character = mb.buildCreature({ "file": "chris-warrington" });
-    l0.addObject(character);
     character.go("",l0); //sets curent location
 
     const result1 = p0.say("talk", "hello", "chris", m0);

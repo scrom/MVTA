@@ -23,6 +23,22 @@ module.exports.Actions = function Actions(parser, fileManager) {
         object: objects[1] || null,
         preposition: preposition || null
   */
+
+      self.catchGameOver = function(player, po) {    
+        if (po.action != "stats") {
+          //explicitly test for false - supports stub testability          
+          if (player.gameIsActive() == false) {
+            return "$inactive$";
+          };
+                    
+          //explicitly test for true - supports stub testability          
+          if (player.isDead() == true) {
+            return "$dead$";
+          };
+        };
+
+        return false;
+      };
         
         //after player has performed an action, each creature in the room has an opportunuty to react
         self.processCreatureTicks = function(time, map, player) {
@@ -132,7 +148,7 @@ module.exports.Actions = function Actions(parser, fileManager) {
                               preposition:po.preposition,
                               adverb:po.adverb,
                               description:result,
-                              attributes:player.getClientAttributesString()}
+                              attributes:player.getClientAttributes()}
             if (imageName) {
               if (fm){
                 //check image exists and only add to response if it does
@@ -146,6 +162,7 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
         
         self.processResponse = function (response, player, map, po, time) {
+          let resultJSON = "";
           try {
 
             if (response) {
@@ -154,19 +171,24 @@ module.exports.Actions = function Actions(parser, fileManager) {
               };
               if (response.includes("$inactive$")) {
                 response = response.replace("$inactive$", "Thanks for playing.<br>There's nothing more you can do here for now.<br><br>You can either <i>quit</i> and start a fresh game or <i>load</i> a previously saved game.");
+                return self.buildResultJSON(result, imageName, player, po);
               };
               if (response.includes("$dead$")) {
                 response = response.replace("$dead$", "You're dead. Game over.<br>There's nothing more you can do here.<br><br>You either need to <i>quit</i> and restart a game or <i>load</i> a previously saved game.");
+                return self.buildResultJSON(result, imageName, player, po);
               };
             };
+
             if (po) {
               if (po.category != "dialogue") {
                 player.setLastCreatureSpokenTo("");
               };
             }
+
             if (tools.stringIsEmpty(response)) {
               return self.null(null, player, map, po);
             };
+
             if (response.includes("$fail$")) {
               response = response.replace("$fail$", "");
               _failCount++;
@@ -183,6 +205,7 @@ module.exports.Actions = function Actions(parser, fileManager) {
               //handle cases where $action does or doesn't have a second $
               response = response.replace("$action$","$action").trim();
             };
+
             if (response.includes("$action")) {
               //strip out any instances of $action
               //we already don't have $result$ so has to be an action already
@@ -219,7 +242,7 @@ module.exports.Actions = function Actions(parser, fileManager) {
 
             let {result, imageName} = self.extractImageName(player, response);
 
-            let resultJSON = self.buildResultJSON(result, imageName, player, po);
+            resultJSON = self.buildResultJSON(result, imageName, player, po);
 
             return resultJSON;
 
@@ -916,6 +939,15 @@ module.exports.Actions = function Actions(parser, fileManager) {
         };
         self.curse = function(verb, player, map, po) { 
           throw "curse not implemented"
+        };
+
+        self.accept = function(verb, player, map, po) { 
+          if (!po.subject) {po.subject = po.originalInput};
+          return self.say(verb, player, map, po);
+        };
+        self.reject = function(verb, player, map, po) { 
+          if (!po.subject) {po.subject = po.originalInput};
+          return self.say(verb, player, map, po);
         };
 
         self.cheatcode = function (verb, player, map, po) {

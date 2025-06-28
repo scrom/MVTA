@@ -22,21 +22,13 @@ function createEngine(player, map) {
 
       let result = {};
 
-      if (action != "stats") {
-        //explicitly test for false - supports stub testability          
-        if (player.gameIsActive() == false) {
-          result = a.processResponse ("$inactive$", player, map, parsedObject, 0);
-          if (result.error) throw new Error(result.error);
-          return result;
-        };
-                  
-        //explicitly test for true - supports stub testability          
-        if (player.isDead() == true) {
-          result = a.processResponse ("$dead$", player, map, parsedObject, 0);
-          if (result.error) throw  new Error(result.error);
-          return result;
-        };
-      };
+      let gameOver = a.catchGameOver(player, parsedObject);
+
+      if (gameOver) {
+        result = a.processResponse (gameOver, player, map, parsedObject, 0);
+        if (result.error) throw new Error(result.error);
+        return result;      
+      }
 
       result = handler(action, player, map, parsedObject);
       if (result.error) throw new Error(result.error);

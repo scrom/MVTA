@@ -898,13 +898,21 @@ exports.Location = function Location(name, displayName, description, attributes)
             return _inventory.listObjects(minSize);
         };
 
-        self.liveCreaturesExist = function() {
+        self.liveCreaturesExist = function(count) {
+            let quantity = 0;
             var creatures = self.getCreatures();
             if (creatures.length > 0) {
                 for (var i=0;i<creatures.length;i++) {
-                    if (!(creatures[i].isDead())) { return true;};
+                    if (!(creatures[i].isDead())) { 
+                        if (count) {
+                            quantity++;
+                        } else {
+                            return true;
+                        };
+                    };
                 };
             };
+            if (quantity > 0) {return quantity};
             return false;
         };
 
