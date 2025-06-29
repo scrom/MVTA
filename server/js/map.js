@@ -20,6 +20,7 @@ exports.Map = function Map() {
         var _creatureCount = 0; //how many creatures are there?
         var _removedCreatures = []; //which creatures have been removed from the map?
         var _dictionary = {};
+        var _reverseDictionary = {};
 
         //consider storing all creatures and artefacts on map object (rather than in location, creature or player) 
         //this will need some major rework and tracking/linking who owns what
@@ -33,50 +34,131 @@ exports.Map = function Map() {
             return _dictionary;
         };
 
-        self.dictionaryLookup = function (string) {
-            let matches = [];
-            for (const [objectName, { synonyms }] of Object.entries(_dictionary)) {
-                if (string === objectName || synonyms.includes(string)) {
-                    matches.push(_dictionary[objectName]);
-                };
-            };
-            return matches;
+        self.getReverseDictionary = function () {
+            return _reverseDictionary;
+        };
+
+        self.dictionaryLookup = function (string, type = null) {
+            const key = string.toLowerCase();
+            const entries = _reverseDictionary[key];
+            if (!entries) return false;
+
+            const result = {};
+            for (const { name, type: entryType } of entries) {
+                if (!type || entryType === type) {
+                    result[name] = _dictionary[name];
+                }
+            }
+
+            return result;
         };
 
         self.getDictionaryEntry = function(name) {
-            let entry = _dictionary[name];
-            if (entry) {return entry};
-            return false;
+            return _dictionary[name] || false;
         };
 
         self.addDictionaryEntry = function(name, type, syns) {
             if (!name) {return false;}
+
+            //save to main dictionary
             _dictionary[name] = {type: type, synonyms: syns};
+        
+            // Combine name and synonyms as keys
+            const allTerms = [name, ...(syns || [])];
+            for (const term of allTerms) {
+                const key = term.toLowerCase(); // normalize for consistency
+                if (!_reverseDictionary[key]) {
+                    _reverseDictionary[key] = [];
+                }
+
+                // Optional: check for duplicates before pushing
+                const alreadyExists = _reverseDictionary[key].some(entry => entry.name === name);
+                if (!alreadyExists) {
+                    _reverseDictionary[key].push({ name, type });
+                }
+            }           
             return true;
         };
 
         self.removeDictionaryEntry = function(name) {
-            if (!name) {return false;}
+            if (!name || !_dictionary[name]) return false;
+
+            const { type, synonyms = [] } = _dictionary[name];
+            const allTerms = [name, ...synonyms];
+
+            for (const term of allTerms) {
+                const key = term.toLowerCase(); // use same normalization as add
+                const entries = _reverseDictionary[key];
+
+                if (entries) {
+                    // Remove all matches for this name
+                    _reverseDictionary[key] = entries.filter(entry => entry.name !== name);
+
+                    // Clean up if empty
+                    if (_reverseDictionary[key].length === 0) {
+                        delete _reverseDictionary[key];
+                    }
+                }
+            }
+
+            // Finally remove from the main dictionary
             delete _dictionary[name];
             return true;
         };
 
         self.modifyDictionaryEntry = function(name, type, syns) {
-            if (!name) {return false;}
-            if (!_dictionary.name) {
-                return self.addToDictionary(name, type, syns);
-            };
+            if (!name) return false;
 
-            if (type) {
-                _dictionary.name.type = type;
-            };
-            if (syns) {
-                if (_dictionary.name.synonyms && !Array.isArray(syns)) {
-                    _dictionary.name.synonyms.push(syns);
-                } else {
-                    _dictionary.name.synonyms = syns;
+            const entry = _dictionary[name];
+
+            // If entry doesn't exist, add it instead
+            if (!entry) {
+                return self.addDictionaryEntry(name, type, syns);
+            }
+
+            // Remove old synonyms from reverse dictionary
+            const oldSynonyms = [name, ...(entry.synonyms || [])];
+            for (const term of oldSynonyms) {
+                const key = term.toLowerCase();
+                if (reverseDictionary[key]) {
+                    reverseDictionary[key] = reverseDictionary[key].filter(e => e.name !== name);
+                    if (reverseDictionary[key].length === 0) {
+                        delete reverseDictionary[key];
+                    }
                 }
-            };
+            }
+
+            // Modify type if given
+            if (type) {
+                entry.type = type;
+            }
+
+            // Modify synonyms
+            if (syns) {
+                if (Array.isArray(syns)) {
+                    entry.synonyms = syns;
+                } else {
+                    // Add single synonym to existing array
+                    if (!entry.synonyms) {
+                        entry.synonyms = [];
+                    }
+                    entry.synonyms.push(syns);
+                }
+            }
+
+            // Re-add new synonyms to reverse dictionary
+            const newSynonyms = [name, ...(entry.synonyms || [])];
+            for (const term of newSynonyms) {
+                const key = term.toLowerCase();
+                if (!reverseDictionary[key]) {
+                    reverseDictionary[key] = [];
+                }
+
+                const alreadyExists = reverseDictionary[key].some(e => e.name === name);
+                if (!alreadyExists) {
+                    reverseDictionary[key].push({ name, type: entry.type });
+                }
+            }
 
             return true;
         };

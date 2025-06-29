@@ -3502,6 +3502,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             artefactName = artefactName.trim();
                             return player.give("offer", artefactName, "to", self.getName());
                         };
+                        
                         console.warn("*** Unhandled player speech (point 2) - first Word:'" + firstWord + "', remainder:'" + remainderString + "', original:'" + originalSpeech + "'");                        
                         return tools.initCap(self.getFirstName())+" says 'Interesting. You've said something I don't know how to deal with at the moment.'<br>'I'm sure Simon will fix that soon though.'";
                         break;
@@ -3573,9 +3574,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     };
                 };
                 console.warn("*** Unhandled player speech (point 3) - first Word:'" + firstWord + "', remainder:'" + remainderString + "', original:'" + originalSpeech + "'");     
-                randomReplies = ["Sorry $player, that doesn't mean much to me at the moment.", "I'm not sure I can help you. Can you try rephrasing that for me - just in case?", "Sorry $player. I'm not quite sure what you're saying.", "I don't think I can help you at the moment. Have you tried typing <i>help</i>?", "Is there something specific you need?", "I'm not sure I can help you there."];
-                randomIndex = Math.floor(Math.random() * randomReplies.length);
-                response += tools.initCap(self.getFirstName())+" says '"+randomReplies[randomIndex]+"'";
+                response += tools.initCap(self.getFirstName())+" looks blankly at you for a moment and then looks away.<br>I don't think "+self.getPrefix().toLowerCase()+" understood you."
             };
 
             if (!(_spokenToPlayer)) {_spokenToPlayer = true;};

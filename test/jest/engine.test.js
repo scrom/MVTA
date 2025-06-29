@@ -456,7 +456,7 @@ test('test telling character to try an item.', () => {
     const input = "chris, try these crisps";
     const result = engine(input);
 
-    const expectedResult = "xxx";
+    const expectedResult = "Chris looks blankly at you for a moment and then looks away.<br>I don't think he understood you.<br>";
     const actualResult = result.description;
     expect(actualResult).toBe(expectedResult);
 
@@ -480,7 +480,7 @@ test('test telling character to try an item.', () => {
     input = "chris, try eating these crisps";
      result = engine(input);
 
-    const expectedResult = "YYY";
+    const expectedResult = "Chris looks blankly at you for a moment and then looks away.<br>I don't think he understood you.<br>";
     const actualResult = result.description;
     expect(actualResult).toBe(expectedResult);
 

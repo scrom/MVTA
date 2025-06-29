@@ -174,8 +174,7 @@ test('test what happens when a creature does not understand a player', () => {
     expect(result1).toEqual(expect.stringContaining("$imagechriswarrington.jpg/$image<br>"));
     
     const actualResult = p0.say("talk", "beady beady boop boop", "chris", m0);
-    expect(actualResult).toEqual(expect.stringContaining("Chris says '"));
-    expect(actualResult).toEqual(expect.stringContaining("$imagechriswarrington.jpg/$image<br>"));
+    expect(actualResult).toEqual("Chris looks blankly at you for a moment and then looks away.<br>I don't think he understood you.$imagechriswarrington.jpg/$image<br>");
 });
 
 /*add tests for:

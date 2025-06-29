@@ -1,6 +1,6 @@
 "use strict";
 //action object - manager user actions and pack/unpack JSON equivalents
-module.exports.LexerParser = function LexerParser(dictionary) {
+module.exports.LexerParser = function LexerParser(dictionary, reverseDictionary) {
     try{
         const tools = require('./tools.js');
         const customAction = require('./customaction.js');
@@ -78,24 +78,34 @@ module.exports.LexerParser = function LexerParser(dictionary) {
 
         //game object dictionary
         self.dictionary;
+        self.reverseDictionary;
 
-        if (!(dictionary)) {
-            self.dictionary = ({null: {type:"null", synonyms: []}});
-        } else if (dictionary.length == 0) {
+        if (!(dictionary) || dictionary.length == 0) {
             self.dictionary = ({null: {type:"null", synonyms: []}});
         } else {
             self.dictionary = dictionary
         };
-        self.topLevelDictionary = Object.keys(self.dictionary);
-        const allSyns = [];
-        for (const key of self.topLevelDictionary) {
-            const syns = self.dictionary[key].synonyms || [];
-            if (syns.length > 0) {
-                allSyns.push(...syns);
-            };
+        
+        if (!(reverseDictionary) || reverseDictionary.length == 0) {
+            self.reverseDictionary = ({null: {type:"null", synonyms: []}});
+        } else {
+            self.reverseDictionary = reverseDictionary
         };
-        self.fullDictionary = self.topLevelDictionary.concat(allSyns);
-        self.fullDictionary  = Array.from(new Set(self.fullDictionary)); //remove duplicates.
+
+        function flattenDictionary(dict) {
+            const wordSet = new Set();
+            //no need to convert case or sanitise - that will have been done on creation.
+            for (const [name, { synonyms = [] }] of Object.entries(dict)) {
+                wordSet.add(name);
+                for (const syn of synonyms) {
+                    wordSet.add(syn);
+                }
+            };
+
+            return Array.from(wordSet);
+        };
+
+        self.fullDictionary = flattenDictionary(self.dictionary);
         self.fullDictionary.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words greatest first
 
         //action string components
@@ -131,15 +141,19 @@ module.exports.LexerParser = function LexerParser(dictionary) {
             return null;
         };
 
-        self.dictionaryLookup = function (string) {
-            string = sanitiseString(string);
-            let matches = [];
-            for (const [objectName, { synonyms }] of Object.entries(dictionary)) {
-                if (string === objectName || synonyms.includes(string)) {
-                    matches[objectName] = dictionary[objectName];
-                };
-            };
-            return matches;
+        self.dictionaryLookup = function (string, type = null) {
+            const key = string.toLowerCase();
+            const entries = self.reverseDictionary[key];
+            if (!entries) return false;
+
+            const result = {};
+            for (const { name, type: entryType } of entries) {
+                if (!type || entryType === type) {
+                    result[name] = self.dictionary[name];
+                }
+            }
+
+            return result;
         };
 
         self.extractAdverb = function(input) {
@@ -533,12 +547,45 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     };
                 };
 
+                
+                if (verbInd > 0 && playerLocation) {
+                    //found verb is not first word - is it a creature? // we only need to know if it exists here at this moment...
+                    let matches;
+                    for (let t=0; t<tokens.length; t++) {
+                        matches = self.dictionaryLookup(tokens[t]+" "+tokens[t+1], "creature");
+                        if (matches) {break;}
+                        //we only need to parse as far as first verb
+                        if (t >= verbInd) {break;};
+                    };
+                    //and again with just a single token if no match
+                    if (!matches) {
+                        for (let t=0; t<tokens.length; t++) {
+                            matches = self.dictionaryLookup(tokens[t], "creature");
+                            if (matches) {break;}
+                            //we only need to parse as far as first verb
+                            if (t >= verbInd) {break;};
+                        };
+                    };
+
+                    if (matches) {
+                        let keys = Object.keys(matches);
+                        for (const key of keys) {
+                            if (playerLocation.getCreature(key)) {
+                                verb = "say";
+                                verbInd = -1;
+                                break;
+                            };
+                        };
+                    };
+                };
+
                 //splice tokens to the verb we are using. (dump everything to the left of selected verb)
                 if (verbInd > -1) {
                     tokens.splice(0,verbInd)   
                     //verb will now be first token
                     verb = self.normaliseVerb(tokens[0]);
 
+                    //drop out of conversation
                     if (verb && verbs[verb].category != "dialogue") {
                         _inConversation = null;
                         if (player) {
@@ -565,7 +612,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     
                 };
 
-                //not in a conversation 
+                //not in a conversation and no verb match
                 if (!verb) {
                     //could be a custom action!
                     verb = "customaction"
@@ -631,7 +678,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     };
                 };
               
-                //do we recognise the object as a creature?
+                //are we *switching* creature whilst talking to another?
                 if (objects.length == 2 && player && (!verb || (verbs[verb].category== "dialogue" && verb != "greet") && _inConversation)) { 
                     //do we swap out objects[1] (inConversation) with new creature?
                     let possibleMatches = []
@@ -643,36 +690,32 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                             //talking to same character again.
                             matched = true;
                             break;
-                        }
-                        if (self.fullDictionary.includes(tokens[t])) {
-                            let matches = self.dictionaryLookup(tokens[t]);
-                            let keys = Object.keys(matches);
-                            for (const key of keys) {
-                                let name = key;
-                                let {type, synonyms} = matches[key];
-                                if (type == "creature") {
-                                    if (objects[0].includes(name) ) {
-                                            if (_inConversation != name) {
-                                                console.debug ("dictionary hit - full name match: "+tokens[t]+" : "+name+" : "+ type + ":"+ synonyms);
-                                                objects[0] = objects[0].replace(name).trim();
-                                                objects[1] = name;
-                                            };
-                                            verb = "greet";
-                                            matched = true;
-                                            break;
-
-                                    } else { //we have a synonym match. Store if they're in the same location as player.
-                                            if (lastCreature) {
-                                                if (lastCreature.syn(tokens[t])) {
-                                                    matched = true;
-                                                    break;
-                                                };
-                                            };
-                                            let possibleCreature = playerLocation.getCreature(name);
-                                                if (possibleCreature) {
-                                                    possibleMatches[key] = matches[key];
-                                                };
+                        };
+                        
+                        let matches = self.dictionaryLookup(tokens[t], "creature");
+                        let keys = Object.keys(matches);
+                        for (const key of keys) {
+                            let name = key;
+                            let {type, synonyms} = matches[key];
+                            if (objects[0].includes(name) ) {
+                                if (_inConversation != name) {
+                                    console.debug ("dictionary hit - full name match: "+tokens[t]+" : "+name+" : "+ type + ":"+ synonyms);
+                                    objects[0] = objects[0].replace(name).trim();
+                                    objects[1] = name;
+                                };
+                                verb = "greet";
+                                matched = true;
+                                break;
+                            } else { //we have a synonym match. Store if they're in the same location as player.
+                                if (lastCreature) {
+                                    if (lastCreature.syn(tokens[t])) {
+                                        matched = true;
+                                        break;
                                     };
+                                };
+                                let possibleCreature = playerLocation.getCreature(name);
+                                if (possibleCreature) {
+                                    possibleMatches[key] = matches[key];
                                 };
                             };
                         };
