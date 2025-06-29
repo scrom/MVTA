@@ -9,9 +9,9 @@
         "position": "on",
         "imageName": "visitorsbook.jpg",
         "customAction": [
-            "get"
+            {"verbs": ["read"], "message": "You flick back a few pages, just to be nosy and see who's visited recently.<br>Among the regular staff who have left their keyfobs at home (or lost them in the pub after work), they've had some very famous names through here - even royalty!<br><i>(Apparently they don't like to talk about that for some reason)</i><br>It reads like a 'Who's Who' for any budding tech scene illuminati conspiracist."},
+            {"verbs": ["get", "steal", "put", "hide", "take", "place"], "message": "It needs to stay down here on reception."}
         ],
-        "defaultResult": "It needs to stay down here on reception.",
         "canDrawOn": true
     },
     "synonyms": [

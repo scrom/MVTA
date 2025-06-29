@@ -684,7 +684,7 @@ module.exports.LexerParser = function LexerParser(dictionary, reverseDictionary)
                     let possibleMatches = []
                     let matched = false;
                     let tokens = objects[0].split(" ");
-                    for (t=0; t<tokens.length;t++) {
+                    for (let t=0; t<tokens.length;t++) {
                         if(!tokens[t]) {continue;};//handle null
                         if (["he", "him", "her", "them", "they", "their", "it"].includes(tokens[t].replace("s","")) || tokens[t] == "his") {
                             //talking to same character again.

@@ -4078,7 +4078,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
             if (!(artefact)) {
                 if (artefactName == "books") {
-                    return "You'll need to be more specific that that.";
+                    return "You'll need to be more specific than that.";
                 };
                 return notFoundMessage(artefactName);
             };
@@ -4087,6 +4087,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             var drawings = artefact.getDrawings();
             var noteCount = writings.length + drawings.length;
 
+            //not a book but can still read
             if (artefact.getType() != "book" && noteCount == 0) {
                 var result;
                 if (artefact.getDefaultAction() == "read") {
@@ -4104,6 +4105,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 _booksRead ++;
             };
 
+            //actually a book
             if (artefact.getType() == "book") {
                 var newMissions = artefact.getMissions();
                 //remove any with dialogue from this list.
@@ -4111,11 +4113,12 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     if (newMissions[j].hasDialogue()) {newMissions.splice(j,1);};
                 };
 
+                //mark as "read" before trying any custom actions
                 resultString += artefact.read(verb);
 
                 var result;
                 //@todo - this is an odd combo related to custom/default actions being related
-                if (artefact.getDefaultAction() == "read") {
+                if (artefact.getDefaultAction() == "read" || artefact.checkCustomAction("read")) {
                     result = artefact.performCustomAction("read");
                     if (result) {resultString += "<br>"+result;};
                 };
@@ -4927,7 +4930,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 weapon = getObjectFromPlayerOrLocation(artefactName);
                 if (!(weapon)) {return "You prepare your most aggressive stance and then realise there's no "+artefactName+" here and you don't have one on your person.<br>Fortunately, I don't think anyone noticed.";};
                 if (attackType == "throw") {
-                    if (!(weapon.isCollectable())) {return "You attempt to grab "+weapon.getDescription()+" but can't get a good enough grip to "+verb+" "+weapon.getSuffix()+".";};
+                    if (!(weapon.isCollectable())) {return "You attempt to grab "+weapon.getDescription(true)+" but can't get a good enough grip to "+verb+" "+weapon.getSuffix()+".";};
                 } else {
                     if (!(weapon.supportsAction(verb))) {return "You prepare your most aggressive stance and then realise you can't effectively "+verb+" with "+weapon.getDescription()+".";};
                 };
