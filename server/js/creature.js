@@ -3291,7 +3291,9 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 var firstWord = someSpeech.split(" ")[0];
                 var remainderString = "";
                 if (firstWord.substr(firstWord.length - 1) == "s") {
-                    firstWord = firstWord.substr(0, firstWord.length - 1);
+                    if (!map.dictionaryLookup(firstWord)) {
+                        firstWord = firstWord.substr(0, firstWord.length - 1);
+                    };
                 };
                 if (firstWord == "") {
                     firstWord = someSpeech.trim();

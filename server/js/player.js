@@ -3323,10 +3323,12 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
                 if (verb == "greet") {
                     //we are greeting soneone - may or may not be current creature.
-                    if (!(speech.includes(_lastCreatureSpokenTo))) {
+                    if (tools.stringIsEmpty(speech)) {
+                        speech = "hello";
+                    } else if (!(speech.includes(_lastCreatureSpokenTo))) {
                         receiverName = null; //wipe receiver and check again.
                     };
-                    verb = "say"
+                    verb = "say";
                 };
 
                 if (tools.stringIsEmpty(receiverName)) { 
@@ -3384,6 +3386,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 speech = " "+speech+" ";
                 speech = speech.replace(" "+verb+" ", "");
                 speech = speech.trim();
+
                 resultString += receiver.reply(speech, self, null, map);
                 var hasSpokenAfter = receiver.hasSpoken();
                 if (!(hasSpokenBefore) && hasSpokenAfter) {
@@ -4293,6 +4296,12 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
         self.getCurrentLocation = function() {
             return _currentLocation;
+        };
+
+        self.getCurrentLocationName = function () {
+            if (_currentLocation) {
+                return _currentLocation.getName();
+            };
         };
 
         self.setStartLocation = function(location) { 

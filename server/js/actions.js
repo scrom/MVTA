@@ -240,9 +240,9 @@ module.exports.Actions = function Actions(parser, fileManager) {
             };
 
             if (response.includes("?")) {
-              parser.setAwaitingPlayerAnswer(true);
+              lp.setAwaitingPlayerAnswer(true);
             } else {
-              parser.setAwaitingPlayerAnswer(false);
+              lp.setAwaitingPlayerAnswer(false);
             };
 
             if (time) {time = Math.floor(time * _baseTickSize);}
@@ -273,11 +273,11 @@ module.exports.Actions = function Actions(parser, fileManager) {
 
         self.reconstructInputAndRecallSelfWithNewVerb = function(verb, player, map, po, replaceAll) {
           //reconstruct sentence without "try/attempt" - second verb usually ends up as part of subject...
-          console.debug ("Input: "+ po.originalInput);
-          console.debug ("Subject: "+po.subject);
-          console.debug ("Object: "+po.object);
-          console.debug ("Preposition: "+po.preposition);
-          console.debug ("Adverb: "+po.adverb);
+          //console.debug ("Input: "+ po.originalInput);
+          //console.debug ("Subject: "+po.subject);
+          //console.debug ("Object: "+po.object);
+          //console.debug ("Preposition: "+po.preposition);
+          //console.debug ("Adverb: "+po.adverb);
 
           let newInputString ="";
           if (replaceAll) {newInputString = verb; }    
@@ -289,8 +289,10 @@ module.exports.Actions = function Actions(parser, fileManager) {
             if (po.object) {newInputString += " "+po.object};
           };
 
-
           let newParsedInput = lp.parseInput(newInputString);
+          if (po.verb == newParsedInput.verb && po.originalVerb == newParsedInput.originalVerb) {
+            return self.null(verb, player, map, po);
+          };
           if (newParsedInput.error) { return newParsedInput.error; };
           const {action} = newParsedInput;
           const handler = self[action];
@@ -350,7 +352,7 @@ module.exports.Actions = function Actions(parser, fileManager) {
         self.try = function (verb, player, map, po) {
           let fail = self.precheckFail(player, map, po);
           if (fail) { return fail;};
-          return self.reconstructInputAndRecallSelfWithNewVerb(verb, player, map, po)
+          return self.use(verb, player, map, po)
         };
 
         self.use = function (verb, player, map, po) {
@@ -540,6 +542,11 @@ module.exports.Actions = function Actions(parser, fileManager) {
           };
           return self.processResponse(player.say(verb, po.subject, po.object, map), player, map, po, 1);
           //return dp.parseDialogue(verb, player, map, po);
+        };
+        self.question = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+            return self.say(verb, player, map, po);
         };
         self.talk = function (verb, player, map, po) {
           let fail = self.precheckFail(player, map, po);

@@ -1,6 +1,6 @@
 "use strict";
 //action object - manager user actions and pack/unpack JSON equivalents
-module.exports.LexerParser = function LexerParser() {
+module.exports.LexerParser = function LexerParser(dictionary) {
     try{
         const tools = require('./tools.js');
         const customAction = require('./customaction.js');
@@ -21,7 +21,7 @@ module.exports.LexerParser = function LexerParser() {
         const modalVerbs = ['can', 'could', 'may', 'might', 'must', 'shall', 'should', 'will', 'would'];
 
         const unhandledWordsAndConjunctions = ['and', 'then', 'than', 'or', 'but', 'because', 'coz','cause','cuz', 'therefore', 'while', 'whilst', 'thing','oh'];
-        const stopWords = ["the", "some", "a", "an", "again", "is"];
+        const stopWords = ["the", "some", "a", "an", "again", "is", "this", "these"];
         const numerals = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
         const firstPersonPronouns = ['i', 'me', 'my', 'mine', 'myself', 'we', 'us', 'our', 'ours', 'ourselves'];
         const secondPersonPronouns = ['your', 'yours', 'yourself', 'yourselves'];
@@ -57,7 +57,8 @@ module.exports.LexerParser = function LexerParser() {
         let allPrepositions = sharedPrepositions.concat(receivingPrepositions.concat(givingPrepositions.concat(locationPrepositions)));
         allPrepositions = Array.from(new Set(allPrepositions)); //remove duplicates.
         allPrepositions.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words greatest first
-        
+
+        //verb dictionary       
         const verbs = fm.readFile("verb-lexicon.json");  //add  'ignore','blank','squeeze','grasp','clutch','clasp','hold','smoosh', 'smear','squish', 'chirp', 'tweet', 'bark', 'meow', 'moo','growl'
         self.lexicon = verbs;
         self.topLevelVerbs = Object.keys(verbs);
@@ -75,6 +76,28 @@ module.exports.LexerParser = function LexerParser() {
                 self.allVerbs.splice(emptyValueIndex,1);
             };
 
+        //game object dictionary
+        self.dictionary;
+
+        if (!(dictionary)) {
+            self.dictionary = ({null: {type:"null", synonyms: []}});
+        } else if (dictionary.length == 0) {
+            self.dictionary = ({null: {type:"null", synonyms: []}});
+        } else {
+            self.dictionary = dictionary
+        };
+        self.topLevelDictionary = Object.keys(self.dictionary);
+        const allSyns = [];
+        for (const key of self.topLevelDictionary) {
+            const syns = self.dictionary[key].synonyms || [];
+            if (syns.length > 0) {
+                allSyns.push(...syns);
+            };
+        };
+        self.fullDictionary = self.topLevelDictionary.concat(allSyns);
+        self.fullDictionary  = Array.from(new Set(self.fullDictionary)); //remove duplicates.
+        self.fullDictionary.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words greatest first
+
         //action string components
         var _inputString = "";
         var _direction = "";
@@ -91,7 +114,7 @@ module.exports.LexerParser = function LexerParser() {
         var _awaitingPlayerAnswer = false;
 
         const sanitiseString = function(aString) {
-            return aString.toLowerCase().substring(0,255).replace(/[^a-z0-9 +-/%]+/g,""); //same as used for client but includes "/" and "%" as well
+            return aString.toLowerCase().substring(0,255).replace(/[^a-z0-9 +]+/g,""); //letters, numbers, and plus sign.
         };
 
         self.setAwaitingPlayerAnswer = function(bool) {
@@ -106,6 +129,17 @@ module.exports.LexerParser = function LexerParser() {
                 };
             };
             return null;
+        };
+
+        self.dictionaryLookup = function (string) {
+            string = sanitiseString(string);
+            let matches = [];
+            for (const [objectName, { synonyms }] of Object.entries(dictionary)) {
+                if (string === objectName || synonyms.includes(string)) {
+                    matches[objectName] = dictionary[objectName];
+                };
+            };
+            return matches;
         };
 
         self.extractAdverb = function(input) {
@@ -190,7 +224,6 @@ module.exports.LexerParser = function LexerParser() {
                     objects[0] = tokens.join(" ");
                 };
             };
-
 
             //If current input object is "it", we use the last object instead.
             //work out where last noun will belong 
@@ -326,6 +359,32 @@ module.exports.LexerParser = function LexerParser() {
                 return {inputVerbs, verbIndex};
             };
 
+            //handle "try" - second verb *might* end with "ing"             
+            if (["try", "attempt"].includes(inputVerbs[0])) {
+                //take the next verb whatever that may be
+                if (inputVerbs.length > 1) {
+                    verbIndex = tokens.indexOf(inputVerbs[1]); 
+                    inputVerbs.shift();
+                    return {inputVerbs, verbIndex};  
+                } else {
+                    for (let t=0; t<tokens.length; t++) {
+                        //if we're here then verbs like "sing" will have already been captured so this is safe to attempt.
+                        if (tokens[t].endsWith("ing")) {
+                            let newVerb = tokens[t].replace("ing", "");
+                            if (self.allVerbs.includes(newVerb)) {
+                                tokens[t] = newVerb; //hopefully this *does* modify the original token
+                                inputVerbs.shift();
+                                inputVerbs.push(newVerb);
+                                verbIndex = t;
+                                return {inputVerbs, verbIndex};
+                            };
+                        };
+                    };
+
+                    //we don't have an alternate verb. 
+                };            
+            }; 
+   
             if (inputVerbs.length == 1) {
                 verbIndex = tokens.indexOf(inputVerbs[0]);
                 return {inputVerbs, verbIndex};
@@ -381,12 +440,6 @@ module.exports.LexerParser = function LexerParser() {
                 verbIndex = tokens.indexOf("go");
                 return {inputVerbs, verbIndex};
             };
-                
-            if (["try", "attempt"].includes(inputVerbs[0])) {
-                //take the next verb whatever that may be
-                verbIndex = tokens.indexOf(inputVerbs[1]); 
-                return {inputVerbs, verbIndex};               
-            }; 
 
             //some prepositions and even nouns (in/out/up/down/water) are also verbs. We have multiple verbs here so remove them from the list of input verbs - leave them in original tokens though.
             let ignoreVerbs = ["i", "in", "into", "inside", "out", "outside", "up", "down", "water", "on", "onto", "off", "offof", "fire", "ice", "present", "mug"];
@@ -416,6 +469,8 @@ module.exports.LexerParser = function LexerParser() {
 
         self.parseInput = function(input, player, map) {
             try {
+                let playerLocation;
+                let lastCreature;
                 //we take in player and map as we may need additional context and want to store state
                 input = sanitiseString(input);
                 let rest = input;
@@ -438,6 +493,10 @@ module.exports.LexerParser = function LexerParser() {
 
                 if (player) {
                     _inConversation = player.getLastCreatureSpokenTo();
+                    playerLocation = player.getCurrentLocation();
+                    if (_inConversation) {
+                        lastCreature = playerLocation.getCreature(_inConversation);
+                    }
                 };
 
                 if (salutations.some((e) => input.split(" ")[0] == e)) { //will only match single words
@@ -462,6 +521,15 @@ module.exports.LexerParser = function LexerParser() {
                     ) { 
                         verbInd = -1; //keep talking, don't trim input
                         verb = "say";
+                    };
+
+                    //did we explicitly mention thim in this new sentence?
+                    for (let t=0; t<tokens.length; t++) {
+                        if (lastCreature.syn(tokens[t])) {
+                            verbInd = -1; //keep talking, don't trim input
+                            verb = "say"; 
+                            break;                           
+                        };
                     };
                 };
 
@@ -521,9 +589,6 @@ module.exports.LexerParser = function LexerParser() {
                     };
                 };
 
-
-
-
                 //split by modal verbs
                 if (verb && verbs[verb].category == "dialogue" && objects.length == 1 && !preposition)  {
                     rest = objects[0];
@@ -563,6 +628,69 @@ module.exports.LexerParser = function LexerParser() {
                     if (tools.directions.includes(objects[0])) {
                         preposition = objects[0];
                         objects[0] = null;
+                    };
+                };
+              
+                //do we recognise the object as a creature?
+                if (objects.length == 2 && player && (!verb || (verbs[verb].category== "dialogue" && verb != "greet") && _inConversation)) { 
+                    //do we swap out objects[1] (inConversation) with new creature?
+                    let possibleMatches = []
+                    let matched = false;
+                    let tokens = objects[0].split(" ");
+                    for (t=0; t<tokens.length;t++) {
+                        if(!tokens[t]) {continue;};//handle null
+                        if (["he", "him", "her", "them", "they", "their", "it"].includes(tokens[t].replace("s","")) || tokens[t] == "his") {
+                            //talking to same character again.
+                            matched = true;
+                            break;
+                        }
+                        if (self.fullDictionary.includes(tokens[t])) {
+                            let matches = self.dictionaryLookup(tokens[t]);
+                            let keys = Object.keys(matches);
+                            for (const key of keys) {
+                                let name = key;
+                                let {type, synonyms} = matches[key];
+                                if (type == "creature") {
+                                    if (objects[0].includes(name) ) {
+                                            if (_inConversation != name) {
+                                                console.debug ("dictionary hit - full name match: "+tokens[t]+" : "+name+" : "+ type + ":"+ synonyms);
+                                                objects[0] = objects[0].replace(name).trim();
+                                                objects[1] = name;
+                                            };
+                                            verb = "greet";
+                                            matched = true;
+                                            break;
+
+                                    } else { //we have a synonym match. Store if they're in the same location as player.
+                                            if (lastCreature) {
+                                                if (lastCreature.syn(tokens[t])) {
+                                                    matched = true;
+                                                    break;
+                                                };
+                                            };
+                                            let possibleCreature = playerLocation.getCreature(name);
+                                                if (possibleCreature) {
+                                                    possibleMatches[key] = matches[key];
+                                                };
+                                    };
+                                };
+                            };
+                        };
+
+                    if (matched) {break;}
+                    };
+
+                    //if we have more than 1 match, we have multiple creatures with the same synonym.
+                    if (!matched && Object.keys(possibleMatches).length == 1) {
+                        //we have a single creature with a matching synonym.
+                        for (t=0; t<tokens.length;t++) {
+                            let key = Object.keys(possibleMatches)[0];
+                            if (possibleMatches[key].synonyms.includes(tokens[t])) {
+                                objects[0] = objects[0].replace(tokens[t]).trim();
+                                objects[1] = tokens[t];
+                                verb = "greet";
+                            };
+                        };
                     };
                 };
 

@@ -19,6 +19,7 @@ exports.Map = function Map() {
         var _bookCount = 0; //how many books are there?
         var _creatureCount = 0; //how many creatures are there?
         var _removedCreatures = []; //which creatures have been removed from the map?
+        var _dictionary = {};
 
         //consider storing all creatures and artefacts on map object (rather than in location, creature or player) 
         //this will need some major rework and tracking/linking who owns what
@@ -27,6 +28,58 @@ exports.Map = function Map() {
 	    var _objectName = "Map";
 
         console.info(_objectName + ' created');
+
+        self.getDictionary = function () {
+            return _dictionary;
+        };
+
+        self.dictionaryLookup = function (string) {
+            let matches = [];
+            for (const [objectName, { synonyms }] of Object.entries(_dictionary)) {
+                if (string === objectName || synonyms.includes(string)) {
+                    matches.push(_dictionary[objectName]);
+                };
+            };
+            return matches;
+        };
+
+        self.getDictionaryEntry = function(name) {
+            let entry = _dictionary[name];
+            if (entry) {return entry};
+            return false;
+        };
+
+        self.addDictionaryEntry = function(name, type, syns) {
+            if (!name) {return false;}
+            _dictionary[name] = {type: type, synonyms: syns};
+            return true;
+        };
+
+        self.removeDictionaryEntry = function(name) {
+            if (!name) {return false;}
+            delete _dictionary[name];
+            return true;
+        };
+
+        self.modifyDictionaryEntry = function(name, type, syns) {
+            if (!name) {return false;}
+            if (!_dictionary.name) {
+                return self.addToDictionary(name, type, syns);
+            };
+
+            if (type) {
+                _dictionary.name.type = type;
+            };
+            if (syns) {
+                if (_dictionary.name.synonyms && !Array.isArray(syns)) {
+                    _dictionary.name.synonyms.push(syns);
+                } else {
+                    _dictionary.name.synonyms = syns;
+                }
+            };
+
+            return true;
+        };
 
         self.getCurrentAttributes = function() {
             var currentAttributes = {};

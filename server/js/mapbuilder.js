@@ -208,6 +208,7 @@ exports.MapBuilder = function MapBuilder(mapDataPath, mapDataFile) {
 
                 //check artefact has syns
                 if (artefact.getSyns().length ==0) {console.warn("Usability check: artefact '"+artefact.getName()+"' has no synonyms defined.");};
+                _map.addDictionaryEntry(artefact.getName(), artefact.getType(), artefact.getSyns());
                 return artefact;
             } catch(err) {
 	            console.error("MAP ERROR: Failed to build artefact: "+artefactData.name+": "+err.stack);
@@ -326,6 +327,7 @@ exports.MapBuilder = function MapBuilder(mapDataPath, mapDataFile) {
                 _map.incrementCreatureCount();
 
                 if (creature.getSyns().length ==0) {console.warn("Usability check: creature '"+creature.getName()+"' has no synonyms defined.");};
+                _map.addDictionaryEntry(creature.getName(), creature.getType(), creature.getSyns());
                 return creature;
             } catch(err) {
 	            console.error("MAP ERROR: Failed to build creature: "+creatureData.name+": "+err.stack);
@@ -624,6 +626,7 @@ exports.MapBuilder = function MapBuilder(mapDataPath, mapDataFile) {
                     //    _map.addLocationSynonym(locationData.name, synonym);
                     //});
                 var newLocation = new locationObjectModule.Location(locationData.name,locationData.displayName,locationData.description,locationData.attributes);
+                _map.addDictionaryEntry(newLocation.getName(), "location", newLocation.getSyns());
                 return newLocation;
             }  catch(err) {
 	            console.error("MAP ERROR: Failed to build location: "+locationData.name+": "+err.stack);
@@ -640,7 +643,6 @@ exports.MapBuilder = function MapBuilder(mapDataPath, mapDataFile) {
             for (var i = 0; i < gameDataAsJSON.length; i++) {
                 if (gameDataAsJSON[i].file) {
                     //overwrite game data element with named file
-                    var fileData = gameDataAsJSON[i]
                     var builtFile = self.buildFromFile(_data[gameDataAsJSON[i].file]);
                     gameDataAsJSON[i] = builtFile;                    
                 };

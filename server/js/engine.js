@@ -2,12 +2,19 @@
 const lpModule = require('./lexerparser.js');
 const actionsModule = require('./actions.js');
 const fileManagerModule = require('./filemanager.js');
-const lp = new lpModule.LexerParser();
+var lp;
 const fm = new fileManagerModule.FileManager(true);
-const a = new actionsModule.Actions(lp, fm);
+var a;
 
 
 function createEngine(player, map) {
+  let dictionary = {};
+  if (map) {
+    dictionary = map.getDictionary();
+  };
+  lp = new lpModule.LexerParser(dictionary);
+  a = new actionsModule.Actions(lp, fm);
+
   return function handle(input) {
     try {
       const parsedObject = lp.parseInput(input, player, map);

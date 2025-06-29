@@ -1,7 +1,11 @@
 "use strict";
 const lexpar = require('../../server/js/lexerparser.js');
+const mapBuilder = require('../../server/js/mapbuilder.js');
+const mb = new mapBuilder.MapBuilder('../../data/', 'root-locations');
+const map = new mb.buildMap();
+let dictionary = map.getDictionary();
 
-const lp = new lexpar.LexerParser();
+const lp = new lexpar.LexerParser(dictionary);
 
 test('can parse verb', () => {
     const input = 'eat an artefact of little consequence';
@@ -165,7 +169,7 @@ test('what happens with a complex sentence?', () => {
     const input = 'please try very hard to carefully pour the water on to the smoking hot barbecue';
     const expectedResult =     {
       category: 'item_use',
-      originalVerb: 'try',
+      originalVerb: 'pour',
       originalInput: input,
       action: 'pour',
       adverb: 'carefully',
@@ -233,7 +237,7 @@ test('what happens with another complex sentence?', () => {
     const input = "please friend please attempt very carefully to eat a tiny tin of dog food with a spoon";
     const expectedResult =  {
       category: 'food_drink',
-      originalVerb: 'attempt',
+      originalVerb: 'eat',
       originalInput: input,
       action: 'eat',
       adverb: 'carefully',
@@ -321,7 +325,7 @@ test('can handle other dialogue words', () => {
     const input = "try really hard to persuade dave to go and get me a bottle of water and pick up some lemonade on the way back"; 
     const expectedResult =  {
       category: 'dialogue',
-      originalVerb: "try",
+      originalVerb: "persuade",
       originalInput: input,
       action: 'persuade',
       adverb: null,
@@ -338,7 +342,7 @@ test('can handle "in" as a direction', () => {
     const input = "try to go in the front door and push over the lampshade"; 
     const expectedResult =  {
       category: 'movement',
-      originalVerb: "try",
+      originalVerb: "go",
       originalInput: input,
       action: 'go',
       adverb: null,
@@ -1466,6 +1470,24 @@ test('test looking with adverb', () => {
       "originalVerb": "look",
       "preposition": "at",
       "subject": "console",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('test "try" with a present participle follow on verb"', () => {
+    const input = "try eating this tasty fish";
+    //we ditch the word try
+    const expectedResult = {
+      "action": "eat",
+      "adverb": null,
+      "category": "food_drink",
+      "object": null,
+      "originalInput": input,
+      "originalVerb": "eat",
+      "preposition": null,
+      "subject": "tasty fish",
     };
     const actualResult = lp.parseInput(input);
     console.log(actualResult);

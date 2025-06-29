@@ -54,7 +54,7 @@ var self = module.exports= {
     /* --- String handling ---*/
     //check if a string is null, undefined or "" 
     stringIsEmpty: function(aString){
-        if ((aString == "")||(aString == undefined)||(aString == null)) {return true;};
+        if ((aString == "")||(aString == undefined)||(aString == null)|| aString == "undefined") {return true;};
         return false;
     },
 

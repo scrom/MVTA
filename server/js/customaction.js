@@ -68,12 +68,18 @@ var self = module.exports = {
 
                 if (customActionIncludesVerb || _defaultAction == verb) {
                     result = _defaultResult;
+                    if (!result && !["drink", "read", "get"].includes(verb)) {
+                        //if result is 1 word, treat it as an action:
+                        if (!verb.includes(" ")) { return "$action"+verb+" "+object.getName();};
+                    }
                     if (typeof (result) == "string") {
                         if (result.includes("$action")) {return result;}; //we're redirecting to an alternate verb
 
                         //if we're *not* redirecting to an alternate verb
                         return result + "$result$";
-                    } else {return result}; //returning object
+                    } else {
+                        return result
+                    }; //returning object
                 };
 
 
