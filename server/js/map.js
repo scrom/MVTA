@@ -790,10 +790,24 @@ exports.Map = function Map() {
                 you = "You";
             };
 
-            //last few checks - is there a spilled liquid we're trying to get?
+            //is it a drawing?
+            var isPlayerArt = currentLocation.checkWritingOrDrawing(objectName);
+            if (!isPlayerArt) {
+                isPlayerArt = inventory.checkWritingOrDrawing(objectName);
+            };
+
+            if (isPlayerArt) {
+                return "It's just some idle scrawl. Nothing anyone can do much with.";
+            };
+     
+            //is there a spilled liquid we're trying to get?
             if (currentLocation.spilledLiquidExists(objectName) || inventory.hasLiquid(objectName)) {
                 return "There's not enough left to do anything useful with.";
             };
+
+            //before we do all the extra processing - do a quick dictionary lookup to confirm whatever they've mentioned actually exists.
+            let matches = self.dictionaryLookup(objectName);
+            if (!matches) {return self.notFoundMessage(objectName, container, caller);};
 
             // - are they looking thru a window or similar?
             var viewObjects = currentLocation.getAllObjectsWithViewLocation();
@@ -811,16 +825,6 @@ exports.Map = function Map() {
                 };
             };
 
-            //is it a drawing?
-            var isPlayerArt = currentLocation.checkWritingOrDrawing(objectName);
-            if (!isPlayerArt) {
-                isPlayerArt = inventory.checkWritingOrDrawing(objectName);
-            };
-
-            if (isPlayerArt) {
-                return "It's just some idle scrawl. Nothing anyone can do much with.";
-            };
-
             if (objectName == currentLocation.getName().toLowerCase() || objectName == currentLocation.getDisplayName().toLowerCase()) {
                 //trying to search whole location...
                 let maybe = "";
@@ -831,55 +835,54 @@ exports.Map = function Map() {
             };
           
             //#566 is a creature carrying it?
-                    let creatures = currentLocation.getCreatures()
-                    for (var c=0; c< creatures.length;c++) {
-                        var creaturesObject = creatures[c].getObject(objectName); //this will also handle synonyms
+            let creatures = currentLocation.getCreatures()
+            for (var c=0; c< creatures.length;c++) {
+                var creaturesObject = creatures[c].getObject(objectName); //this will also handle synonyms
 
-                        if (creaturesObject) {
-                            return "It looks like "+creaturesObject.getSuffix()+" belongs to "+creatures[c].getFirstName()+".";
-                        };
+                if (creaturesObject) {
+                    return "It looks like "+creaturesObject.getSuffix()+" belongs to "+creatures[c].getFirstName()+".";
+                };
 
-                        //do they sell it?
-                        if (creatures[c].sells(objectName)) {
-                            return "I think "+creatures[c].getFirstName()+" may have some for sale.";
-                        };
+                //do they sell it?
+                if (creatures[c].sells(objectName)) {
+                    return "I think "+creatures[c].getFirstName()+" may have some for sale.";
+                };
 
-                        //see if any of their active (or inactive without parent) missions deliver it...
-                        let creatureMissions = creatures[c].getMissions();
-                        for (var m=0; m < creatureMissions.length; m++) {
-                            if (creatureMissions[m].isActive() || (!creatureMissions[m].hasParents())) {
-                                let reward = creatureMissions[m].getRewardObject();
-                                if (reward) {
-                                    if (reward.syn(objectName)) {
-                                        return tools.initCap(creatures[c].getFirstName())+" <i>might</i> have what you're looking for.";
-                                    };
-                                };
+                //see if any of their active (or inactive without parent) missions deliver it...
+                let creatureMissions = creatures[c].getMissions();
+                for (var m=0; m < creatureMissions.length; m++) {
+                    if (creatureMissions[m].isActive() || (!creatureMissions[m].hasParents())) {
+                        let reward = creatureMissions[m].getRewardObject();
+                        if (reward) {
+                            if (reward.syn(objectName)) {
+                                return tools.initCap(creatures[c].getFirstName())+" <i>might</i> have what you're looking for.";
                             };
                         };
                     };
+                };
+            };
 
-                    //#566 add handling in here for delivered items from artefacts. (creatures can't deliver items but their missions might - see just above)
-                    //there are more efficient ways of handling this but we want to try normal routes first.
-                    //get all artefacts from inventory, then location, then creatures.
-                    //find out if any "deliver" what we're looking for.
-                    let allArtefacts = inventory.getAllObjectsAndChildren(false); //not inaccessible things
-                    allArtefacts = allArtefacts.concat(currentLocation.getAllObjectsAndChildren(false));
-                    //console.debug(allArtefacts);
-                    let deliveryItems = [];
-                    for (var a=0; a<allArtefacts.length;a++) {
-                        if (allArtefacts[a].getType() != 'creature') {
-                            //do they sell it?
-                            if (allArtefacts[a].sells(objectName)) {"I think "+allArtefacts[a].getName()+" may have some for sale."};
-
-                            deliveryItems = allArtefacts[a].getDeliveryItems();
-                            //if (deliveryItems.length > 0) {console.debug(deliveryItems)};
-                            for (var d=0; d<deliveryItems.length;d++) {
-                                if (deliveryItems[d].syn(objectName))  {
-                                    return "There's "+allArtefacts[a].descriptionWithCorrectPrefix()+" nearby that might have what you're looking for.";
-                                };
-                            };
-                        };                       
+            //#566 add handling in here for delivered items from artefacts. (creatures can't deliver items but their missions might - see just above)
+            //there are more efficient ways of handling this but we want to try normal routes first.
+            //get all artefacts from inventory, then location, then creatures.
+            //find out if any "deliver" what we're looking for.
+            let allArtefacts = inventory.getAllObjectsAndChildren(false); //not inaccessible things
+            allArtefacts = allArtefacts.concat(currentLocation.getAllObjectsAndChildren(false));
+            //console.debug(allArtefacts);
+            let deliveryItems = [];
+            for (var a=0; a<allArtefacts.length;a++) {
+                if (allArtefacts[a].getType() != 'creature') {
+                    //do they sell it?
+                    if (allArtefacts[a].sells(objectName)) {"I think "+allArtefacts[a].getName()+" may have some for sale."};
+                    deliveryItems = allArtefacts[a].getDeliveryItems();
+                    //if (deliveryItems.length > 0) {console.debug(deliveryItems)};
+                    for (var d=0; d<deliveryItems.length;d++) {
+                        if (deliveryItems[d].syn(objectName))  {
+                            return "There's "+allArtefacts[a].descriptionWithCorrectPrefix()+" nearby that might have what you're looking for.";
+                        };
                     };
+                };                       
+            };
 
             //is is a location or distant object mentioned in the description?
             let whereIsIt = self.where(objectName, "action", caller);
@@ -893,24 +896,39 @@ exports.Map = function Map() {
                 }
                 return whereIsIt;
             };
-            
-            var randomReplies;
+
+            //there will be occasions where after all that work we still don't have anything.
+           return self.notFoundMessage(objectName, container, caller);
+        };
+
+        self.notFoundMessage = function(objectName, container, caller) {
+            //basic random messages when we can't find anything - with some context awareness
+           var randomReplies;
             if (caller.getType() == "player") {
                 if (container) {
                     if (container == "inventory") {
-                        randomReplies = ["You're not carrying any " + objectName + ".", "You'll need to try somewhere (or someone) else for that.", "You don't have any " + objectName + " to hand right now."];
+                        randomReplies = ["You're not carrying any " + objectName + ".", 
+                                         "You'll need to try somewhere (or someone) else for that.", 
+                                         "You don't have any " + objectName + " to hand right now."];
                     } else if (container == "location") {
-                        randomReplies = ["You can't see any " + objectName + " around here.", "There's no sign of any " + objectName + " nearby. You'll probably need to look elsewhere.", "You'll need to try somewhere (or someone) else for that."];
+                        randomReplies = ["You can't see any " + objectName + " around here.", 
+                                        "There's no sign of any " + objectName + " nearby. You'll probably need to look elsewhere.", 
+                                        "You'll need to try somewhere (or someone) else for that."];
                     } else if (typeof container == "object"){
-                        randomReplies = ["There's no " + objectName + " in " + container.getDisplayName() + ".", "You can't see any " + objectName + " in " + container.getDisplayName() + ".", "There's no sign of any " + objectName + " in " + container.getDisplayName() + ". You'll probably need to look elsewhere.", "There's no " + objectName + " in " + container.getDisplayName() + " at the moment."];
+                        randomReplies = ["There's no " + objectName + " in " + container.getDisplayName() + ".", "You can't see any " + objectName + " in " + container.getDisplayName() + ".", 
+                                         "There's no sign of any " + objectName + " in " + container.getDisplayName() + ". You'll probably need to look elsewhere.", 
+                                         "There's no " + objectName + " in " + container.getDisplayName() + " at the moment."];
                     };
                 };
                 
                 if (!randomReplies) {
-                    randomReplies = ["You can't see any " + objectName + " around here.", "There's no sign of any " + objectName + " nearby. You'll probably need to look elsewhere.", "You'll need to try somewhere (or someone) else for that.", "There's no " + objectName + " available here at the moment."];
+                    randomReplies = ["You can't see any " + objectName + " around here.", "There's no sign of any " + objectName + " nearby. You'll probably need to look elsewhere.", 
+                                     "You'll need to try somewhere (or someone) else for that.", "There's no " + objectName + " available here at the moment."];
                 };
             } else {
-                randomReplies = ["Sorry $player, I can't help you there.", "I've not seen any "+objectName+" around recently, sorry $player.", "I'm afraid you'll need to hunt that down yourself.", "Nope, sorry."];
+                randomReplies = ["Sorry $player, I can't help you there.", 
+                                 "I've not seen any "+objectName+" around recently, sorry $player.", 
+                                 "I'm afraid you'll need to hunt that down yourself.", "Nope, sorry."];
             }
             
             var randomIndex = Math.floor(Math.random() * randomReplies.length);
