@@ -1043,7 +1043,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 };
             };
             
-            //note we only preserve linked exits and delivery items from the destination item - beware differing objects here!
+            //note we only preserve linked exits and delivery items from the destination item - beware differing "newAttributes" vs keep... here!
             return new Artefact(keep.getName(), keep.getRawDescription(), keep.getRawDetailedDescription(), newAttributes, keep.getLinkedExits(), keep.getDeliveryItems());
             
         };
@@ -1910,21 +1910,21 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             //console.debug("combining :" + self.getName() + " with " + anObject.getName() + " to produce " + deliveryItemSource.getName());                      
 
             //consume charge
-            var originalArtefactCharges = anObject.chargesRemaining();
-            var anObjectChargesRemaining = -1;
-            if (originalArtefactCharges > 0) {
-                anObjectChargesRemaining = anObject.consume();
+            var originalCharges = anObject.chargesRemaining();
+            var objectCharges = originalCharges;
+
+            if (objectCharges > 0) {
+                objectCharges = anObject.consume();
             };
 
             //zero the weights of both source objects. Unfortunately the caller must remove them from wherever they came from 
 
-            //set weight.
+            //reduce weight of supplied object.
             if (anObject.chargesRemaining() == 0) {              
                 anObject.setWeight(0);
-            } else if (anObjectChargesRemaining > 0) {
-                var newWeight = anObject.getWeight();
-                //new weight rounded to 1 decimal place
-                newWeight = Math.round((newWeight/originalArtefactCharges)*anObjectChargesRemaining*100)/100;
+            } else if (objectCharges > 0) {
+                //new weight (rounded to 2 decimal places here)
+                anObject.setWeight(Math.round((anObject.getWeight()/originalCharges)*objectCharges*100)/100);
             };
 
             //if we don't have a delivery item...
@@ -2142,7 +2142,9 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             if (self.isDestroyed()) {return 0;};
             //console.debug("Remaining charges for "+self.getDisplayName()+": "+_charges);
             //we use -1 to mean unlimited
-            return Math.round(_charges*100)/100;
+            if (_charges == -1) {return _charges};
+
+            return Math.round(_charges*100)/100; //round to 2dp
         };
 
         self.getChargeUnit = function() {

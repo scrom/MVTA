@@ -483,7 +483,8 @@ test("issue #468 check quantity of what is used up when combining items.", () =>
 
     objectJSON  = prodfm.readFile("artefacts/coco-pops.json"); 
     const pops = mb.buildArtefact(objectJSON);
-    pops.setCharges(10);
+    let originalPopsCharges = 10;
+    pops.setCharges(originalPopsCharges);
 
     objectJSON  = prodfm.readFile("artefacts/bottle-of-milk.json"); 
     const bottle = mb.buildArtefact(objectJSON);
@@ -511,9 +512,15 @@ test("issue #468 check quantity of what is used up when combining items.", () =>
     result = pops.combinesWith(milk, true);
     expect(result).toBe(expected);  
 
+    let originalPopsWeight = pops.getWeight();
+    let portionWeight = Math.round((originalPopsWeight/originalPopsCharges)*100)/100
+
     const expectedResult = "You add the coco pops to the milk.<br>Your bowl now contains milky coco pops.$imagebowl.jpg/$image";
     const actualResult = p0.get("get", "coco pops"); //this should succeed
     expect(actualResult).toBe(expectedResult);
+
+    let newPopsWeight = pops.getWeight();
+    expect(newPopsWeight).toBe(originalPopsWeight-portionWeight);
 
     expected = 0
     result = milk.chargesRemaining();
