@@ -4,9 +4,8 @@ const mapBuilder = require('../../server/js/mapbuilder.js');
 const mb = new mapBuilder.MapBuilder('../../data/', 'root-locations');
 const map = new mb.buildMap();
 let dictionary = map.getDictionary();
-let reverseDictionary = map.getReverseDictionary();
 
-const lp = new lexpar.LexerParser(dictionary, reverseDictionary);
+const lp = new lexpar.LexerParser(dictionary);
 
 test('can parse verb', () => {
     const input = 'eat an artefact of little consequence';

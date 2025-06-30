@@ -11,9 +11,8 @@ function createEngine(player, map) {
   let dictionary = {};
   if (map) {
     dictionary = map.getDictionary();
-    reverseDictionary = map.getReverseDictionary();
   };
-  lp = new lpModule.LexerParser(dictionary, reverseDictionary);
+  lp = new lpModule.LexerParser(dictionary);
   a = new actionsModule.Actions(lp, fm);
 
   return function handle(input) {

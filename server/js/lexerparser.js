@@ -1,10 +1,11 @@
 "use strict";
 //action object - manager user actions and pack/unpack JSON equivalents
-module.exports.LexerParser = function LexerParser(dictionary, reverseDictionary) {
+module.exports.LexerParser = function LexerParser(dictionary) {
     try{
         const tools = require('./tools.js');
         const customAction = require('./customaction.js');
         const fileManagerModule = require('./filemanager.js');
+        const dictionaryModule = require('./dictionary');  
 	    const self = this; //closure so we don't lose this reference in callbacks
         var dataFolder = '../../data/'; 
         const fm = new fileManagerModule.FileManager(true, dataFolder);
@@ -77,36 +78,9 @@ module.exports.LexerParser = function LexerParser(dictionary, reverseDictionary)
             };
 
         //game object dictionary
-        self.dictionary;
-        self.reverseDictionary;
-
-        if (!(dictionary) || dictionary.length == 0) {
-            self.dictionary = ({null: {type:"null", synonyms: []}});
-        } else {
-            self.dictionary = dictionary
-        };
-        
-        if (!(reverseDictionary) || reverseDictionary.length == 0) {
-            self.reverseDictionary = ({null: {type:"null", synonyms: []}});
-        } else {
-            self.reverseDictionary = reverseDictionary
-        };
-
-        function flattenDictionary(dict) {
-            const wordSet = new Set();
-            //no need to convert case or sanitise - that will have been done on creation.
-            for (const [name, { synonyms = [] }] of Object.entries(dict)) {
-                wordSet.add(name);
-                for (const syn of synonyms) {
-                    wordSet.add(syn);
-                }
-            };
-
-            return Array.from(wordSet);
-        };
-
-        self.fullDictionary = flattenDictionary(self.dictionary);
-        self.fullDictionary.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words greatest first
+        self.dictionary = dictionary;
+        //handle not being passed in (e.g. testing)
+        if (!(self.dictionary)) {self.dictionary = new dictionaryModule.Dictionary();};
 
         //action string components
         var _inputString = "";
@@ -139,21 +113,6 @@ module.exports.LexerParser = function LexerParser(dictionary, reverseDictionary)
                 };
             };
             return null;
-        };
-
-        self.dictionaryLookup = function (string, type = null) {
-            const key = string.toLowerCase();
-            const entries = self.reverseDictionary[key];
-            if (!entries) return false;
-
-            const result = {};
-            for (const { name, type: entryType } of entries) {
-                if (!type || entryType === type) {
-                    result[name] = self.dictionary[name];
-                }
-            }
-
-            return result;
         };
 
         self.extractAdverb = function(input) {
@@ -552,7 +511,7 @@ module.exports.LexerParser = function LexerParser(dictionary, reverseDictionary)
                     //found verb is not first word - is it a creature? // we only need to know if it exists here at this moment...
                     let matches;
                     for (let t=0; t<tokens.length; t++) {
-                        matches = self.dictionaryLookup(tokens[t]+" "+tokens[t+1], "creature");
+                        matches = self.dictionary.lookup(tokens[t]+" "+tokens[t+1], "creature");
                         if (matches) {break;}
                         //we only need to parse as far as first verb
                         if (t >= verbInd) {break;};
@@ -560,7 +519,7 @@ module.exports.LexerParser = function LexerParser(dictionary, reverseDictionary)
                     //and again with just a single token if no match
                     if (!matches) {
                         for (let t=0; t<tokens.length; t++) {
-                            matches = self.dictionaryLookup(tokens[t], "creature");
+                            matches = self.dictionary.lookup(tokens[t], "creature");
                             if (matches) {break;}
                             //we only need to parse as far as first verb
                             if (t >= verbInd) {break;};
@@ -692,7 +651,7 @@ module.exports.LexerParser = function LexerParser(dictionary, reverseDictionary)
                             break;
                         };
                         
-                        let matches = self.dictionaryLookup(tokens[t], "creature");
+                        let matches = self.dictionary.lookup(tokens[t], "creature");
                         let keys = Object.keys(matches);
                         for (const key of keys) {
                             let name = key;
@@ -738,6 +697,7 @@ module.exports.LexerParser = function LexerParser(dictionary, reverseDictionary)
                 };
 
                 if (player) { player.setLastVerbUsed(verb); };
+                _lastInputString = input;
 
                 return {
                     category: verbs[verb].category,
