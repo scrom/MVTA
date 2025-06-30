@@ -1147,15 +1147,23 @@ test('adding 2 identical liquids without defined charges modifies weight', () =>
     var containerAttributes = { weight: 2, carryWeight: 25, attackStrength: 2, type: "container", canCollect: true, isBreakable: true, holdsLiquid: true };
     var rum = new artefact.Artefact('rum', 'rum', 'rum', liquidAttributes, null);
     var moreRum = new artefact.Artefact('rum', 'rum', 'rum', liquidAttributes, null);
+    moreRum.setWeight = 2; //make sure we're adding 2x more rum.
     var bottle = new artefact.Artefact('bottle', 'bottle', 'bottle', containerAttributes, null);
     
     l0.addObject(moreRum);
     console.debug(bottle.receive(rum));
     console.debug(bottle.descriptionWithCorrectPrefix());
-    console.debug("before accept: " + bottle.getDetailedDescription());
+    let beforeDescription = bottle.getDetailedDescription();
+    let beforeWeight = bottle.getWeight();
     console.debug(p0.acceptItem(bottle));
-    console.debug("after accept: " + bottle.getDetailedDescription());
+    expect(actualResult).toBe(expectedResult);
+
     p0.get('get', moreRum.getName());
+    
+    let afterDescription =  bottle.getDetailedDescription();
+    let afterWeight = bottle.getWeight();
+    expect(beforeDescription).toBe(afterDescription);
+    expect(afterWeight).toBe(beforeWeight+moreRum.getWeight());
     
     var combinedRum = bottle.getObject("rum");
     var expectedResult = '{"object":"artefact","name":"rum","description":"rum","detailedDescription":"rum","attributes":{"weight":2,"type":"food","requiresContainer":true,"isLiquid":true,"canCollect":true,"plural":true,"affinityModifier":2,"isEdible":true}}';
@@ -1167,7 +1175,7 @@ test('adding 2 identical liquids without defined charges modifies weight', () =>
 });
 
 test('adding 2 identical liquids with defined charges weight and charges', () => {
-    var liquidAttributes = { weight: 1, type: "food", charges: 1, canCollect: true, isEdible: true, isLiquid: true };
+    var liquidAttributes = { weight: 1, type: "food", charges: 5, canCollect: true, isEdible: true, isLiquid: true };
     var containerAttributes = { weight: 2, carryWeight: 25, attackStrength: 2, type: "container", canCollect: true, isBreakable: true, holdsLiquid: true };
     var rum = new artefact.Artefact('rum', 'rum', 'rum', liquidAttributes, null);
     var moreRum = new artefact.Artefact('rum', 'rum', 'rum', liquidAttributes, null);
@@ -1176,13 +1184,24 @@ test('adding 2 identical liquids with defined charges weight and charges', () =>
     l0.addObject(moreRum);
     console.debug(bottle.receive(rum));
     console.debug(bottle.descriptionWithCorrectPrefix());
-    console.debug("before accept: " + bottle.getDetailedDescription());
+    let beforeDescription = bottle.getDetailedDescription();
+    let beforeWeight = bottle.getWeight();
     console.debug(p0.acceptItem(bottle));
-    console.debug("after accept: " + bottle.getDetailedDescription());
+    expect(actualResult).toBe(expectedResult);
+
     p0.get('get', moreRum.getName());
     
+    let afterDescription =  bottle.getDetailedDescription();
+    let afterWeight = bottle.getWeight();
+    expect(beforeDescription).toBe(afterDescription);
+    expect(afterWeight).toBe(beforeWeight+moreRum.getWeight());
+    
     var combinedRum = bottle.getObject("rum");
-    var expectedResult = '{"object":"artefact","name":"rum","description":"rum","detailedDescription":"rum","attributes":{"weight":2,"type":"food","requiresContainer":true,"isLiquid":true,"canCollect":true,"charges":2,"plural":true,"affinityModifier":2,"isEdible":true}}';
+    var combinedCharges = 10;
+    var actualCharges = combinedRum.chargesRemaining();
+    expect(actualCharges).toBe(combinedCharges);
+
+    var expectedResult = '{"object":"artefact","name":"rum","description":"rum","detailedDescription":"rum","attributes":{"weight":2,"type":"food","requiresContainer":true,"isLiquid":true,"canCollect":true,"charges":10,"plural":true,"affinityModifier":2,"isEdible":true}}';
     var actualResult = combinedRum.toString();
     console.debug(bottle.getDetailedDescription());
     console.debug("Expected: " + expectedResult);
