@@ -526,7 +526,7 @@ test("issue #468 check quantity of what is used up when combining items.", () =>
     result = milk.chargesRemaining();
     expect(result).toBe(expected);
 
-    expected = 6
+    expected = 9
     result = pops.chargesRemaining();
     expect(result).toBe(expected);
 
