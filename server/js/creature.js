@@ -3361,56 +3361,71 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     case 'can'://you/i help/give/say/ask/get/fetch/find/have [me] /object
                     case 'will'://same as "can"
                     //@todo - add "open/unlock" here as requests
-                        if (remainderString.startsWith("find ")) {
+                        artefactName = remainderString;
+                        artefactName = artefactName.replace(/\bcan\b/, "");
+                        artefactName = artefactName.replace(/\byou\b/, "");
+                        artefactName = artefactName.trim();
+                        if (artefactName.startsWith("find ")) {
                             artefactName = artefactName.replace("find ", " ");
                             return "You ask " + self.getFirstName() + " to find " + artefactName + ".<br>" + player.ask("find", self.getName(), artefactName, map);
                         };
-                        if (remainderString.startsWith("help ")) {
+                        if (artefactName.startsWith("help ")) {
                             return self.replyToKeyword("help", player, map);
                         };
-                        if (remainderString.startsWith("give ") || remainderString.startsWith("i have ") || remainderString.startsWith("tell ")) {
-                            var artefactName = remainderString;
+                        if (artefactName.startsWith("give ") || artefactName.startsWith("i have ") || artefactName.startsWith("have ") || artefactName.startsWith("tell ")) {
+                            var artefactName = artefactName;
                             artefactName = artefactName.replace(/\bgive\b/, "to give");
                             artefactName = artefactName.replace(/\byour\b/, _genderPossessiveSuffix);
+                            artefactName = artefactName.replace(/\bmy\b/, "your");
                             artefactName = artefactName.replace(/\bme\b/, "you");
                             artefactName = artefactName.replace(/\btell\b/, "to");
                             artefactName = artefactName.replace(/\bi have\b/, "for");
+                            artefactName = artefactName.replace(/\bhave\b/, "for");
                             artefactName = artefactName.trim();
                             //@todo trap "can you give x to y" here in future.
                             return "You ask " + self.getFirstName() +" "+ artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
                         };
-                        if (remainderString.startsWith("fix ") || remainderString.startsWith("mend ") || remainderString.startsWith("repair ")) {
-                            var artefactName = remainderString;
+                        if (artefactName.startsWith("fix ") || artefactName.startsWith("mend ") || artefactName.startsWith("repair ")) {
                             artefactName = artefactName.replace(/\bfix\b/, "");
                             artefactName = artefactName.replace(/\brepair\b/, "");
                             artefactName = artefactName.replace(/\bmend\b/, "");
+                            artefactName = artefactName.replace(/\bmy\b/, "your");
+                            artefactName = artefactName.replace(/\bme\b/, "you");
                             artefactName = artefactName.trim();
                             //@todo trap "can you give x to y" here in future.
                             return "You ask " + self.getFirstName() + " to repair " + artefactName + ".<br>" + player.ask("repair", self.getName(), artefactName, map);
                        };
 
-                        if (remainderString.startsWith("wait ")) {
+                        if (artefactName.startsWith("wait ")) {
                             return "You ask " + self.getFirstName() + " to wait.<br>" + player.ask("wait", self.getName(), null, map);
                         };
-                        if (remainderString.startsWith("go ")) {
-                            var artefactName = remainderString;
+                        if (artefactName.startsWith("go ")) {
                             artefactName = artefactName.replace(/\bgo\b/, "");
+                            artefactName = artefactName.replace(/\bmy\b/, "your");
+                            artefactName = artefactName.replace(/\bme\b/, "you");
                             artefactName = artefactName.replace(" to ", " ");
                             artefactName = artefactName.replace(" the ", " ");
                             artefactName = artefactName.trim();
                             return "You ask " + self.getFirstName() + " to go to "+ artefactName + ".<br>"+ player.ask("go", self.getName(), artefactName, map);
                         };
+                         if (artefactName.startsWith("put ")) {
+                            artefactName = artefactName.replace(/\bput\b/, "");
+                            artefactName = artefactName.replace(/\bmy\b/, "your");
+                            artefactName = artefactName.replace(/\bme\b/, "you");
+                            artefactName = artefactName.trim();
+                            return "You ask " + self.getFirstName() + " to put "+ artefactName + ".<br>"+tools.initCap(self.getPrefix())+" says 'You'll need to do that for yourself.'";
+                        };                       
+                        break;
                     case 'pardon': // [me - apology] / [please repeat last thing] 
                     case 'sorry':// [standalone apology] / [? see pardon] / [loop back to who/what/etc]
                         if (remainderString == "sorry" || remainderString == "pardon me") {
                             return tools.initCap(self.getFirstName()) + " says 'You should know better. I accept your apology for now but I suggest you back off for a while.'";
-                            break;
                         };
+                        break;
                     case 'why'://is/are/do
                         if ((!(remainderString == remainderString.replace(/\b you\b/, ""))) || remainderString == "that" || remainderString == "is that") {
                             return tools.initCap(self.getFirstName()) + " says 'Well, it's just a thing, you know.'";
                         };
-
                     case 'who': //is/are [character]
                     case 'what': //is/are/can (see can) [object]
                         if (!(remainderString == remainderString.replace(/\b you do\b/, ""))) {

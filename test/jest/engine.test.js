@@ -362,8 +362,8 @@ test('test follow-on dialogue in active conversation including other verbs', () 
     expect(actualFirstResult).toBe(expectedFirstResult);
 
     const input = "can you put my guitar in the toaster";
-    const expectedResult = "Aaron says";
-    const actualResult = engine(input).description//.substring(0,expectedResult.length);
+    const expectedResult = "You ask Aaron to put your guitar in the toaster.<br>He says 'You'll need to do that for yourself.'";
+    const actualResult = engine(input).description;
     expect(actualResult).toBe(expectedResult);
 });
 
