@@ -469,6 +469,123 @@ test("issue #394 Test that a player avoids container with water (and uses altern
 });
 
 
+test("issue #468 check quantity of what is used up when combining items.", () => {
+    //whatever is already in the bowl should be used up - but we should only be adding the same number of units (or less) of the added item.
+    //e.g. bowl has 4 units of milk, box of coco pops has 10. How many portions of milky coco pops do we end up with? and what's left in the coco pops box. (should be 0 milk, 4 milky pops + 6 in box)
+    //AND a bowl has 4 units of milk, box of coco pops only has 2. How many portions of milky coco pops do we end up with? and what's left in the coco pops box. (should be 0 milk, 2 milky pops, 0 in box)
+    const m0 = mb.buildMap();
+    p0 = new player.Player({"username": playerName}, m0, mb);
+    p0.setLocation(l0);
+
+
+    objectJSON  = prodfm.readFile("artefacts/bowl.json"); 
+    const bowl = mb.buildArtefact(objectJSON);
+
+    objectJSON  = prodfm.readFile("artefacts/coco-pops.json"); 
+    const pops = mb.buildArtefact(objectJSON);
+    pops.setCharges(10);
+
+    objectJSON  = prodfm.readFile("artefacts/milk.json"); 
+    const milk = mb.buildArtefact(objectJSON);
+    milk.setCharges(4)
+
+    l0.addObject(bowl);
+    l0.addObject(pops);
+    l0.addObject(milk);
+
+    //ensure container has plenty of physical space...
+    const bowlInv = bowl.getInventoryObject();
+    bowlInv.setCarryWeight(25);
+
+    let expected = "You collect the milk into a nearby bowl.<br>"
+    let result = p0.get("get", "milk");
+    expect(result).toBe(expected);  
+
+    expected = true
+    result = milk.combinesWith(pops, true);
+    expect(result).toBe(expected);  
+
+    expected = true
+    result = pops.combinesWith(milk, true);
+    expect(result).toBe(expected);  
+
+    const expectedResult = "You add the coco pops to the milk.<br>Your bowl now contains milky coco pops.$imagebowl.jpg/$image";
+    //const actualResult = p0.put("pour", "coco pops", "into", "bowl"); //this should succeed
+    const actualResult = p0.get("get", "coco pops"); //this should succeed
+    expect(actualResult).toBe(expectedResult);
+
+    expected = 0
+    result = milk.chargesRemaining();
+    expect(result).toBe(expected);
+
+    expected = 9
+    result = pops.chargesRemaining();
+    expect(result).toBe(expected);
+
+    expected = "It's a plain round china bowl<br>There's some milky coco pops in it.$imagebowl.jpg/$image"
+    result = bowl.getDetailedDescription();
+    expect(result).toBe(expected);
+
+    expected = "Sugar, chocolate, puffed rice and milk. They're starting to go a bit soggy and turn the milk brown."
+    result = p0.examine("examine", "milky coco pops");
+    expect(result).toBe(expected);
+
+
+});
+
+test("issue #468 / #123 check 'put pops in bowl' behaves same as 'get pops' with a bowl full of milk nearby.", () => {
+    const m0 = mb.buildMap();
+    p0 = new player.Player({"username": playerName}, m0, mb);
+    p0.setLocation(l0);
+
+    objectJSON  = prodfm.readFile("artefacts/bowl.json"); 
+    const bowl = mb.buildArtefact(objectJSON);
+
+    objectJSON  = prodfm.readFile("artefacts/coco-pops.json"); 
+    const pops = mb.buildArtefact(objectJSON);
+    pops.setCharges(10);
+
+    objectJSON  = prodfm.readFile("artefacts/milk.json"); 
+    const milk = mb.buildArtefact(objectJSON);
+    milk.setCharges(4)
+
+    l0.addObject(bowl);
+    l0.addObject(pops);
+    l0.addObject(milk);
+
+    //ensure container has plenty of physical space...
+    const bowlInv = bowl.getInventoryObject();
+    bowlInv.setCarryWeight(25);
+
+    let expected = "You collect the milk into a nearby bowl.<br>"
+    let result = p0.get("get", "milk");
+    expect(result).toBe(expected);  
+
+    expected = true
+    result = milk.combinesWith(pops, true);
+    expect(result).toBe(expected);  
+
+    expected = true
+    result = pops.combinesWith(milk, true);
+    expect(result).toBe(expected);  
+
+    const expectedResult = "You add the coco pops to the milk.<br>Your bowl now contains milky coco pops.$imagebowl.jpg/$image";
+    //const actualResult = p0.put("pour", "coco pops", "into", "bowl"); //this should succeed
+    const actualResult = p0.put("pour", "coco pops", "into", "bowl"); //this should succeed
+    expect(actualResult).toBe(expectedResult);
+
+    expected = "It's a plain round china bowl<br>There's some milky coco pops in it.$imagebowl.jpg/$image"
+    result = bowl.getDetailedDescription();
+    expect(result).toBe(expected);
+
+    expected = "Sugar, chocolate, puffed rice and milk. They're starting to go a bit soggy and turn the milk brown."
+    result = p0.examine("examine", "milky coco pops");
+    expect(result).toBe(expected);
+
+
+});
+
+
 /*
     const object2JSON  = prodfm.readFile("artefacts/vial.json"); 
     const object2 = mb.buildArtefact(object2JSON);
