@@ -452,26 +452,24 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
         validate(_type, _subType);
 
         //return right prefix for item       
-        self.descriptionWithCorrectPrefix = function (anItemDescription, plural) {
+        self.descriptionWithCorrectPrefix = function (anItemDescription, plural, useThe) {
             var state = " ";
-            if (anItemDescription) {
-                //before we go any futher, we need to remove any spurious prefixes here (an, a, some, the)
-                let tokens = anItemDescription.split(" ");
-                if (["some", "an", "a"].includes(tokens[0])) {
-                    tokens.shift();
-                    anItemDescription = tokens.join(" ");
-                };
-            };
+            let describingSelf = false;
             if (!anItemDescription) {
-                //we're referencing self instead
+                //we're describing self.
                 anItemDescription = self.getRawDescription();
-                
-                //before we go any futher, we need to remove any spurious prefixes here (an, a, some, the)
-                let tokens = anItemDescription.split(" ");
-                if (["some", "an", "a"].includes(tokens[0])) {
-                    tokens.shift();
-                    anItemDescription = tokens.join(" ");
-                };
+                describingSelf = true;
+            };
+            
+            //before we go any futher, we need to remove any current prefixes (an, a, some, the)
+            let tokens = anItemDescription.split(" ");
+            if (["some", "an", "a"].includes(tokens[0])) {
+                tokens.shift();
+                anItemDescription = tokens.join(" ");
+            };
+
+            if (describingSelf) {
+                anItemDescription = self.getRawDescription();
 
                 plural = _plural;
                 if (self.isDestroyed()) {
@@ -514,16 +512,22 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 if (descriptionAsWords.length>2) {
                     //"x of y" ?
                     if (!(collectionPlurals.indexOf(descriptionAsWords[0]) > -1 && descriptionAsWords[1] == "of")) {
-                        //not a special case
+                        //not "x of y"
                         return "some"+state+anItemDescription;
                     };
                 } else {
-                    //normal plural case
+                    //normal single word plural case
                     return "some"+state+anItemDescription;
                 };
             };
             
-            return tools.anOrA(anItemDescription, state);
+            let description;
+            if (useThe) {
+                description = "the"+state+anItemDescription;
+            } else {
+                description = tools.anOrA(anItemDescription, state);
+            }
+            return description;
         };
 
         //public member functions
@@ -1086,8 +1090,8 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             return null;
         };
 
-        self.getDescription = function() {
-            var resultString = self.descriptionWithCorrectPrefix();
+        self.getDescription = function(useThe) {
+            var resultString = self.descriptionWithCorrectPrefix(null, null, useThe);
             //if it's a container with a single item and it's open (or fixed open), include contents
             if (self.getType() == "container" && _inventory.size(false, true) == 1 && ((!_opens)||_open)) {
                 var inventoryItems = _inventory.getAllObjects();

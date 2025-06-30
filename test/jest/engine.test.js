@@ -363,7 +363,7 @@ test('test follow-on dialogue in active conversation including other verbs', () 
 
     const input = "can you put my guitar in the toaster";
     const expectedResult = "Aaron says";
-    const actualResult = engine(input).description.substring(0,expectedResult.length);
+    const actualResult = engine(input).description//.substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -732,7 +732,7 @@ test('test "give" X to Y verb', () => {
     const object2 = mb.buildArtefact(object2JSON);
     p0.acceptItem(object2);
     const input = "give ice cream to aaron";
-    const expectedResult = "Aaron takes a 99 flake ice cream.";
+    const expectedResult = "Aaron takes the 99 flake ice cream.";
     const actualResult = engine(input).description;
     expect(actualResult).toBe(expectedResult);
 });

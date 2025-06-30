@@ -102,7 +102,7 @@ test('creatureToStringReturnsValidJSON', () => {
 test('creatureCanReceiveObject', () => {
     var creatureName = 'creature';
     var c0 = new creature.Creature(creatureName,'beastie', 'a big beastie with teeth',{weight:120, attackStrength:50, gender:'unknown', type:'creature', carryWeight:50, health:150, affinity:0});
-    var expected = "The creature takes an artefact of little consequence.";
+    var expected = "The creature takes the artefact of little consequence.";
     var actual = c0.receive(a0);
     expect(actual).toBe(expected);
 });
@@ -1476,7 +1476,7 @@ test('receivingFoodWhenFriendlyCreatureIsNotHungryKeepsFood', () => {
     var l = new location.Location("room", "a room", false, true, 0);
     p0.setLocation(l);
     c0.go(null,l); 
-    var expected = "The creature takes a slab of sugary goodness.";
+    var expected = "The creature takes the slab of sugary goodness.";
     var actual = c0.receive(food, p0);
     console.debug("expected:"+expected);
     console.debug("actual:"+actual);
@@ -1774,7 +1774,7 @@ test('derekWontEatMissionChocolateEvenWhenHungry', () => {
     var foodAttributes = {weight: 1, nutrition: 5, charges: 3, carryWeight: 0, attackStrength: 0, type: "food", canCollect: true, canOpen: false, isEdible: true, isBreakable: false};
     var chocolate = new artefact.Artefact('chocolate', 'chocolate', 'nom nom nom',foodAttributes, null);
 
-    var expected = "Derek takes a chocolate.";
+    var expected = "Derek takes the chocolate.";
     var actual = c0.receive(chocolate, m, p0);
     console.debug("expected:" + expected);
     console.debug("actual:" + actual);

@@ -132,8 +132,8 @@ var self = module.exports= {
     },
 
     anOrA: function(anItemDescription, state) {
-            if (!state) {state = " "};
-            switch (anItemDescription.charAt(0).toLowerCase()) {
+            if (!state) {state = " "}; //e.g. broken/chewed
+            switch ((state+anItemDescription).trim().charAt(0).toLowerCase()) {  //include state when checking - if set.
                 case "u":
                     if (anItemDescription.length == 1) {return "a"+state+"'"+anItemDescription+"'";};
                     //note no break - fall through case
