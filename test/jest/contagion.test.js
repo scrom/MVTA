@@ -236,7 +236,7 @@ describe('Contagion', () => {
         });
         const cr = new creature.Creature("creature", "creature", "creature", { health: 25 });
 
-        for (let i = 0; i < 14; i++) {
+        for (let i = 0; i < 50; i++) {
             c.enactSymptoms(cr);
         }
 
@@ -258,7 +258,7 @@ describe('Contagion', () => {
         expect(actualResult).toBe(expectedResult);
     });
 
-    test('checkCloneUsesOriginalAttributes', () => {
+    test('checkCloneWithoutMutationUsesOriginalAttributes', () => {
         const c = new contagion.Contagion("zombie", "zombieism", {
             incubationPeriod: 2,
             communicability: 0.5,
@@ -272,11 +272,15 @@ describe('Contagion', () => {
         c.enactSymptoms(cr);
         c.enactSymptoms(cr);
 
-        const expectedResult = '{"object":"Contagion","name":"zombie","displayName":"zombieism","attributes":{"incubationPeriod":2,"communicability":0.5,"symptoms":[{"action":"hurt","health":5,"frequency":0.3,"escalation":0.1}]}}';
-        const actualResult = c.clone().toString();
+        const expectedResult = {"incubationPeriod":2,"communicability":0.5,"symptoms":[{"action":"hurt","health":5,"frequency":0.3,"escalation":0.1}]};
+        let clone = c.clone();
+        const actualResult = clone.getAttributesToSave(); //we read "attributes to save" as this returns only non-default values. 
+        delete actualResult.mutate; //mutation *can* change between cloning.
+
+
         console.debug("Expected: " + expectedResult);
         console.debug("Actual  : " + actualResult);   
-        expect(actualResult).toBe(expectedResult);
+        expect(actualResult).toStrictEqual(expectedResult);
     });
 
     test('checkCloneWithMutationManglesOriginalAttributes', () => {
@@ -444,5 +448,98 @@ describe('Contagion', () => {
         const actualResult = c.toString();
         const expectedResult = '{"object":"Contagion","name":"zombie","displayName":"zombieism","attributes":{"communicability":0.5,"symptoms":[{"action":"hurt","health":1,"frequency":1}],"duration":0,"originalDuration":5}}';
         expect(actualResult).toBe(expectedResult);
+    });
+
+    test('#414 - test symptoms mutatate over time', () => {
+        const c = new contagion.Contagion("zombie", "zombieism", {
+            communicability: 0.5,
+            duration: 5,
+            transmission: "bite",
+            "symptoms": [
+            {
+              "action": "hurt",
+              "health": 2,
+              "frequency": 0.05
+            },
+            {
+              "action": "bite",
+              "frequency": 0.16,
+              "escalation": 0.02
+            }
+          ]
+        });
+
+        let symptoms = c.getSymptoms();
+        const oldSymptoms = symptoms;
+        for (s = 0 ; s < 100; s++) { //mutate 100x
+            symptoms = c.mutateSymptoms(symptoms);
+        };
+
+        //hard to be deterministic given random % changes but rounding up tends higher so... 
+        //probe a different value on each symptom
+        expect(symptoms[1].escalation).toBeGreaterThan(oldSymptoms[1].escalation);
+        expect(symptoms[0].frequency).toBeGreaterThan(oldSymptoms[0].frequency);
+
+    });
+
+    test('#414 - test cloning mutates base (numeric) attributes *and* symptoms', () => {
+        //This test may fail very occasionally given the randomness of attributes - 
+        //for the more stable attributes we calculate max/min of each and ensure that we have seen at least some variation over time
+        let c = new contagion.Contagion("zombie", "zombieism", {
+            communicability: 0.5,
+            incubationPeriod: 5,
+            duration: 10,
+            mutate: true,
+            transmission: "bite",
+            "symptoms": [
+            {
+              "action": "hurt",
+              "health": 2,
+              "frequency": 0.05
+            },
+            {
+              "action": "bite",
+              "frequency": 0.16,
+              "escalation": 0.02
+            }
+          ]
+        });
+
+        let symptoms = c.getSymptoms();
+        let attributes = c.getCurrentAttributes();
+        const oldSymptoms = symptoms;
+        const oldAttributes = attributes;
+        let newContagion = c;
+        let maxEscalation = oldSymptoms[1].escalation;
+        let maxFrequency = oldSymptoms[0].frequency;
+        let maxCommunicability = oldAttributes.communicability;
+        let maxIncubationPeriod = oldAttributes.incubationPeriod;
+        let minIncubationPeriod = oldAttributes.incubationPeriod;
+        let maxDuration = oldAttributes.duration; 
+        let minDuration = oldAttributes.duration; 
+        for (c = 0 ; c < 200; c++) { //mutate 200x
+            newContagion = newContagion.clone();
+
+            symptoms = newContagion.getSymptoms();
+            attributes = newContagion.getCurrentAttributes();
+            if (maxEscalation < symptoms[1].escalation) {maxEscalation = symptoms[1].escalation};
+            if (maxFrequency < symptoms[1].frequency) {maxFrequency = symptoms[1].frequency};
+            if (maxCommunicability < attributes.communicability) {maxCommunicability = attributes.communicability};
+            if (maxIncubationPeriod < attributes.incubationPeriod) {maxIncubationPeriod = attributes.incubationPeriod};
+            if (minIncubationPeriod > attributes.incubationPeriod) {minIncubationPeriod = attributes.incubationPeriod};
+            if (maxDuration < attributes.duration) {maxDuration = attributes.duration};
+            if (minDuration > attributes.duration) {minDuration = attributes.duration};
+
+        };
+
+        //hard to be deterministic given random % changes but rounding up tends higher so 
+        //Symptoms tend to increase, attributes are more random/tending toward a middle.
+        //probe a different value on each symptom
+        expect(maxEscalation).toBeGreaterThan(oldSymptoms[1].escalation);
+        expect(maxFrequency).toBeGreaterThan(oldSymptoms[0].frequency);
+        expect(maxCommunicability).not.toEqual(oldAttributes.communicability);
+        expect(maxIncubationPeriod-minIncubationPeriod).not.toEqual(0); //ensure it at least fluctuates
+        expect(maxDuration-minDuration).not.toEqual(0); //ensure it at least fluctuates
+
     });
 });

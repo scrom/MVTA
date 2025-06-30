@@ -95,22 +95,27 @@ exports.Contagion = function Contagion(name, displayName, attributes) {
             return currentAttributes;
         };
 
+        self.getSymptoms = function () {
+            return _symptoms
+        };
+
         self.getCloneAttributes = function () {
             var cloneAttributes = {};
+
+            //randomly start or stop mutating (33% chance it *will* mutate)
+            let randomInt = Math.floor(Math.random() * 3);
+            if (randomInt == 0) {
+                cloneAttributes.mutate = true;
+            } else {
+                cloneAttributes.mutate = false;
+            };
             if (_mutate) { 
                 cloneAttributes.incubationPeriod = Math.round((Math.random() * _originalIncubationPeriod+1)); //something similar to or shorter than original
                 cloneAttributes.communicability = Math.round(Math.random()*100)/100 //somewhere between 0 and 1
-                cloneAttributes.symptoms = _symptoms; //use current symptoms rather than original (means may already be fully escalated                
+                cloneAttributes.symptoms = self.mutateSymptoms(_originalSymptoms); //mutate from original.         
                 if (_originalDuration > -1) {//if duration is permanent, don't alter it
                     cloneAttributes.duration = Math.round(Math.random() * (_originalDuration * 2)); //between 0 and 2*original
-                };
-                //randomly continue or stop mutating (50% chance)
-                var randomInt = Math.floor(Math.random() * 2);
-                if (randomInt == 0) {
-                    cloneAttributes.mutate = true;
-                };
-                
-
+                };                
             } else {
                 cloneAttributes.incubationPeriod = _originalIncubationPeriod;
                 cloneAttributes.communicability = _communicability;
@@ -120,6 +125,11 @@ exports.Contagion = function Contagion(name, displayName, attributes) {
 
             cloneAttributes.transmission = _transmission;
             return cloneAttributes;
+        };
+
+        
+        self.clone = function () {
+            return new Contagion(_name, _displayName, self.getCloneAttributes());
         };
 
         self.getAttributesToSave = function () {
@@ -155,10 +165,6 @@ exports.Contagion = function Contagion(name, displayName, attributes) {
             if (saveOriginalAttributes) { saveAttributes.originalSymptoms = contagionAttributes.originalSymptoms; };
 
             return saveAttributes;
-        };
-
-        self.clone = function () {
-            return new Contagion(_name, _displayName, self.getCloneAttributes());
         };
 
         self.getName = function () {
@@ -218,6 +224,51 @@ exports.Contagion = function Contagion(name, displayName, attributes) {
             return contagionString;
         };
 
+        self.mutateSymptoms = function(symptoms) {
+            //note - because the calculated values generally round *up*...
+            //even though there's an equal chance of negative values, 
+            //over 100 iterations we see a fair rise in escalation and frequency and nominal changes in hp.
+            let newSymptoms = [];
+            if (Array.isArray(symptoms)) {
+                newSymptoms = [...symptoms];            
+            } else {
+                newSymptoms.push(symptoms);
+            };
+
+            for (let s = 0; s < newSymptoms.length; s++) {
+                let symptom = newSymptoms[s];
+                let newSymptom = {};
+                for(const [name, value] of Object.entries(symptom)) {
+                    if (typeof value === "number") {
+                        let changeBy = 1;
+                        let newValue = 0;
+                        let percentChange = 0;
+                        let integerChange = 0
+                        let increaseOrDecrease = (Math.floor(Math.random() * 3) - 1)// 0 to 2 minus one :) 
+                        if (Number.isInteger (value)) {
+                            integerChange = (Math.floor(Math.random() * 5))+1 //1-5
+                            percentChange = ((value - integerChange) / value) * 100
+                        } else {
+                            //increase or decrease each attribute by +/- by 10-20%
+                            percentChange = (Math.floor(Math.random() * 11)+10); //11 options - therefore 0..10 + 10
+                        };
+                        changeBy = 1+((percentChange*increaseOrDecrease)/100);
+                        if (Number.isInteger (value)) {
+                            newValue = Math.ceil(value*changeBy); // round up to whole value
+                        } else {
+                            newValue = Math.ceil((value*changeBy)*100)/100; // round up to 2dp
+                        };
+                        if (newValue <= 0) {newValue = value}
+                        newSymptom[name] = newValue;
+                    } else {
+                        newSymptom[name] = value;
+                    };
+                };
+                newSymptoms.splice(s,1,newSymptom);
+            };
+            return newSymptoms;
+        };
+        
         self.enactSymptoms = function (carrier, location, player) {
             //example: "symptoms": [{ "action":"bite", "frequency":0.3,"escalation":0},{ "action":"hurt", "health":5, "frequency":0.1,"escalation":0.1}],
             if (carrier.isDead()) { return ""; }; //do nothing
@@ -340,6 +391,13 @@ exports.Contagion = function Contagion(name, displayName, attributes) {
                             break;
                         case "weaken":
                             //@todo eventually - reduce carrier's carry limit and attack strength. (may or may not be recoverable)
+                            break;
+                        // see #579 for all these...
+                        case "vomiting":
+                        case "hunger":
+                        case "dehydration":
+                        case "confusion":
+                        case "bleed":
                             break;
                     };
                 };
