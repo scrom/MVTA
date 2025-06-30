@@ -3134,7 +3134,11 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             } else {
                 if (giver.getSubType() == "intangible") {return "You can't steal from "+giver.getDisplayName()+".";};
                 if (verb == "mug"){ return "If "+giver.getDescriptivePrefix()+" carrying anything of use, you should just be able to take what you need."};
-                if (tools.stringIsEmpty(artefactName) && verb == "steal"){ return tools.initCap(verb)+" what?";};
+                if (tools.stringIsEmpty(artefactName) && verb == "steal"){ 
+                    if (giver.isCollectable()) {return "You don't need to <i>"+verb+ "</i> "+giver.getDisplayName(true)+". Just help yourself - but don't be greedy."};
+                    if (giver.getType() == "scenery") {return "Nope. "+tools.initCap(giver.getDescriptivePrefix())}+" staying right here. I suggest you focus your efforts elsewhere."
+                    return tools.initCap(verb)+" what?";
+                };
                 var locationInventory = _currentLocation.getInventoryObject();
                 self.increaseAggression(1); //we're stealing!  
                 _currentLocation.reduceLocalFriendlyCreatureAffinity(1, giver.getName()); 
