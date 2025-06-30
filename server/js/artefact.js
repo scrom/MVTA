@@ -455,6 +455,10 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
         self.descriptionWithCorrectPrefix = function (anItemDescription, plural, useThe) {
             var state = " ";
             let describingSelf = false;
+            if (self.syn(anItemDescription)) {
+                //this is the same object but possibly name instead of description.
+                describingSelf = true;
+            };
             if (!anItemDescription) {
                 //we're describing self.
                 anItemDescription = self.getRawDescription();
@@ -469,8 +473,6 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             };
 
             if (describingSelf) {
-                anItemDescription = self.getRawDescription();
-
                 plural = _plural;
                 if (self.isDestroyed()) {
                     return "some "+self.getRawDescription();  
@@ -1807,6 +1809,8 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             
             if (combinesWithResult) { //we have a match
                 if (crossCheck) {
+                    let localName = self.getName();
+                    let otherObject = anObject.getName();
                     if (anObject.combinesWith(self, false)) { return true;};
                 } else {
                     //no need to cross-check
@@ -1890,13 +1894,18 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             //get first available delivery item that matches both combine objects.
             var deliveryItemSource;
             var objectDeliveryItems = anObject.getDeliveryItems();
+            let match = false;
             for (var d = 0;d<objectDeliveryItems.length;d++) {
                 for (var dd = 0; dd < _delivers.length; dd++) {
                     if (_delivers[dd].getName() == objectDeliveryItems[d].getName())  {
                         deliveryItemSource = _delivers[dd];
+                        match = true;
+                        break;
                     };
-                };   
+                }; 
+                if (match) {break;}
             };    
+
             
             //console.debug("combining :" + self.getName() + " with " + anObject.getName() + " to produce " + deliveryItemSource.getName());                      
 
@@ -1922,7 +1931,10 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             if (!deliveryItemSource) { return null;};    
 
             //we do have a new item to deliver, continue...
-            self.setWeight(0);  
+            //as we are the combine-ee, we will be wiped out and replaced - regardless of charges remaining.
+            //(caller will need to remove)
+            self.setWeight(0);
+            self.consumeAll(); 
 
             //return a new instance of deliveryObject
             var deliveredItem = new Artefact(deliveryItemSource.getName(), deliveryItemSource.getRawDescription(), deliveryItemSource.getInitialDetailedDescription(), deliveryItemSource.getSourceAttributes(), deliveryItemSource.getLinkedExits(), deliveryItemSource.getDeliveryItems());
@@ -2300,7 +2312,23 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             return _burnRate;
         };
 
+        self.recharge = function(quantity) {
+            if (quantity <0) {return _charges} // use consume instead!
+            if (_charges == -1) {return -1};
+            _charges += quantity;
+            return _charges;
+        };
+
+        self.consumeAll = function() {
+            if (_charges < 0) {return _charges;};
+            _charges = 0;
+            return _charges;
+        };
+
         self.consume = function(quantity) {
+            if (quantity <0) {return _charges} //if we want to recharge something instead, we need a recharge function!
+            if (_charges <= 0) {return _charges;};
+
             if (!(quantity)) {
                 if (_burnRate > 0) {
                     quantity = _burnRate;
@@ -2308,16 +2336,16 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                     quantity = 1;
                 };
             };
-            if (_charges == 0) {return _charges;};
-            if (_charges > 0) {
-                if (_charges-quantity >0) {
-                    _charges -=quantity;
-                } else {
-                    _charges = 0;
-                };
+
+            //we have charges > 0
+            if (_charges-quantity >0) {
+                _charges -=quantity;
+            } else {
+                _charges = 0;
             };
+
+            return Math.round(_charges*100)/100;  //to 2 decimals.
             //console.debug("Consumed "+self.getDisplayName()+" charges remaining: "+_charges);
-            return Math.round(_charges*100)/100; //deliberately works but does nothing if charges are -ve
         };
 
         self.consumeItem = function (anObject) {
@@ -2401,6 +2429,16 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             if (components.length >= _requiredComponentCount) {return true;}; //we have everything we need yet.
             return false;
         };
+
+        self.delivers = function (anObjectName) {
+            for (var i = 0; i < _delivers.length; i++) {
+                if (_delivers[i].syn(anObjectName)) {
+                    return true;
+                };
+            };
+            return false;
+        };
+
 
         self.deliver = function (anObjectName) {
             //if we can't deliver the requested object
@@ -3271,8 +3309,8 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 if (inventoryLiquidOrPowder) {
                     if (inventoryLiquidOrPowder.getName() != anObject.getName()) {
                         //we're mixing 2 liquids that shouldn't combine.
-                        resultString = "$fail$You attempt to add " + anObject.getName() + " to " + self.getDisplayName();
-                        return resultString + " but decide "+anObject.getPrefix().toLowerCase()+" won't really mix well with " + inventoryLiquidOrPowder.getDisplayName() + " that's already in there.";
+                        resultString = "$fail$You consider adding " + anObject.descriptionWithCorrectPrefix(anObject.getName()) + " to " + self.getDisplayName();
+                        return resultString + " but "+anObject.getPrefix().toLowerCase()+" won't really mix well with " + inventoryLiquidOrPowder.getDisplayName() + " that's already in there."+tools.imgTag(self);
                     } else {
                         //this is a liquid with the same name - is is comparable
                         if (self.compareLiquidOrPowder(anObject, inventoryLiquidOrPowder)) {

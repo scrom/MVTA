@@ -265,7 +265,7 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
         };
 
         self.canCarry = function(anObject) {
-            if (anObject == undefined) {
+            if (anObject == undefined || !(anObject)) {
                 return false;
             };
 
@@ -280,8 +280,22 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
             //check if what we're adding will conflict vs combine with existing liquid or powder.
             if (anObject.isLiquid()||anObject.isPowder()) {
                 let contents = self.getLiquidOrPowder();
-                if (!contents || contents.getName() == anObject.getName()) {
+                if (!(contents)) {
                     return true;
+                };
+
+                let objectName = anObject.getName();
+                let contentsName = contents.getName();
+
+                if (contentsName == objectName) {
+                    return true;
+                };
+
+                if (contents.getWeight() <= 0 && contents.getType() != "scenery" && contents.getSubType() != "intangible" ) {
+                    //minor hack to handle when we're in the middle of combining things and have zeroed weight..
+                    if (contents.delivers(objectName)) {
+                        return true;
+                    };
                 };
                 if (!anObject.combinesWith(contents, true)) {
                     return false;

@@ -1102,7 +1102,7 @@ test('cant put object in broken container', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
-test('cannot get liquid into container already containing liquid that doesnt combine', () => {
+test('cannot "get" liquid into container already containing liquid that doesnt combine', () => {
     var liquidAttributes = { weight: 1, type: "food", canCollect: true, isEdible: true, isLiquid: true};
     var containerAttributes = { weight: 2, carryWeight: 25, attackStrength: 2, type: "container", canCollect: true, isBreakable: true, holdsLiquid: true };
     var rum = new artefact.Artefact('rum', 'rum', 'rum', liquidAttributes, null);
@@ -1115,6 +1115,24 @@ test('cannot get liquid into container already containing liquid that doesnt com
 
     var expectedResult = "You're not carrying anything that you can collect the soup into.";
     var actualResult = p0.get('get', soup.getName());
+    console.debug("Expected: " + expectedResult);
+    console.debug("Actual  : " + actualResult);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('cannot "put" liquid into container already containing liquid that doesnt combine', () => {
+    var liquidAttributes = { weight: 1, type: "food", canCollect: true, isEdible: true, isLiquid: true};
+    var containerAttributes = { weight: 2, carryWeight: 25, attackStrength: 2, type: "container", canCollect: true, isBreakable: true, holdsLiquid: true };
+    var rum = new artefact.Artefact('rum', 'rum', 'rum', liquidAttributes, null);
+    var soup = new artefact.Artefact('soup', 'soup', 'soup', liquidAttributes, null);
+    var bottle = new artefact.Artefact('bottle', 'bottle', 'bottle', containerAttributes, null);
+    
+    l0.addObject(soup);
+    console.debug(bottle.receive(rum));
+    console.debug(p0.acceptItem(bottle));
+
+    var expectedResult = "You consider adding some soup to the bottle but it won't really mix well with the rum that's already in there.";
+    var actualResult = p0.put('pour', soup.getName(), "into", bottle.getName());
     console.debug("Expected: " + expectedResult);
     console.debug("Actual  : " + actualResult);
     expect(actualResult).toBe(expectedResult);

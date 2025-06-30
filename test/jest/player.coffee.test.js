@@ -248,7 +248,7 @@ describe('Sweet Coffee Combination Tests', () =>
         const coffeeMachine = new artefact.Artefact('machine', 'coffee vending machine', "When it works it uses coffee beans to make coffee.", lockedStaticMachineAttributes, null, coffee);
 
         const bottomkitchen = new location.Location('kitchen-ground-floor', "You're in the atrium kitchen.");
-        const expectedResult = 'location now contains a coffee vending machine.';
+        const expectedResult = 'kitchen-ground-floor now contains a coffee vending machine.';
         const actualResult = bottomkitchen.addObject(coffeeMachine);
         expect(actualResult).toBe(expectedResult);
     });

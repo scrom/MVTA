@@ -2093,8 +2093,9 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
             var requiresContainer = newObject.requiresContainer();
 
+            var receiverName = receiver.getName();
             //check where receiver is/was
-            var receiverIsInLocation = _currentLocation.objectExists(receiver.getName());
+            var receiverIsInLocation = _currentLocation.objectExists(receiverName);
 
             if(requiresContainer) {
                 var container;
@@ -2603,8 +2604,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                         //there's already something in here...
                         let contents = receiver.getLiquidOrPowder();
                         if (contents) {
-                            return "You attempt to add " + artefact.getName() + " to " + receiver.getDisplayName() +
-                               " but realise "+artefact.getPrefix().toLowerCase()+" won't really mix well with " + contents.getDisplayName() + " that's already in there.";
+                            return "You consider adding " + artefact.descriptionWithCorrectPrefix(artefact.getName()) + " to " + receiver.getDisplayName() +
+                               " but "+artefact.getPrefix().toLowerCase()+" won't really mix well with " + contents.getDisplayName() + " that's already in there.";
                         };
 
                     } else {

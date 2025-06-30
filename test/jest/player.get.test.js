@@ -422,7 +422,7 @@ test("Test that a player cannot add coco pops to a glass of water.", () => {
     let kitchen = m0.getLocation("kitchen-ground-floor")
     p0.setLocation(kitchen);
 
-    const expectedResult = "You attempt to add coco pops to the glass but realise they won't really mix well with the water that's already in there.$imagedrinkingglass.jpg/$image";
+    const expectedResult = "You consider adding a serving of coco pops to the glass but they won't really mix well with the water that's already in there.$imagedrinkingglass.jpg/$image";
 
     p0.get('get', 'water');
 
@@ -485,8 +485,10 @@ test("issue #468 check quantity of what is used up when combining items.", () =>
     const pops = mb.buildArtefact(objectJSON);
     pops.setCharges(10);
 
-    objectJSON  = prodfm.readFile("artefacts/milk.json"); 
-    const milk = mb.buildArtefact(objectJSON);
+    objectJSON  = prodfm.readFile("artefacts/bottle-of-milk.json"); 
+    const bottle = mb.buildArtefact(objectJSON);
+
+    const milk = bottle.getObject("milk")
     milk.setCharges(4)
 
     l0.addObject(bowl);
@@ -510,7 +512,6 @@ test("issue #468 check quantity of what is used up when combining items.", () =>
     expect(result).toBe(expected);  
 
     const expectedResult = "You add the coco pops to the milk.<br>Your bowl now contains milky coco pops.$imagebowl.jpg/$image";
-    //const actualResult = p0.put("pour", "coco pops", "into", "bowl"); //this should succeed
     const actualResult = p0.get("get", "coco pops"); //this should succeed
     expect(actualResult).toBe(expectedResult);
 
@@ -518,7 +519,7 @@ test("issue #468 check quantity of what is used up when combining items.", () =>
     result = milk.chargesRemaining();
     expect(result).toBe(expected);
 
-    expected = 9
+    expected = 6
     result = pops.chargesRemaining();
     expect(result).toBe(expected);
 
@@ -570,7 +571,6 @@ test("issue #468 / #123 check 'put pops in bowl' behaves same as 'get pops' with
     expect(result).toBe(expected);  
 
     const expectedResult = "You add the coco pops to the milk.<br>Your bowl now contains milky coco pops.$imagebowl.jpg/$image";
-    //const actualResult = p0.put("pour", "coco pops", "into", "bowl"); //this should succeed
     const actualResult = p0.put("pour", "coco pops", "into", "bowl"); //this should succeed
     expect(actualResult).toBe(expectedResult);
 

@@ -534,7 +534,7 @@ exports.Location = function Location(name, displayName, description, attributes)
 
         self.addObject = function(anObject) {
             _inventory.add(anObject);
-            return "location now contains "+anObject.getDescription()+".";
+            return self.getName()+" now contains "+anObject.getDescription()+".";
         };
 
         self.removeObject = function(anObjectName, searchCreatures) {
