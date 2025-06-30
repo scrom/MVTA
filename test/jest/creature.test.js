@@ -1659,7 +1659,6 @@ test('CreatureCanSlipOnWetFloor', () => {
     p0.setLocation(l0);
     var creatureName = 'creature';
     var c0 = new creature.Creature(creatureName,'beastie', 'a small beastie',{weight:120, attackStrength:10, gender:'unknown', type:'creature', carryWeight:50, health:120, affinity:0, canTravel: true, traveller: true, homeLocation: l0});
-    console.debug(c0.go("n", l1));
 
     //add enough liquids to guarantee slipping...
     l0.addLiquid("blood");
@@ -1682,7 +1681,16 @@ test('CreatureCanSlipOnWetFloor', () => {
     //console.debug(c0.tick(15, m1, p0));
 
     var expectedResult = "<br>A beastie wanders in and slips in the mess on the floor. It's injured. ";
-    var actualResult = c0.tick(5, m1, p0);
+    var attempts = 1;
+    var actualResult;
+    while (actualResult != expectedResult && attempts < 10) {
+        //a 0 from the random slip algorithm will still not slip so try again
+        console.debug("Fail: slip did not occur - attempting try# "+attempts+"...");
+        c0.go("n", l1);
+        actualResult = c0.tick(5, m1, p0);
+        console.debug(actualResult);
+        attempts++;
+    };
     console.debug("Expected: "+expectedResult);
     console.debug("Actual  : "+actualResult);
     expect(actualResult).toBe(expectedResult);
@@ -1718,10 +1726,9 @@ test('CreatureCanSlipAndDieOnWetFloor', () => {
     //*note* - occasionaly - even with this much liquid, they might still not slip.
     //this matches player behaviour for fairness.
     var expectedResult = "<br>A beastie wanders in, slips in the mess on the floor and dies from its injuries. Now you can steal all its stuff. ";
-    var actualResult = c0.tick(5, m1, p0);
-    console.debug(actualResult);
     var attempts = 1;
-    while (actualResult != expectedResult && attempts < 5) {
+    var actualResult;
+    while (actualResult != expectedResult && attempts < 10) {
         //a 0 from the random slip algorithm will still not slip so try again
         console.debug("Fail: slip did not occur - attempting try# "+attempts+"...");
         c0.go("n", l1);
