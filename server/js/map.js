@@ -120,10 +120,10 @@ exports.Map = function Map() {
             const oldSynonyms = [name, ...(entry.synonyms || [])];
             for (const term of oldSynonyms) {
                 const key = term.toLowerCase();
-                if (reverseDictionary[key]) {
-                    reverseDictionary[key] = reverseDictionary[key].filter(e => e.name !== name);
-                    if (reverseDictionary[key].length === 0) {
-                        delete reverseDictionary[key];
+                if (_reverseDictionary[key]) {
+                    _reverseDictionary[key] = _reverseDictionary[key].filter(e => e.name !== name);
+                    if (_reverseDictionary[key].length === 0) {
+                        delete _reverseDictionary[key];
                     }
                 }
             }
@@ -150,13 +150,13 @@ exports.Map = function Map() {
             const newSynonyms = [name, ...(entry.synonyms || [])];
             for (const term of newSynonyms) {
                 const key = term.toLowerCase();
-                if (!reverseDictionary[key]) {
-                    reverseDictionary[key] = [];
+                if (!_reverseDictionary[key]) {
+                    _reverseDictionary[key] = [];
                 }
 
-                const alreadyExists = reverseDictionary[key].some(e => e.name === name);
+                const alreadyExists = _reverseDictionary[key].some(e => e.name === name);
                 if (!alreadyExists) {
-                    reverseDictionary[key].push({ name, type: entry.type });
+                    _reverseDictionary[key].push({ name, type: entry.type });
                 }
             }
 
