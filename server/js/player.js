@@ -1783,6 +1783,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (firstArtefact.getSubType() == "intangible") {
                 resultString = tools.initCap(firstArtefact.getName())+" isn't really something you can "+verb+".";
                 resultString += "<br>You try anyway. After a while, your arms get tired and you feel slightly awkward.";
+                return resultString;
             };  
 
             //build return string
@@ -1797,9 +1798,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             }; 
 
             resultString+=". ";
-
-            resultString+= firstArtefact.wave(secondArtefact, self);
-
+            resultString+= firstArtefact.wave(verb, secondArtefact, _map, self);
             resultString += "<br>Your arms get tired and you feel slightly awkward.";   
 
             return resultString;
@@ -1817,6 +1816,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (artefact.getSubType() == "intangible") {
                 resultString = tools.initCap(artefact.getName()) + " isn't really something you can " + verb + ".";
                 resultString += "<br>You try anyway. After a while, your arms get tired and you feel slightly awkward.";
+                return resultString;
             };
             
             //build return string

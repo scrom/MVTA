@@ -2030,9 +2030,12 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             return _inventory.remove(anObjectName);
         };
 
-        self.wave = function(anObject, player) {
+        self.wave = function(verb, otherObject, map, player) { 
             if (self.isDestroyed()) {return "There's nothing left of "+_itemSuffix+".";};
             //we may wave this at another object or creature
+            if (self.checkCustomAction(verb)) {
+                return self.performCustomAction(verb, map, player);
+            };
             return "Nothing happens.";
         };
 

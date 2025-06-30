@@ -1551,8 +1551,11 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             return _inventory.canCarry(anObject);
         };
 
-        self.wave = function(anObject, player) {
+        self.wave = function(verb, otherObject, map, player) {
             //we may wave this at another object or creature
+            if (self.checkCustomAction(verb)) {
+                return self.performCustomAction(verb, map, player);
+            };
             return "Nothing happens.";
         };
 
