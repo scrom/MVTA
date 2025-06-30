@@ -293,7 +293,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
         const sre = (_genderPrefix == "They") ? "re" : "s";
 
         //return right prefix for item       
-        self.descriptionWithCorrectPrefix = function (anItemDescription, plural) {
+        self.descriptionWithCorrectPrefix = function (anItemDescription, plural, useThe) {
             if (!anItemDescription) {
                 //we're referencing self instead
                 anItemDescription = self.getRawDescription();
@@ -320,8 +320,14 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     return "some " + anItemDescription;
                 };
             };
-
-            return tools.anOrA(anItemDescription);
+    
+            let description;
+            if (useThe) {
+                description = "the "+anItemDescription;
+            } else {
+                description = tools.anOrA(anItemDescription);
+            }
+            return description;
         };
 
         //console.debug('carrying: '+carrying);
@@ -928,8 +934,8 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             return _displayName;
         };
         
-        self.getDescription = function() {
-            return self.descriptionWithCorrectPrefix();
+        self.getDescription = function(useThe) {
+            return self.descriptionWithCorrectPrefix(null, null, useThe);
         };
 
         self.getRawDescription = function () {
@@ -1811,7 +1817,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             //turn on delay
             _currentDelay = 0;
 
-            var resultString = tools.initCap(self.getFirstName())+" takes "+anObject.getDescription()+".";
+            var resultString = tools.initCap(self.getFirstName())+" takes "+anObject.getDescription(true)+".";
 
             if (!anObject.isIntact() && self.canRepair(anObject) && player && !anObject.isDestroyed()) {
                 var brokenString = "broken";
@@ -3191,10 +3197,12 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             //replace these with arrays from input parser.
             casual: ["seriously", "whatever", "dude"],
             greeting: ["hi", "yo", "hello", "ahoy", "hiya", "hey", "morning", "afternoon", "evening", "good morning", "good afternoon", "good evening"],
-            farewell: ["bye", "goodbye", "night", "goodnight", "good night", "good-night"],
-            affirmative: ["ok", "y", "yes", "yeah", "yarp", "yep", "affirmative", "great", "cool", "excellent", "awesome", "affirmatory", "sure", "okay", "no problem", "okey"],
-            negative: ["no", "n", "nah", "nope", "narp", "no thanks", "no ta", "no thank you", "no thankyou", "negative", "negatory"],
-            gratitude: ["thanks", "thankyou", "thank you", "thx", "ta", "cheers"],
+            farewell: ["bye", "goodbye", "night", "goodnight", "good night", "good-night", "seeya", "later", "laters", "cya", "tates", "taters"],
+            affirmative: ['y','yes','yup','yeh','yep','aye','yeah', 'yarp','ok','okay','okey','kay','sure','absolutely', 'certainly', 'definitely','exactly', 'indeed', 'right','totally', 'totes', 'true','truth','great','cool', 'awesome','excellent','marvelous','fantastic','affirmed', 'confirmed','confirmation','affirmative', 'affirmatory', 'no problem'],
+            negative: ["no", "n", , "nay", "nah", "nope", "narp", "no thanks", "no ta", "no thank you", "no thankyou", "negative", "negatory", 'reject','rejected', 'rejection','deny','denied','refuse','refused', 'refusal'],
+            gratitude: ["thanks", "thankyou", "thank you", "thx", "ta", "cheers", "tx", "thx", "thanx"],
+            question: ['is', 'who','what','why','where','when','how','which','whose', 'can', 'could', 'may', 'might', 'must', 'shall', 'should', 'will', 'would','do you', 'have you', 'do', 'have', "pardon"],
+            apology: ['sorry', 'apologies', 'im sorry'],
             keyword: [keyword]
             };
 
@@ -3270,6 +3278,9 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     randomIndex = Math.floor(Math.random() * randomReplies.length);
                     response += tools.initCap(replyName)+" say"+ss+" '"+randomReplies[randomIndex]+".'";
                     break;
+                case "question":
+                    break; //we handle this later...
+                case "apology":
                 default:
                     if (self.syn(someSpeech)) {
                         player.setLastCreatureSpokenTo(self.getName());
@@ -3300,10 +3311,6 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 } else {
                     remainderString = someSpeech.substring(someSpeech.indexOf(" ")).trim();
                 };
-                var stringStartsWith = function(string, startsWith) {
-                    string = string;
-                    return string.indexOf(startsWith) == 0;
-                };
                 var artefactName = remainderString;
                 artefactName = artefactName.replace(" me ", " ");
                 artefactName = artefactName.replace(" my ", " ");
@@ -3316,7 +3323,6 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 artefactName = artefactName.replace(" here ", " ");
                 artefactName = artefactName.trim();
                 
-                remainderString = remainderString.replace(/\byou\b/, "");
                 remainderString = remainderString.replace(/\bi\b/, "");
                 remainderString = remainderString.trim();
 
@@ -3330,7 +3336,6 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     case "yes":
                     case "i":
                     case "im":
-                    case "you":
                     case "it":
                     case "but":
                     case "because":
@@ -3356,14 +3361,14 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     case 'can'://you/i help/give/say/ask/get/fetch/find/have [me] /object
                     case 'will'://same as "can"
                     //@todo - add "open/unlock" here as requests
-                        if (stringStartsWith(remainderString, "find ")) {
+                        if (remainderString.startsWith("find ")) {
                             artefactName = artefactName.replace("find ", " ");
                             return "You ask " + self.getFirstName() + " to find " + artefactName + ".<br>" + player.ask("find", self.getName(), artefactName, map);
                         };
-                        if (stringStartsWith(remainderString, "help ")) {
+                        if (remainderString.startsWith("help ")) {
                             return self.replyToKeyword("help", player, map);
                         };
-                        if (stringStartsWith(remainderString, "give ") || stringStartsWith(remainderString, "i have ") || stringStartsWith(remainderString, "tell ")) {
+                        if (remainderString.startsWith("give ") || remainderString.startsWith("i have ") || remainderString.startsWith("tell ")) {
                             var artefactName = remainderString;
                             artefactName = artefactName.replace(/\bgive\b/, "to give");
                             artefactName = artefactName.replace(/\byour\b/, _genderPossessiveSuffix);
@@ -3374,7 +3379,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             //@todo trap "can you give x to y" here in future.
                             return "You ask " + self.getFirstName() +" "+ artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
                         };
-                        if (stringStartsWith(remainderString, "fix ") || stringStartsWith(remainderString, "mend ") || stringStartsWith(remainderString, "repair ")) {
+                        if (remainderString.startsWith("fix ") || remainderString.startsWith("mend ") || remainderString.startsWith("repair ")) {
                             var artefactName = remainderString;
                             artefactName = artefactName.replace(/\bfix\b/, "");
                             artefactName = artefactName.replace(/\brepair\b/, "");
@@ -3384,10 +3389,10 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             return "You ask " + self.getFirstName() + " to repair " + artefactName + ".<br>" + player.ask("repair", self.getName(), artefactName, map);
                        };
 
-                        if (stringStartsWith(remainderString, "wait ")) {
+                        if (remainderString.startsWith("wait ")) {
                             return "You ask " + self.getFirstName() + " to wait.<br>" + player.ask("wait", self.getName(), null, map);
                         };
-                        if (stringStartsWith(remainderString, "go ")) {
+                        if (remainderString.startsWith("go ")) {
                             var artefactName = remainderString;
                             artefactName = artefactName.replace(/\bgo\b/, "");
                             artefactName = artefactName.replace(" to ", " ");
@@ -3418,7 +3423,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             return tools.initCap(self.getFirstName()) + " says 'I'll be around somewhere.'";
                         };
                     case 'how'://is/are/can/will/many/much/about
-                        if (stringStartsWith(remainderString, "is ") || stringStartsWith(remainderString, "are ")) {
+                        if (remainderString.startsWith("is ") || remainderString.startsWith("are ")) {
                             if (remainderString == remainderString.replace(/\b you\b/, "")) {
                                 return tools.initCap(self.getFirstName()) + " says 'Good question.'<br>'I'd love to help you but I'm afraid I just don't know.'<br>'You'll need to work it out yourself.'";
                             } else {
@@ -3433,7 +3438,8 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     case 'would': 
                     case 'have':
                     case 'do'://you/i think/know/want ??
-                        if (stringStartsWith(remainderString, "have ")) {
+                        remainderString = (remainderString.replace(/\byou\b/, "")).trim();
+                        if (remainderString.startsWith("have ")) {
                             var artefactName = remainderString;
                             artefactName = artefactName.replace(/\bhave\b/, "");
                             artefactName = artefactName.trim();
@@ -3445,60 +3451,40 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             };
                             return "You ask " + self.getFirstName() + " "+ifFor+" " + artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
                         };
-                        if (stringStartsWith(remainderString, "know where ")) {
+                        if (remainderString.startsWith("know where ")) {
                             var artefactName = remainderString;
                             artefactName = artefactName.replace(/\bknow where \b/, "");
+                            artefactName = artefactName.replace(/\bthe \b/, "");
+                            artefactName = artefactName.replace(/\bi can find \b/, "");
+                            artefactName = artefactName.replace(/\bi might find \b/, "");
+                            artefactName = artefactName.replace(/\btheres \b/, "");
+                            artefactName = artefactName.replace(/\bsome \b/, "");
+                            artefactName = artefactName.replace(/\bany \b/, "");
+                            artefactName = artefactName.replace(/\ban \b/, "");
+                            artefactName = artefactName.replace(/\ba \b/, "");
+                            artefactName = artefactName.replace(/\b is\b/, "");
+                            artefactName = artefactName.replace(/\b are\b/, "");
+                            artefactName = artefactName.replace(/\b may be\b/, "");
+                            artefactName = artefactName.replace(/\b will be\b/, "");
+                            artefactName = artefactName.replace(/\b could be\b/, "");
+                            artefactName = artefactName.replace(/\b might be\b/, "");
                             artefactName = artefactName.trim();
-                            if (stringStartsWith(artefactName, "the ")) {
-                                artefactName = artefactName.replace(/\bthe \b/, "");
-                            };
-                            if (stringStartsWith(artefactName, "i can find ")) {
-                                artefactName = artefactName.replace(/\bi can find \b/, "");
-                            };
-                            if (stringStartsWith(artefactName, "i might find ")) {
-                                artefactName = artefactName.replace(/\bi might find \b/, "");
-                            };
-                            if (stringStartsWith(artefactName, "theres ")) {
-                                artefactName = artefactName.replace(/\btheres \b/, "");
-                            };
-                            if (stringStartsWith(artefactName, "some ")) {
-                                artefactName = artefactName.replace(/\bsome \b/, "");
-                            };
-                            if (stringStartsWith(artefactName, "any ")) {
-                                artefactName = artefactName.replace(/\bany \b/, "");
-                            };
-                            artefactName = artefactName.trim();
-                            if (artefactName.substr(-3) == " is") {
-                                artefactName = artefactName.replace(/\b is\b/, "");
-                            };
-                            if (artefactName.substr(-4) == " are") {
-                                artefactName = artefactName.replace(/\b are\b/, "");
-                            };
-                            if (artefactName.substr(-7) == " may be") {
-                                artefactName = artefactName.replace(/\b may be\b/, "");
-                            };
-                            if (artefactName.substr(-8) == " will be") {
-                                artefactName = artefactName.replace(/\b will be\b/, "");
-                            };
-                            if (artefactName.substr(-9) == " could be") {
-                                artefactName = artefactName.replace(/\b could be\b/, "");
-                            };
-                            if (artefactName.substr(-9) == " might be") {
-                                artefactName = artefactName.replace(/\b might be\b/, "");
-                            };
-
-                            return "You ask " + self.getFirstName() + " to find " + artefactName + ".<br>" + player.ask("find", self.getName(), artefactName, map);
                         };
+
+                        return "You ask " + self.getFirstName() + " to find " + artefactName + ".<br>" + player.ask("find", self.getName(), artefactName, map);
 
                         //note, no break here!
                     case 'take': //@todo - test if "take" is ever reachable - I have a feeling it's not (and shouldn't ever be)
                         //handle "a", "some"
-                        if (stringStartsWith(remainderString, "a ") || stringStartsWith(remainderString, "some ") || stringStartsWith(remainderString, "the ") || stringStartsWith(remainderString, "this ")) {
+                        if (remainderString.startsWith("a ") || remainderString.startsWith("some ") || remainderString.startsWith("the ") || remainderString.startsWith("this ") || remainderString.startsWith("your ")) {
                             var artefactName = remainderString;
                             artefactName = artefactName.replace(/\ba \b/, " ");
+                            artefactName = artefactName.replace(/\ban \b/, " ");
+                            artefactName = artefactName.replace(/\bany \b/, " ");
                             artefactName = artefactName.replace(/\bsome \b/, " ");
                             artefactName = artefactName.replace(/\bthe \b/, " ");
                             artefactName = artefactName.replace(/\bthis \b/, " ");
+                            artefactName = artefactName.replace(/\byour \b/, " ");
                             artefactName = artefactName.trim();
                             return player.give("offer", artefactName, "to", self.getName());
                         };
@@ -4274,21 +4260,20 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         //remove medicalArtefact if used up.
                         if (medicalArtefact.chargesRemaining() == 0) {
                             var searchString = " uses " + medicalArtefact.getDescription();
+                            //remove first word
+                            var artefactDescription = medicalArtefact.getDescription();
+                            if (artefactDescription.toLowerCase() == artefactDescription) {                                   
+                                //not a proper noun
+                                artefactDescription = artefactDescription.substr(artefactDescription.indexOf(" "));     
+                            };   
                             if (locationObject) {
-                                var replaceString = " uses up a nearby " + medicalArtefact.getDescription();
-                                healString = healString.replace(searchString, replaceString);
+                                var replaceString = " uses up the nearby " + artefactDescription;
                                 _currentLocation.removeObject(medicalArtefact.getName());
-                            } else {
-                                //remove first word
-                                var artefactDescription = medicalArtefact.getDescription();
-                                if (artefactDescription.toLowerCase() == artefactDescription) {
-                                    //not a proper noun
-                                    artefactDescription = artefactDescription.substr(artefactDescription.indexOf(" "));     
-                                };                   
+                            } else {               
                                 var replaceString = " uses up the last of " + _genderPossessiveSuffix + artefactDescription;
-                                healString = healString.replace(searchString, replaceString);
                                 _inventory.remove(medicalArtefact.getName());
                             };
+                            healString = healString.replace(searchString, replaceString);
                         };
                     } else {
                         //increment damage during tick loop but only apply "hurt" once at end.
