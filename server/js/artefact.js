@@ -1742,6 +1742,14 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
         self.isBreakable = function() {
             return _breakable;
         };
+  
+        self.setBreakable = function(bool) {
+            if (!bool || bool == "false") {
+                _breakable = false;
+            } else {
+                _breakable = true;
+            };
+        };
 
         //artefact only
         self.isIntact = function() {

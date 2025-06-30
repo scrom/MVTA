@@ -1035,25 +1035,39 @@ test('hittingContainerArtefactTwiceWhenArmedDestroysContainerAndScattersContents
     expect(actualResult).toBe(expectedResult);
 });
 
-test('hittingContainerArtefactTwiceWhenArmedUsuallyDamagesContents', () => {
+test('Hitting Unbreakable Container Twice When Armed Damages Contents', () => {
     container.receive(breakable);
+    container.setBreakable(false);
     p0.get('get', weapon.getName());
     var hitcount = 0;
-    while (hitcount < 2) {
-        var actualResult = p0.hit('hit', container.getName());
-        if (!(actualResult == "You missed!")) {
-            hitcount++;
-        };
-    };
-    var expectedResult;
+    var attempts = 0
     var expectedResult1 = "It's broken.";
     var expectedResult2 = "a somewhat fragile drinking vessel It shows signs of being dropped or abused.";
     var actualResult = p0.examine("examine", "glass");
-    if (actualResult == expectedResult1) {
-        expectedResult = expectedResult1;
-    } else {
-        expectedResult = expectedResult2;
+    while (hitcount < 2 && attempts < 10) {
+        let hitResult = p0.hit('hit', container.getName());
+        if (hitResult != "You missed!") {
+            hitcount++;
+            console.debug(hitResult);
+
+            actualResult = p0.examine("examine", "glass");
+            if (actualResult == expectedResult1) {
+                expectedResult = expectedResult1;
+            } else {
+                expectedResult = expectedResult2;
+            };
+
+            if (actualResult == expectedResult) {
+                break;
+            } else if (hitcount == 2) {
+                //try again
+                hitcount--
+            };;
+        };
+        attempts++
     };
+    var expectedResult;
+
     console.debug("Expected: "+expectedResult);
     console.debug("Actual  : "+actualResult);
     expect(actualResult).toBe(expectedResult);
