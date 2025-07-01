@@ -778,7 +778,16 @@ exports.Map = function Map() {
             //is is a location or distant object mentioned in the description?
             let whereIsIt = self.where(objectName, "action", caller);
             if (whereIsIt.length >0) {
-                if (caller.getType() != "player")
+                if (caller.getType() == "creature") {
+                    //reword one of the responses.
+                    //
+                    if (whereIsIt.includes("You peer toward")) {
+                        whereIsIt = whereIsIt.replace("You peer toward", "I think you need")
+                        whereIsIt = whereIsIt.replace(" but can't quite make any clear details out.<br>You'll need to find your way there to take a proper look. Start by", ".'<br>'Try");
+                        whereIsIt += " It's not far from here."
+                    };
+
+                } else if (caller.getType() != "player")
                 {
                     //reword one of the responses.
                     if (whereIsIt.includes("You peer toward")) {

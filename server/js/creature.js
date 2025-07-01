@@ -3376,7 +3376,6 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             return self.replyToKeyword("help", player, map);
                         };
                         if (artefactName.startsWith("give ") || artefactName.startsWith("i have ") || artefactName.startsWith("have ") || artefactName.startsWith("tell ")) {
-                            var artefactName = artefactName;
                             artefactName = artefactName.replace(/\bgive\b/, "to give");
                             artefactName = artefactName.replace(/\byour\b/, _genderPossessiveSuffix);
                             artefactName = artefactName.replace(/\bmy\b/, "your");
@@ -3458,28 +3457,31 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     case 'do'://you/i think/know/want ??
                         remainderString = (remainderString.replace(/\byou\b/, "")).trim();
                         if (remainderString.startsWith("have ")) {
-                            var artefactName = remainderString;
+                            artefactName = remainderString; //reset
                             artefactName = artefactName.replace(/\bhave\b/, "");
                             artefactName = artefactName.trim();
                             
                             let ifFor = "if "+self.getPrefix().toLowerCase()+" "+have;
-                            artefactFirstWord = artefactName.split(" ")[0];
+                            let artefactFirstWord = artefactName.split(" ")[0];
                             if (["a", "an", "some"].includes(artefactFirstWord)) {
                                 ifFor = "for"
                             };
                             return "You ask " + self.getFirstName() + " "+ifFor+" " + artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
                         };
                         if (remainderString.startsWith("know where ")) {
-                            var artefactName = remainderString;
+                            artefactName = remainderString; //reset
                             artefactName = artefactName.replace(/\bknow where \b/, "");
                             artefactName = artefactName.replace(/\bthe \b/, "");
                             artefactName = artefactName.replace(/\bi can find \b/, "");
                             artefactName = artefactName.replace(/\bi might find \b/, "");
                             artefactName = artefactName.replace(/\btheres \b/, "");
-                            artefactName = artefactName.replace(/\bsome \b/, "");
-                            artefactName = artefactName.replace(/\bany \b/, "");
-                            artefactName = artefactName.replace(/\ban \b/, "");
-                            artefactName = artefactName.replace(/\ba \b/, "");
+                            artefactName = artefactName.replace(/\ba \b/, " ");
+                            artefactName = artefactName.replace(/\ban \b/, " ");
+                            artefactName = artefactName.replace(/\bany \b/, " ");
+                            artefactName = artefactName.replace(/\bsome \b/, " ");
+                            artefactName = artefactName.replace(/\bthe \b/, " ");
+                            artefactName = artefactName.replace(/\bthis \b/, " ");
+                            artefactName = artefactName.replace(/\byour \b/, " ");
                             artefactName = artefactName.replace(/\b is\b/, "");
                             artefactName = artefactName.replace(/\b are\b/, "");
                             artefactName = artefactName.replace(/\b may be\b/, "");
@@ -3489,26 +3491,54 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             artefactName = artefactName.trim();
                         };
 
-                        return "You ask " + self.getFirstName() + " to find " + artefactName + ".<br>" + player.ask("find", self.getName(), artefactName, map);
+                        if (remainderString.startsWith("want ") || remainderString.startsWith("like ")) {
+                            artefactName = remainderString; //reset
+                            artefactName = artefactName.replace(/\bwant \b/, "");
+                            artefactName = artefactName.replace(/\blike \b/, "");
+                            let response = "You ask " + self.getFirstName() + " if "+_genderPrefix.toLowerCase()+" want"+s+" " + artefactName + ".<br>" + _genderPrefix+" replies ";
+                            if (artefactName.startsWith("to ")) {return response + "'I'm good for now, thanks.'"};
+                            artefactName = artefactName.replace(/\bsome \b/, "");
+                            artefactName = artefactName.replace(/\bany \b/, "");
+                            artefactName = artefactName.replace(/\ban \b/, "");
+                            artefactName = artefactName.replace(/\ba \b/, "");
+                            artefactName = artefactName.trim();
+                            //get if player has it, or if it exists in location and check affinity.
+                            if (_affinity <= 0) {
+                                return "'No, thankyou.'";
+                            };
+                            
+                            let artefact = player.getObject(artefactName);
+                            if (artefact) {
+                                if (self.willAcceptGift(player.getAggression(), artefact)) {  return "' I'd love "+artefact.descriptionWithCorrectPrefix(artefact.getName())+", thanks for offering!'" }
+                                return "'I couldn't possibly accept "+artefact.getSuffix().replace("it", "that")+" from you at the moment. But thanks for the kind offer.'"
+                            } else {
+                                return "'I don't think that's something you can <i>truly</i> offer me right now.'";
+                            };
+                        } else {
+                            return "You ask " + self.getFirstName() + " to find " + artefactName + ".<br>" + player.ask("find", self.getName(), artefactName, map);
+                        }                     
 
                         //note, no break here!
-                    case 'take': //@todo - test if "take" is ever reachable - I have a feeling it's not (and shouldn't ever be)
+                    case 'take': 
                         //handle "a", "some"
-                        if (remainderString.startsWith("a ") || remainderString.startsWith("some ") || remainderString.startsWith("the ") || remainderString.startsWith("this ") || remainderString.startsWith("your ")) {
-                            var artefactName = remainderString;
+                        if (["a ", "an ", "some ", "my ", "the ", "this "].includes(remainderString.split(" ")[0])) {
+                            artefactName = remainderString; //reset
                             artefactName = artefactName.replace(/\ba \b/, " ");
                             artefactName = artefactName.replace(/\ban \b/, " ");
                             artefactName = artefactName.replace(/\bany \b/, " ");
                             artefactName = artefactName.replace(/\bsome \b/, " ");
+                            artefactName = artefactName.replace(/\my \b/, " ");
                             artefactName = artefactName.replace(/\bthe \b/, " ");
                             artefactName = artefactName.replace(/\bthis \b/, " ");
-                            artefactName = artefactName.replace(/\byour \b/, " ");
                             artefactName = artefactName.trim();
                             return player.give("offer", artefactName, "to", self.getName());
                         };
+                        if (remainderString.startsWith("you") || remainderString.startsWith("your")) {
+                            return "'I don't think so, no.'"
+                        };
                         
                         console.warn("*** Unhandled player speech (point 2) - first Word:'" + firstWord + "', remainder:'" + remainderString + "', original:'" + originalSpeech + "'");                        
-                        return tools.initCap(self.getFirstName())+" says 'Interesting. You've said something I don't know how to deal with at the moment.'<br>'I'm sure Simon will fix that soon though.'";
+                        return tools.initCap(self.getFirstName())+" looks blankly at you for a moment and then looks away.<br>I don't think "+self.getPrefix().toLowerCase()+"completely understood you."
                         break;
                 };
             };

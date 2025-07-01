@@ -845,8 +845,8 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 return true; 
             };
             
-            if (synonym.substr(synonym.length-1) == "s") {
-                return self.syn(synonym.substr(0, synonym.length - 1));
+            if (synonym.endsWith("s")) {
+                return self.syn(synonym.substring(0, synonym.length - 1));
             };
 
             return false;

@@ -536,6 +536,26 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                             };
                         };
                     };
+
+                    //not a creature name but... is it a question?
+                    if (
+                        (questions.some((e) =>  tokens[0] == e)) ||
+                        (moreQuestions.some((e) => tokens[0] == e)) ||
+                        (modalVerbs.some((e) =>  tokens[0] == e)) ||
+                        (tokens[tokens.length-1].endsWith("?"))
+                    ) {
+                        if (playerLocation.liveCreaturesExist()) {
+                            let creatures = playerLocation.getCreatures(); 
+                            //work backwards as we may splice...
+                            for (let c=creatures.length-1; c >=0 ;c--) {
+                                if (creatures[c].isDead()) {creatures[c].splice(c,1)};
+                            };
+                            if (creatures.length == 1) {
+                                verb = "say";
+                                verbInd = -1;
+                            };
+                        };
+                    };
                 };
 
                 //splice tokens to the verb we are using. (dump everything to the left of selected verb)
@@ -601,13 +621,6 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     //attempt dialogue splitting
                     ({ objects, preposition} =  self.extractObjectsByRequestStems(rest));
                 };
-
-                //split by questions
-                //if (verb && verbs[verb].category == "dialogue" && objects.length == 1 && !preposition)  {
-                //   rest = objects[0];
-                    //attempt dialogue splitting
-                //    ({ objects, preposition} =  self.extractObjectsByQuestions(rest));
-                //};
 
                 if (_inConversation) {
                     objects[0] = input;

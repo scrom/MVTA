@@ -3275,6 +3275,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
         self.say = function(verb, speech, receiverName, map) {
                 if (!speech && !receiverName) {return "You flap your mouth and move your tongue as if to speak but no sound comes out.<br>I hope everything's ok with you there."}
+                let creatures; 
                 //if (tools.stringIsEmpty(speech)){ return verb+" what?";};
                 if (verb == "sing" || verb == "whistle") {
                     return "It's lovely that you feel the joyful urge to "+verb+". But... ...seriously. Come back when you can hold a tune."
@@ -3301,7 +3302,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     };
 
                     //scare any nearby animals...
-                    var creatures = _currentLocation.getCreatures();
+                    creatures = _currentLocation.getCreatures();
                     var shoutedAtAnimal = false;
                     for (var c=0;c<creatures.length;c++) {
                         if (creatures[c].getSubType() == "animal") {
@@ -3337,7 +3338,9 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 };
 
                 if (tools.stringIsEmpty(receiverName)) { 
-                    let creatures = _currentLocation.getCreatures();
+                    if (!creatures) {
+                        creatures = _currentLocation.getCreatures();
+                    };
                     let found = false;
                     //can we determine receiver from speech?
                     
@@ -3368,6 +3371,15 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 
                 //not found who to speak to...
                 if (tools.stringIsEmpty(receiverName)) {
+                    if (creatures) {
+                        if (creatures.length == 0 && (!["shout", "scream", "howl", "yell"].includes(verb))) {
+                            resultString += "There's nobody nearby to hear you."
+                        } else  if (creatures.length > 1) {
+                            resultString += "Nobody responds. You'll need to directly talk <i>to</i> someone if you want attention."
+                        };
+                    } else if (verb == "ask"){
+                        resultString += "...<br>...Nobody responds."
+                    };
                     return "You "+verb+" '" + tools.initCap(speech) + "'" + "<br>" + resultString;     
                 };                    
 

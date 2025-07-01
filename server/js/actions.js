@@ -546,7 +546,12 @@ module.exports.Actions = function Actions(parser, fileManager) {
         self.question = function (verb, player, map, po) {
           let fail = self.precheckFail(player, map, po);
           if (fail) { return fail;};
-            return self.say(verb, player, map, po);
+          if (po.object) {
+            return self.say("ask", player, map, po);
+          } else {
+            po.subject = po.originalInput;
+            return self.say("ask", player, map, po);
+          }
         };
         self.talk = function (verb, player, map, po) {
           let fail = self.precheckFail(player, map, po);

@@ -330,7 +330,7 @@ test('test initate dialogue with open salutation when only one creature present'
 
 test('test saying things out loud when no characters nearby', () => {
     const input = "ahoy there";
-    const expectedResult = "You say 'Ahoy there'<br>";
+    const expectedResult = "You say 'Ahoy there'<br>There's nobody nearby to hear you.";
     const actualResult = engine(input).description;
     expect(actualResult).toBe(expectedResult);
 });
