@@ -403,6 +403,7 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
         };
     
         self.check = function(anObjectName, ignoreSynonyms, searchCreatures, ignoreScenery) {
+            //unfortunately can't use dictionary here as we need to also look inside other items.
             //check if passed in object name is in inventory
             if (self.getObject(anObjectName, ignoreSynonyms, searchCreatures, null, ignoreScenery)){return true;};
             return false;
@@ -757,11 +758,9 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
             return objects;
         };
 
+        //cascades to child objects
         self.getAllObjectsOfType = function(anObjectType) {
             var returnObjects = [];
-            let matches = _dictionary.getEntriesByType(anObjectType);
-            if (!matches) {return returnObjects;};
-
             for(var index = 0; index < _items.length; index++) {
                 if((_items[index].getType() == anObjectType || _items[index].getSubType() == anObjectType) && (!(_items[index].isHidden()))) {
                     //console.debug(anObjectType+" found: "+_items[index].getName()+" in "+_ownerName+" inventory. Index: "+index);
@@ -781,11 +780,9 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
            return returnObjects;
         };
         
-        
+        //cascades to child objects
         self.getAllObjectsWithSyn = function (aSynonym) {
             var returnObjects = [];
-            let matches = _dictionary.lookup(aSynonym)
-            if (!matches) {return returnObjects;};
             for (var index = 0; index < _items.length; index++) {
                 if (_items[index].syn(aSynonym) && (!(_items[index].isHidden()))) {
                     //console.debug(aSynonym+" found: "+_items[index].getName()+" in "+_ownerName+" inventory. Index: "+index);
