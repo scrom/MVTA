@@ -10,7 +10,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
 
 	    var _objectName = "Inventory";
         var _ownerName = ownerName;
-        var _dictionary = new dictionaryModule.Dictionary();
         var _maxCarryingWeight = maxCarryingWeight;
         var _items = [];
         var _money = openingCashBalance;
@@ -321,7 +320,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
             if (anObject == undefined) {return "Can't pick it up.";};
 
             _items.push(anObject);
-            _dictionary.addEntry(anObject.getName(), anObject.getType(), anObject.getSyns());
             return "success: "+anObject.getDescription()+".";
         };
 
@@ -347,7 +345,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
                     localInventory.splice(index, 1);
                     //console.debug(anObjectName+" removed from "+_ownerName+" inventory");
                     returnObject.show();
-                    _dictionary.removeEntry(itemName);
                     return returnObject;
                 };
             };
@@ -362,7 +359,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
                     };
                     if (object) {
                         object.show();
-                        _dictionary.removeEntry(object.getName());
                         return object;
                     };
                             
@@ -371,7 +367,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
                         object = salesInventory.remove(anObjectName);
                         if (object) {
                             object.show();
-                            _dictionary.removeEntry(object.getName());
                             return object
                         };
                     };
@@ -379,7 +374,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
                     var objects = localInventory[index].getInventoryObject().getPositionedObjects(false);
                     for (var o=0;o<objects.length;o++) {
                         if (objects[o].getName() == anObjectName) {
-                            _dictionary.removeEntry(objects[o].getName());
                             return objects[o];
                         };
                     };
@@ -393,7 +387,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
                     localInventory.splice(index,1);
                     //console.debug(anObjectName+" removed from "+_ownerName+" inventory");
                     returnObject.show();
-                    _dictionary.removeEntry(returnObject.getName());
                     return returnObject;
                 };
             };
@@ -478,7 +471,14 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
         };
         
         self.countNamedObject = function (objectName) {
-            return _dictionary.getRefCount(objectName);
+            var allItems = self.getAllObjects();
+            var count = 0;
+            for (var i = 0; i < allItems.length; i++) {
+                if (allItems[i].getName() == objectName) {
+                    count++;
+                };
+            };
+            return count;
         };
         
         self.quantifyNamedObject = function (objectName) {
@@ -640,8 +640,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
 
         //this one doesn't cascade to contents of other objects.
         self.getObjectByType = function(anObjectType) {
-            let matches = _dictionary.getEntriesByType(anObjectType);
-            if (!matches) {return null;}
             for(var index = _items.length-1; index >= 0; index--) {
                 if(_items[index].getType() == anObjectType  && (!(_items[index].isHidden()))) {
                     //console.debug(anObjectType+" found: "+_items[index].getName()+" in "+_ownerName+" inventory. Index: "+index);
