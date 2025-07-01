@@ -4,7 +4,6 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
     try{
         //module deps
         var tools = require('./tools.js');     
-        const dictionaryModule = require('./dictionary');    
                 
 	    var self = this; //closure so we don't lose this reference in callbacks
 
@@ -646,6 +645,7 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
                     return _items[index];
                 };
            };
+           return null;
         };
 
         //this one doesn't cascade to contents of other objects.
