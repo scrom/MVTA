@@ -17,6 +17,8 @@ function createEngine(player, map) {
 
   return function handle(input) {
     try {
+      if (input == "+parser" && process.env.NODE_ENV != "production") {return lp;};
+      
       const parsedObject = lp.parseInput(input, player, map);
       if (parsedObject.error) throw parsedObject.error; //we may want to try dialogue here
 

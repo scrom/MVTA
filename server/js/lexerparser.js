@@ -480,14 +480,18 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                 if (_inConversation) {
                     //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
                     if (
-                        (yesWords.some((e) =>  input.split(" ")[0] == e)) ||
-                        (politeWords.some((e) =>  input.split(" ")[0] == e)) ||
-                        (goodbyes.some((e) =>  input.split(" ")[0] == e)) ||
-                        (noWords.some((e) =>  input.split(" ")[0] == e)) ||
                         (questions.some((e) =>  input.split(" ")[0] == e)) ||
                         (input.endsWith("?")) ||
                         (moreQuestions.some((e) =>  input.split(" ")[0] == e)) ||
-                        (modalVerbs.some((e) =>  input.split(" ")[0] == e)) ||
+                        (modalVerbs.some((e) =>  input.split(" ")[0] == e))
+                    ) {
+                        verbInd = -1; //keep talking, don't trim input
+                        verb = "say"; //would prefer "ask" but that forces a re-parse from action               
+                    } else if (
+                        (yesWords.some((e) =>  input.split(" ")[0] == e)) ||
+                        (politeWords.some((e) =>  input.split(" ")[0] == e)) ||
+                        (goodbyes.some((e) =>  input.split(" ")[0] == e)) ||
+                        (noWords.some((e) =>  input.split(" ")[0] == e))  ||
                         //pronouns...
                         (firstPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))  ||
                         (secondPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))
@@ -496,12 +500,14 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                         verb = "say";
                     };
 
-                    //did we explicitly mention thim in this new sentence?
-                    for (let t=0; t<tokens.length; t++) {
-                        if (lastCreature.syn(tokens[t])) {
-                            verbInd = -1; //keep talking, don't trim input
-                            verb = "say"; 
-                            break;                           
+                    //did we explicitly mention them in this new sentence?
+                    if (!verb || verbs[verb].category != "dialogue") {
+                        for (let t=0; t<tokens.length; t++) {
+                            if (lastCreature.syn(tokens[t])) {
+                                verbInd = -1; //keep talking, don't trim input
+                                verb = "say"; 
+                                break;                           
+                            };
                         };
                     };
                 };
@@ -551,7 +557,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                                 if (creatures[c].isDead()) {creatures[c].splice(c,1)};
                             };
                             if (creatures.length == 1) {
-                                verb = "say";
+                                verb = "say";//would prefer "ask" but that forces a re-parse from action
                                 verbInd = -1;
                             };
                         };
@@ -672,7 +678,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                             if (objects[0].includes(name) ) {
                                 if (_inConversation != name) {
                                     console.debug ("dictionary hit - full name match: "+tokens[t]+" : "+name+" : "+ type + ":"+ synonyms);
-                                    objects[0] = objects[0].replace(name).trim();
+                                    objects[0] = objects[0].replace(name,"").trim();
                                     objects[1] = name;
                                 };
                                 verb = "greet";
@@ -701,7 +707,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                         for (t=0; t<tokens.length;t++) {
                             let key = Object.keys(possibleMatches)[0];
                             if (possibleMatches[key].synonyms.includes(tokens[t])) {
-                                objects[0] = objects[0].replace(tokens[t]).trim();
+                                objects[0] = objects[0].replace(tokens[t],"").trim();
                                 objects[1] = tokens[t];
                                 verb = "greet";
                             };
