@@ -1,10 +1,15 @@
 "use strict";
 //reusable disctionary object
+//in addition to basic lookup...
+//we also track number of references so that we know how many of a particular (main) key there are.
+//and offer a lookup by type
 exports.Dictionary = function Dictionary() {
     const self = this; //closure so we don't lose this reference in callbacks
     var _dictionary = {};
     var _reverseDictionary = {};
     const _objectName = "Dictionary";
+    var _typeIndex = {};  // Maintain a type index for fast lookup
+    var _refCounts = {}; // Track reference counts for each entry
 
     //console.info(_objectName + ' created');
     try{
@@ -15,6 +20,10 @@ exports.Dictionary = function Dictionary() {
 
         self.getReverseDictionary = function () {
             return _reverseDictionary;
+        };
+
+        self.getRefCount = function(name) {
+            return _refCounts[name] || 0;
         };
 
         self.lookup = function (string, type = null) {
@@ -35,9 +44,22 @@ exports.Dictionary = function Dictionary() {
         self.getEntry = function(name) {
             return _dictionary[name] || false;
         };
+        
+        self.getEntriesByType = function(type) {
+            if (!type || !_typeIndex[type]) return {};
+            const result = {};
+            for (const name of _typeIndex[type]) {
+                result[name] = _dictionary[name];
+            }
+            return result;
+        };
 
         self.addEntry = function(name, type, syns) {
             if (!name) {return false;}
+            if (!_refCounts[name]) _refCounts[name] = 0;
+            _refCounts[name]++;
+            // Only add to dictionary if first reference
+            if (_refCounts[name] > 1) { return true; };
 
             //save to main dictionary
             _dictionary[name] = {type: type, synonyms: syns};
@@ -55,12 +77,25 @@ exports.Dictionary = function Dictionary() {
                 if (!alreadyExists) {
                     _reverseDictionary[key].push({ name, type });
                 }
-            }           
+            };
+            
+            if (type) {
+                //maintain type cache
+                if (!_typeIndex[type]) {_typeIndex[type] = new Set();};
+                _typeIndex[type].add(name);
+            };
             return true;
         };
 
         self.removeEntry = function(name) {
-            if (!name || !_dictionary[name]) return false;
+            if (!name || !_dictionary[name]|| !_refCounts[name]) return false;
+            _refCounts[name]--;
+            if (_refCounts[name] > 0) {
+                return true; // Don't remove from dictionary yet
+            }
+            delete _refCounts[name];
+
+            const entry = _dictionary[name];
 
             const { type, synonyms = [] } = _dictionary[name];
             const allTerms = [name, ...synonyms];
@@ -80,6 +115,12 @@ exports.Dictionary = function Dictionary() {
                 }
             }
 
+            //update type index
+            if (entry && entry.type && _typeIndex[entry.type]) {
+                _typeIndex[entry.type].delete(name);
+                if (_typeIndex[entry.type].size === 0) {delete _typeIndex[entry.type];};
+            };
+
             // Finally remove from the main dictionary
             delete _dictionary[name];
             return true;
@@ -89,6 +130,7 @@ exports.Dictionary = function Dictionary() {
             if (!name) return false;
 
             const entry = _dictionary[name];
+            const oldType = entry ? entry.type : null;
 
             // If entry doesn't exist, add it instead
             if (!entry) {
@@ -137,6 +179,19 @@ exports.Dictionary = function Dictionary() {
                 if (!alreadyExists) {
                     _reverseDictionary[key].push({ name, type: entry.type });
                 }
+            }
+
+            //maintain type index
+            const newEntry = _dictionary[name];
+            const newType = newEntry ? newEntry.type : null;
+
+            if (oldType && _typeIndex[oldType]) {
+                _typeIndex[oldType].delete(name);
+                if (_typeIndex[oldType].size === 0) delete _typeIndex[oldType];
+            }
+            if (newType) {
+                if (!_typeIndex[newType]) _typeIndex[newType] = new Set();
+                _typeIndex[newType].add(name);
             }
 
             return true;
