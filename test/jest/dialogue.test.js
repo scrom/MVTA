@@ -187,6 +187,45 @@ test('test - dialogue - with busy location - asking creature to find another', (
     expect(actualResult).toBe(expectedResult);
 });
 
+
+test('test - dialogue - with busy location - asking creature go to a location', () => {
+    //this breaks around the "swtiching creature conversation" block in the parser as we have mentioned another character!!
+    man.go(null, l0);
+    aaron.go(null, l0);
+    aaron.increaseAffinity(2);
+    vi.go(null, l0);
+    l0.addObject(note);
+    l0.addObject(notes);
+    l0.addObject(plant);
+    l0.addObject(bookshelf);
+    p0.acceptItem(sword);
+    p0.acceptItem(cake);
+    engine("talk to aaron");
+    const input = "please go to the kitchen";
+    const expectedResult = "You ask Aaron to go to the kitchen.<br>He says '"; 
+    let actualResult = engine(input).description.substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test - dialogue - with busy location - asking creature go to a direction', () => {
+    //this breaks around the "swtiching creature conversation" block in the parser as we have mentioned another character!!
+    man.go(null, l0);
+    aaron.go(null, l0);
+    aaron.increaseAffinity(2);
+    vi.go(null, l0);
+    l0.addObject(note);
+    l0.addObject(notes);
+    l0.addObject(plant);
+    l0.addObject(bookshelf);
+    p0.acceptItem(sword);
+    p0.acceptItem(cake);
+    engine("talk to aaron");
+    const input = "please go up";
+    const expectedResult = "You ask Aaron to go up.<br>He says '"; 
+    let actualResult = engine(input).description.substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
 test('test - dialogue - with busy location - requests with "help" in are treated as a generic request for help.', () => {
     //this breaks around the "swtiching creature conversation" block in the parser as we have mentioned another character!!
     man.go(null, l0);
@@ -204,3 +243,22 @@ test('test - dialogue - with busy location - requests with "help" in are treated
     let actualResult = engine(input).description.substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
+
+
+test('test - dialogue - with busy location - ask everyone to wait.', () => {
+    //this breaks around the "swtiching creature conversation" block in the parser as we have mentioned another character!!
+    man.go(null, l0);
+    aaron.go(null, l0);
+    vi.go(null, l0);
+    l0.addObject(note);
+    l0.addObject(notes);
+    l0.addObject(plant);
+    l0.addObject(bookshelf);
+    p0.acceptItem(sword);
+    p0.acceptItem(cake);
+    const input = "everyone, please wait here";
+    const expectedResult = "xxx"; 
+    let actualResult = engine(input).description
+    expect(actualResult).toBe(expectedResult);
+});
+

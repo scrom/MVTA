@@ -1493,3 +1493,56 @@ test('test "try" with a present participle follow on verb"', () => {
     console.log(actualResult);
     expect(actualResult).toStrictEqual(expectedResult);
 });
+
+
+test('test "everyone" request wait', () => {
+    const input = "everyone, please wait here";
+    const expectedResult = {
+      "action": "say",
+      "adverb": null,
+      "category": "dialogue",
+      "object": "everyone",
+      "originalInput": input.replace(",",""),
+      "originalVerb": "wait",
+      "preposition": null,
+      "subject": "everyone please wait here",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+
+test('test "everyone" request go', () => {
+    const input = "everyone, please go to the kitchen";
+    const expectedResult = {
+      "action": "say",
+      "adverb": null,
+      "category": "dialogue",
+      "object": "everyone",
+      "originalInput": input.replace(",",""),
+      "originalVerb": "go",
+      "preposition": "to",
+      "subject": "everyone please go to the kitchen",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});
+
+test('test "everyone" request go', () => {
+    const input = "everyone, please go south to the kitchen";
+    const expectedResult = {
+      "action": "say",
+      "adverb": null,
+      "category": "dialogue",
+      "object": "everyone",
+      "originalInput": input.replace(",",""),
+      "originalVerb": "go",
+      "preposition": "south",
+      "subject": "everyone please go south to the kitchen",
+    };
+    const actualResult = lp.parseInput(input);
+    console.log(actualResult);
+    expect(actualResult).toStrictEqual(expectedResult);
+});

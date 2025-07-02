@@ -498,12 +498,24 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     }
                 };
 
+                if (tokens.includes("everyone")) {
+                    for (i = 0; i < inputVerbs.length; i++) {
+                        //if (verbs[inputVerbs[i]].category == "dialogue") {
+                            verb = "say"
+                            _inConversation = "everyone";
+                            verbInd = -1;
+                            break;
+                        //};
+                    };
+        
+                };
+
                 if (salutations.some((e) => input.split(" ")[0] == e)) { //will only match single words
                     verb = "greet";
                     verbInd = -1; //don't trim input
                 };
 
-                if (_inConversation) {
+                if (_inConversation && _inConversation != "everyone") {
                     //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
                     if (
                         (questions.some((e) =>  input.split(" ")[0] == e)) ||
@@ -539,7 +551,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                 };
 
                 
-                if (verbInd > 0 && playerLocation) {
+                if (verbInd > 0 && playerLocation && _inConversation != "everyone") {
                     //found verb is not first word - is it a creature? // we only need to know if it exists here at this moment...
                     let matches;
                     for (let t=0; t<tokens.length; t++) {
@@ -675,15 +687,15 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                 }; 
 
                 //if action is a movement, set preposition to be direction (where reelvant).
-                if (verbs[verb].category == "movement" && (!preposition)) {
+                if (verbs[verb].category == "movement"){
                     if (tools.directions.includes(objects[0])) {
                         preposition = objects[0];
                         objects[0] = null;
                     };
                 };
-              
+           
                 //are we *switching* creature whilst talking to another?
-                if (objects.length == 2 && player && (!verb || (verbs[verb].category== "dialogue" && verb != "greet") && _inConversation)) { 
+                if (objects.length == 2 && player && (!verb || (verbs[verb].category== "dialogue" && verb != "greet") && _inConversation && _inConversation != "everyone")) { 
                     //do we swap out objects[1] (inConversation) with new creature?
                     let possibleMatches = []
                     let matched = false;
@@ -750,14 +762,35 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                                 objects[0] = objects[0].replace(tokens[t],"").trim();
                                 objects[1] = tokens[t];
                                 verb = "greet";
+                                matched = true;
                                 break;
                             };
                         };
                     };
                 };
 
+
                 if (player) { player.setLastVerbUsed(verb); };
                 _lastInputString = input;
+
+                if (_inConversation) {
+                    //last check are we asking them to go somewhere
+                    if (inputVerbs) {
+                        if (inputVerbs[0] == "go") {
+                            let t = tokens.indexOf(inputVerbs[0]);
+                            for (t; t < tokens.length; t++) {
+                                if (tools.directions.includes(tokens[t])) {
+                                    preposition = tokens[t];
+                                    break;
+                                };
+                            };
+                        };
+                    };
+                };
+                if (_inConversation == "everyone") {
+                    //don't carry this forward for next call.
+                    _inConversation = null;
+                };
 
                 return {
                     category: verbs[verb].category,

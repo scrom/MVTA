@@ -3026,6 +3026,16 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     return replyName + " say"+s+" 'we're both here already.'" + returnImage;
                 };
             };
+
+            if (tools.directions.includes(locationName)) {
+                //get the location name from the requesdted exit - or if no exit, respond.
+                locationName = locationName.substring(0,1);
+                let directionIndex = tools.directions.indexOf(locationName);
+                locationName = tools.directions[directionIndex + 1]; //rewrite to full name
+                let exit = _currentLocation.getExitDestination(locationName);
+                if (!exit || exit == _currentLocation.getName()) {return "Sorry $player, <i>"+locationName+"</i> doesn't go anywhere."}
+                locationName = exit;
+            };
             
             //refuse to go to location if in "avoiding" list.
             var avoidIndex = _avoiding.indexOf(locationName);
@@ -3554,7 +3564,21 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         if (remainderString.startsWith("you") || remainderString.startsWith("your")) {
                             return "'I don't think so, no.'"
                         };
-                        
+                    case "go":
+                        artefactName = remainderString; //reset
+                        let direction = artefactName.replace(/\bto\b/, "");
+                        direction = direction.replace(/\bthe\b/, "");
+                        direction = direction.trim();
+                        let tokens = direction.split(" ");
+
+                        for (t=0; t<tokens.length;t++) {
+                            if (tools.directions.includes(tokens[t])) {
+                                direction = tokens[t];
+                                break;
+                            };
+                        };
+
+                        return "You ask " + self.getFirstName() + " to go " + artefactName + ".<br>" + self.goTo(direction, player, map);
                         console.warn("*** Unhandled player speech (point 2) - first Word:'" + firstWord + "', remainder:'" + remainderString + "', original:'" + originalSpeech + "'");                        
                         return tools.initCap(self.getFirstName())+" looks blankly at you for a moment and then looks away.<br>I don't think "+self.getPrefix().toLowerCase()+"completely understood you."
                         break;
