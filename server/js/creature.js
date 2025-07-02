@@ -3325,7 +3325,11 @@ exports.Creature = function Creature(name, description, detailedDescription, att
 
             //if we've not already responded...
             if (response.length == 0) {
-                var firstWord = someSpeech.split(" ")[0];
+                let tokens = someSpeech.split(" ");
+                if (tokens[0] == "to") {
+                    tokens.shift();
+                };
+                var firstWord = tokens[0];
                 var remainderString = "";
                 if (firstWord.substr(firstWord.length - 1) == "s") {
                     if (!map.dictionaryLookup(firstWord)) {

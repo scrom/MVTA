@@ -3403,8 +3403,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     speech = " "+speech+" ";
                     speech = speech.replace(" "+verb+" ", "");
                     speech = speech.replace(" "+verb+" ", "");
-                    speech = speech.trim();
                     speech = speech.replace(/\beveryone\b/, "");
+                    speech = speech.trim();
 
                     resultString += receivers[r].reply(speech, self, null, map);
                     if (rlen > 1 && r < rlen-1) {
