@@ -3027,14 +3027,42 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 };
             };
 
-            if (tools.directions.includes(locationName)) {
-                //get the location name from the requesdted exit - or if no exit, respond.
-                locationName = locationName.substring(0,1);
-                let directionIndex = tools.directions.indexOf(locationName);
-                locationName = tools.directions[directionIndex + 1]; //rewrite to full name
-                let exit = _currentLocation.getExitDestination(locationName);
-                if (!exit || exit == _currentLocation.getName()) {return "Sorry $player, <i>"+locationName+"</i> doesn't go anywhere."}
-                locationName = exit;
+            var location = map.getLocation(locationName, true);
+            if (!location) {
+                //are we going in a direction instead?
+                let tokens = locationName.split(" ");
+                for (t=0; t<tokens.length;t++) {
+                    if (tools.directions.includes(tokens[t])) {
+                        locationName = tokens[t];
+                        break;
+                    };
+                };
+
+                if (tools.directions.includes(locationName)) {
+                    //get the location name from the requesdted exit - or if no exit, respond.
+                    locationName = locationName.substring(0,1);
+                    let directionIndex = tools.directions.indexOf(locationName);
+                    locationName = tools.directions[directionIndex + 1]; //rewrite to full name
+                    let exit = _currentLocation.getExitDestination(locationName);
+                    if (!exit || exit == _currentLocation.getName()) {return "Sorry $player, <i>"+locationName+"</i> doesn't go anywhere."}
+                    locationName = exit;
+                    location = map.getLocation(locationName, true);
+                };
+            };
+            
+            if (!(location)) {
+                var randomReplies = ["Sorry $player, I don't know where that is.", "I don't think there's a "+locationName+" anywhere around here.", "I think you might have the wrong place.", "Where's that? Are you sure you've got the name right."];
+                var randomIndex = Math.floor(Math.random() * randomReplies.length);
+                return replyName+" say"+s+" '"+randomReplies[randomIndex]+"'"+returnImage;
+            };
+    
+            //can ask a creature with very high affinity to move from their location!
+            if ((!(_canTravel) && (_affinity >=5))) {
+                _canTravel = true;
+            };
+
+            if ((!(_canTravel)) && (_affinity <5)) {
+                return replyName+" say"+s+" 'Sorry $player, I need to stick around here at the moment. Maybe later?'"+returnImage;
             };
             
             //refuse to go to location if in "avoiding" list.
@@ -3045,6 +3073,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 return replyName + " say"+s+" '" + randomReplies[randomIndex] + "'" + returnImage;              
             };
 
+            //is it already a destination?
             var destinationIndex = _destinations.indexOf(locationName);
             if (destinationIndex >-1) {
                 var replyString = "'I'm already planning to go there later.'";
@@ -3052,22 +3081,6 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     replyString = "'I'm on my way there now.'";
                 };
                 return replyName+" say"+s+" "+replyString+returnImage;
-            };
-
-            var location = map.getLocation(locationName, true);
-            if (!(location)) {
-                var randomReplies = ["Sorry $player, I don't know where that is.", "I don't think there's a "+locationName+" anywhere around here.", "I think you might have the wrong place.", "Where's that? Are you sure you've got the name right."];
-                var randomIndex = Math.floor(Math.random() * randomReplies.length);
-                return replyName+" say"+s+" '"+randomReplies[randomIndex]+"'"+returnImage;
-            };
-
-            if ((!(_canTravel)) && (_affinity <5)) {
-                return replyName+" say"+s+" 'Sorry $player, I need to stick around here at the moment. Maybe later?'"+returnImage;
-            };
-
-            //can ask a creature with very high affinity to move from their location!
-            if ((!(_canTravel) && (_affinity >=5))) {
-                _canTravel = true;
             };
 
             if (_affinity >1) {
@@ -3376,6 +3389,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             artefactName = artefactName.replace(/\bbe\b/, "");
                             artefactName = artefactName.trim();
                             return "You ask " + self.getFirstName() + " to find " + artefactName + "<br>...<br>'" + player.ask("find", self.getName(), artefactName, map)+"'";
+                            break;
                     case 'give':
                     case 'ask':
                     case 'say':
@@ -3387,6 +3401,11 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     case 'fix':
                     case 'repair':
                     case 'mend':
+                    case 'put':
+                    case 'wait':
+                    case 'go':
+                    case 'head':
+                    case 'run':
                         remainderString = firstWord + " " + remainderString;
                         firstWord = "can";
                     case 'can'://you/i help/give/say/ask/get/fetch/find/have [me] /object
@@ -3429,14 +3448,15 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         if (artefactName.startsWith("wait ")) {
                             return "You ask " + self.getFirstName() + " to wait.<br>" + player.ask("wait", self.getName(), null, map);
                         };
-                        if (artefactName.startsWith("go ")) {
-                            artefactName = artefactName.replace(/\bgo\b/, "");
-                            artefactName = artefactName.replace(/\bmy\b/, "your");
-                            artefactName = artefactName.replace(/\bme\b/, "you");
-                            artefactName = artefactName.replace(" to ", " ");
-                            artefactName = artefactName.replace(" the ", " ");
-                            artefactName = artefactName.trim();
-                            return "You ask " + self.getFirstName() + " to go to "+ artefactName + ".<br>"+ player.ask("go", self.getName(), artefactName, map);
+                        if (artefactName.startsWith("go ") || artefactName.startsWith("head ")) {
+                            artefactName = remainderString; //reset
+                            let direction = artefactName.replace(/\bto\b/, "");
+                            direction = direction.replace(/\bthe\b/, "");
+                            direction = direction.replace(/\bgo\b/, "");
+                            direction = direction.replace(/\bmy\b/, "your");
+                            direction = direction.replace(/\bme\b/, "you");
+                            direction = direction.trim();
+                            return "You ask " + self.getFirstName() + " to " + artefactName + ".<br>" + self.goTo(direction, player, map);
                         };
                          if (artefactName.startsWith("put ")) {
                             artefactName = artefactName.replace(/\bput\b/, "");
@@ -3449,7 +3469,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     case 'pardon': // [me - apology] / [please repeat last thing] 
                     case 'sorry':// [standalone apology] / [? see pardon] / [loop back to who/what/etc]
                         if (remainderString == "sorry" || remainderString == "pardon me") {
-                            return tools.initCap(self.getFirstName()) + " says 'You should know better. I accept your apology for now but I suggest you back off for a while.'";
+                        return tools.initCap(self.getFirstName()) + " says 'You should know better. I accept your apology for now but I suggest you back off for a while.'";
                         };
                         break;
                     case 'why'://is/are/do
@@ -3564,24 +3584,8 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         if (remainderString.startsWith("you") || remainderString.startsWith("your")) {
                             return "'I don't think so, no.'"
                         };
-                    case "go":
-                        artefactName = remainderString; //reset
-                        let direction = artefactName.replace(/\bto\b/, "");
-                        direction = direction.replace(/\bthe\b/, "");
-                        direction = direction.trim();
-                        let tokens = direction.split(" ");
-
-                        for (t=0; t<tokens.length;t++) {
-                            if (tools.directions.includes(tokens[t])) {
-                                direction = tokens[t];
-                                break;
-                            };
-                        };
-
-                        return "You ask " + self.getFirstName() + " to go " + artefactName + ".<br>" + self.goTo(direction, player, map);
+                    default:
                         console.warn("*** Unhandled player speech (point 2) - first Word:'" + firstWord + "', remainder:'" + remainderString + "', original:'" + originalSpeech + "'");                        
-                        return tools.initCap(self.getFirstName())+" looks blankly at you for a moment and then looks away.<br>I don't think "+self.getPrefix().toLowerCase()+"completely understood you."
-                        break;
                 };
             };
 

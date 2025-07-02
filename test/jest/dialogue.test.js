@@ -244,6 +244,23 @@ test('test - dialogue - with busy location - requests with "help" in are treated
     expect(actualResult).toBe(expectedResult);
 });
 
+test('test - dialogue - with busy location - ask single creature to "wait".', () => {
+    //this breaks around the "swtiching creature conversation" block in the parser as we have mentioned another character!!
+    man.go(null, l0);
+    aaron.go(null, l0);
+    vi.go(null, l0);
+    l0.addObject(note);
+    l0.addObject(notes);
+    l0.addObject(plant);
+    l0.addObject(bookshelf);
+    p0.acceptItem(sword);
+    p0.acceptItem(cake);
+    engine("talk to ice cream man");
+    const input = "please wait here";
+    const expectedResult = "You ask the ice cream man to wait.<br>He says 'I'm not planning on going anywhere.'<br>"; 
+    let actualResult = engine(input).description//.substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
 
 test('test - dialogue - with busy location - ask everyone to wait.', () => {
     //this breaks around the "swtiching creature conversation" block in the parser as we have mentioned another character!!
@@ -257,8 +274,10 @@ test('test - dialogue - with busy location - ask everyone to wait.', () => {
     p0.acceptItem(sword);
     p0.acceptItem(cake);
     const input = "everyone, please wait here";
-    const expectedResult = "xxx"; 
     let actualResult = engine(input).description
-    expect(actualResult).toBe(expectedResult);
+    const searchTerms = ["Aaron", "Violet", "the ice cream man", "wait"]; 
+    for (t=0;t<searchTerms.length;t++) {
+        expect(actualResult).toContain(searchTerms[t]);
+    };
 });
 

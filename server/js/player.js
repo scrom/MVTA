@@ -3208,7 +3208,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             }
             switch (verb) {
                 case "go":
-
                     for (let g=0;g<givers.length;g++) {
                         resultString += givers[g].goTo(artefactName, self, map); //artefactName will actually be location name
                         resultString += "<br>";
@@ -3275,7 +3274,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
         self.say = function(verb, speech, receiverName, map) {
                 if (!speech && !receiverName) {return "You flap your mouth and move your tongue as if to speak but no sound comes out.<br>I hope everything's ok with you there."}
-                let creatures; 
+                let receivers = [];
                 //if (tools.stringIsEmpty(speech)){ return verb+" what?";};
                 if (verb == "sing" || verb == "whistle") {
                     return "It's lovely that you feel the joyful urge to "+verb+". But... ...seriously. Come back when you can hold a tune."
@@ -3292,6 +3291,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     };
                 };
 
+                let creatures = _currentLocation.getCreatures();
+
                 var resultString = "";
                 if (verb == "shout") {
                     self.increaseAggression(1); //we don't like shouty!
@@ -3302,7 +3303,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     };
 
                     //scare any nearby animals...
-                    creatures = _currentLocation.getCreatures();
                     var shoutedAtAnimal = false;
                     for (var c=0;c<creatures.length;c++) {
                         if (creatures[c].getSubType() == "animal") {
@@ -3338,9 +3338,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 };
 
                 if (tools.stringIsEmpty(receiverName)) { 
-                    if (!creatures) {
-                        creatures = _currentLocation.getCreatures();
-                    };
                     let found = false;
                     //can we determine receiver from speech?
                     
@@ -3394,22 +3391,34 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                         }
                     };
                 };
-                if (!(receiver)) {return notFoundMessage(receiverName);};
+                if (receiver) {receivers.push(receiver)}
+                else if (receiverName == "everyone") { receivers = creatures;}
+                else {return notFoundMessage(receiverName);};
 
                 //we'll only get this far if there is a valid receiver
                 if (verb == "shout" && (tools.stringIsEmpty(speech) || speech == "!")) {return "I suggest you speak nicely to "+receiver.getSuffix()+" if you want something.";};
+                let rlen = receivers.length;
+                for (let r=0; r < rlen; r++) {
+                    var hasSpokenBefore = receivers[r].hasSpoken();
+                    speech = " "+speech+" ";
+                    speech = speech.replace(" "+verb+" ", "");
+                    speech = speech.replace(" "+verb+" ", "");
+                    speech = speech.trim();
+                    speech = speech.replace(/\beveryone\b/, "");
 
-                var hasSpokenBefore = receiver.hasSpoken();
-                speech = " "+speech+" ";
-                speech = speech.replace(" "+verb+" ", "");
-                speech = speech.trim();
+                    resultString += receivers[r].reply(speech, self, null, map);
+                    if (rlen > 1 && r < rlen-1) {
+                        resultString += "<br>"
+                    };
+                    var hasSpokenAfter = receivers[r].hasSpoken();
+                    if (!(hasSpokenBefore) && hasSpokenAfter) {
+                        _creaturesSpokenTo ++;
+                    };
 
-                resultString += receiver.reply(speech, self, null, map);
-                var hasSpokenAfter = receiver.hasSpoken();
-                if (!(hasSpokenBefore) && hasSpokenAfter) {
-                    _creaturesSpokenTo ++;
+                }; 
+                if (receivers.length == 1) {
+                    self.setLastCreatureSpokenTo(receivers[0].getName());
                 };
-                self.setLastCreatureSpokenTo(receiver.getName());
                 return resultString;
         };
         

@@ -71,7 +71,7 @@
   },
   "run": {
     "category": "movement",
-    "aliases": ["dash", "jog", "sprint"]
+    "aliases": ["dash", "jog", "sprint", "hurry"]
   },
   "swim": {
     "category": "movement",
