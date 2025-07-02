@@ -425,7 +425,7 @@
   },
   "question": {
     "category": "dialogue",
-    "aliases": ["who", "whos", "whose", "what", "whats", "why", "whys", "when", "whens", "where", "wheres", "how", "hows", "have", "do"]
+    "aliases": ["who", "whos", "whose", "what", "whats", "why", "whys", "when", "whens", "where", "wheres", "how", "hows", "have", "do", "is"]
   },
   "apologise": {
     "category": "dialogue",

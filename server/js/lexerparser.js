@@ -17,7 +17,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
         const goodbyes  =["bye", "good bye", "goodbye","seeya", "later","laters", "goodnight", "good night"]
         const noWords = ['n','no', 'nay', 'nope', 'narp', 'reject','rejected', 'rejection','deny','denied','refuse','refused', 'refusal','negative', 'negatory']
 
-        const questions = ['who','what','why','where','when','how','which','whose'];
+        const questions = ['who','what','why','where','when','how','which','whose', 'is']; //is may need some special handling ()
         const moreQuestions = ['do you', 'have you', 'do', 'have', "pardon", "sorry"];
         const modalVerbs = ['can', 'could', 'may', 'might', 'must', 'shall', 'should', 'will', 'would'];
 
@@ -346,7 +346,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                             let newVerb = tokens[t].replace("ing", "");
                             if (self.allVerbs.includes(newVerb)) {
                                 tokens[t] = newVerb; //hopefully this *does* modify the original token
-                                inputVerbs.shift();
+                                inputVerbs.shift(); //ditch "try" or "attempt" and replace with gerund
                                 inputVerbs.push(newVerb);
                                 verbIndex = t;
                                 return {inputVerbs, verbIndex};
@@ -424,6 +424,32 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     };
                 };
             };
+ 
+            //check for "is" as a standalone verb vs part of another...
+            if (inputVerbs.includes("is") && inputVerbs[0] != "is") {
+                let isIndex = tokens.indexOf("is");
+                if (inputVerbs.includes(tokens[isIndex-1])) {
+                    //the word before "is" is probably the preferred verb. - ditch "is"
+                    inputVerbs.splice(isIndex,1);
+                };
+                if (isIndex == tokens.length-1) {
+                    //it's at the end of the sentence - we can drop that too.
+                    inputVerbs.splice(isIndex,1);
+                };
+            };
+             
+            //check for "do" as a standalone verb vs part of another...
+            if (inputVerbs.includes("do") && inputVerbs[0] != "do") {
+                let isIndex = tokens.indexOf("do");
+                if (inputVerbs.includes(tokens[isIndex-1])) {
+                    //the word before "do" is probably the preferred verb. - ditch "do"
+                    inputVerbs.splice(isIndex,1);
+                };
+                if (isIndex == tokens.length-1) {
+                    //it's at the end of the sentence - we can drop that too.
+                    inputVerbs.splice(isIndex,1);
+                };
+            };
                     
             //we may be back down to 1 verb now...
             if (inputVerbs.length == 1) {
@@ -486,7 +512,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                         (modalVerbs.some((e) =>  input.split(" ")[0] == e))
                     ) {
                         verbInd = -1; //keep talking, don't trim input
-                        verb = "say"; //would prefer "ask" but that forces a re-parse from action               
+                        verb = "question"; //would prefer "ask" but that forces a re-parse from action               
                     } else if (
                         (yesWords.some((e) =>  input.split(" ")[0] == e)) ||
                         (politeWords.some((e) =>  input.split(" ")[0] == e)) ||
@@ -557,7 +583,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                                 if (creatures[c].isDead()) {creatures[c].splice(c,1)};
                             };
                             if (creatures.length == 1) {
-                                verb = "say";//would prefer "ask" but that forces a re-parse from action
+                                verb = "question";//would prefer "ask" but that forces a re-parse from action
                                 verbInd = -1;
                             };
                         };
@@ -661,12 +687,16 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     //do we swap out objects[1] (inConversation) with new creature?
                     let possibleMatches = []
                     let matched = false;
+                    let switching = false;
+                    let matchedIndex = -1
                     let tokens = objects[0].split(" ");
                     for (let t=0; t<tokens.length;t++) {
                         if(!tokens[t]) {continue;};//handle null
-                        if (["he", "him", "her", "them", "they", "their", "it"].includes(tokens[t].replace("s","")) || tokens[t] == "his") {
+                        if (["he", "him", "her", "them", "they", "their", "it", "you"].includes(tokens[t].replace("s","")) || tokens[t] == "his") {
                             //talking to same character again.
                             matched = true;
+                            matchedIndex = t;                            
+                            switching = false;
                             break;
                         };
                         
@@ -683,11 +713,15 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                                 };
                                 verb = "greet";
                                 matched = true;
+                                matchedIndex = t;
+                                switching = true;
                                 break;
                             } else { //we have a synonym match. Store if they're in the same location as player.
                                 if (lastCreature) {
                                     if (lastCreature.syn(tokens[t])) {
                                         matched = true;
+                                        matchedIndex = t;
+                                        switching = false;                                      
                                         break;
                                     };
                                 };
@@ -701,15 +735,22 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     if (matched) {break;}
                     };
 
-                    //if we have more than 1 match, we have multiple creatures with the same synonym.
-                    if (!matched && Object.keys(possibleMatches).length == 1) {
-                        //we have a single creature with a matching synonym.
+                    //if we have more than 1 match, we have multiple creatures with the same synonym 
+                    if (!matched && Object.keys(possibleMatches).length == 1 ) {
+                        //we have a single creature with a matching synonym but could be further on in the sentence than the first word!.
+                        //if we're have a question *before* a creature name we don't want to switch
+                        //this is where we can use "inputVerbs" to help us.
                         for (t=0; t<tokens.length;t++) {
+                            if (inputVerbs.includes(tokens[t])) {
+                                //we've hit a verb before a matching name...
+                                break;
+                            };
                             let key = Object.keys(possibleMatches)[0];
                             if (possibleMatches[key].synonyms.includes(tokens[t])) {
                                 objects[0] = objects[0].replace(tokens[t],"").trim();
                                 objects[1] = tokens[t];
                                 verb = "greet";
+                                break;
                             };
                         };
                     };

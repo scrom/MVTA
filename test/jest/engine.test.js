@@ -1283,6 +1283,30 @@ test('test ask find', () => {
 });
 
 test('test ask for repair', () => {
+    /*
+    "Ask" forces a reparse of input here's what first and second parses return and indicators of what gets passed to player.ask:
+        1ST PARSE:
+        ----------
+        action ='ask'
+        adverb =null
+        category ='dialogue'
+        object ='fix guitar'
+        originalInput ='ask aaron to fix my guitar'
+        originalVerb ='ask'
+        preposition ='to'
+        subject ='aaron' => giver
+
+        2ND PARSE:
+        ----------
+        action ='repair' => verb
+        adverb =null
+        category ='building'
+        object =null
+        originalInput ='fix guitar'
+        originalVerb ='fix'
+        preposition =null
+        subject ='guitar' => artefact
+    */
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
     object.go(null, l0);

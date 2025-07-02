@@ -3346,8 +3346,26 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         randomIndex = Math.floor(Math.random() * randomReplies.length);
                         response += "'" + randomReplies[randomIndex] + "'";
                         break;
-                    case 'where': //"where" is actually handled in action.js
-                    case 'find': //"find" should already have been trapped as a forst word too
+                    case 'where':
+                    case 'find': 
+                            artefactName = artefactName.replace(/\bfind\b/, "");
+                            artefactName = artefactName.replace(/\bwhere\b/, "");
+                            artefactName = artefactName.replace(/\bcan\b/, "");
+                            artefactName = artefactName.replace(/\bcould\b/, "");
+                            artefactName = artefactName.replace(/\bwould\b/, "");
+                            artefactName = artefactName.replace(/\bshould\b/, "");
+                            artefactName = artefactName.replace(/\bmight\b/, "");
+                            artefactName = artefactName.replace(/\bi\b/, "");
+                            artefactName = artefactName.replace(/\bfor\b/, "");
+                            artefactName = artefactName.replace(/\bme\b/, "");
+                            artefactName = artefactName.replace(/\bis\b/, "");
+                            artefactName = artefactName.replace(/\bdo\b/, "");
+                            artefactName = artefactName.replace(/\byou\b/, "");
+                            artefactName = artefactName.replace(/\bthink of\b/, "");
+                            artefactName = artefactName.replace(/\bthink\b/, "");
+                            artefactName = artefactName.replace(/\bbe\b/, "");
+                            artefactName = artefactName.trim();
+                            return "You ask " + self.getFirstName() + " to find " + artefactName + "<br>...<br>'" + player.ask("find", self.getName(), artefactName, map)+"'";
                     case 'give':
                     case 'ask':
                     case 'say':
@@ -3373,7 +3391,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             return "You ask " + self.getFirstName() + " to find " + artefactName + ".<br>" + player.ask("find", self.getName(), artefactName, map);
                         };
                         if (artefactName.startsWith("help ")) {
-                            return self.replyToKeyword("help", player, map);
+                            return self.replyToKeyword("help", player, map)+"<br>'If that's not the sort of help you're looking for, you can try rephrasing your question'";
                         };
                         if (artefactName.startsWith("give ") || artefactName.startsWith("i have ") || artefactName.startsWith("have ") || artefactName.startsWith("tell ")) {
                             artefactName = artefactName.replace(/\bgive\b/, "to give");

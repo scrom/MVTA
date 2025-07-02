@@ -147,7 +147,7 @@ test('test - dialogue - with busy location - can initiate conversation with ice 
     p0.acceptItem(cake);
     const input = "talk to ice cream man";
     const expectedResult = "The ice cream man says 'H"; 
-    let actualResult = engine(input).description.substring(0,expectedResult.length);;
+    let actualResult = engine(input).description.substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
 
@@ -164,7 +164,43 @@ test('test - dialogue - with busy location - asking creature we are already talk
     p0.acceptItem(cake);
     engine("talk to ice cream man");
     const input = "can you give aaron one of your ice creams?";
-    const expectedResult = "xxx"; 
-    let actualResult = engine(input).description;
+    const expectedResult = "You ask the ice cream man to give aaron one of his ice creams.<br>He says '"; 
+    let actualResult = engine(input).description.substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test - dialogue - with busy location - asking creature to find another', () => {
+    //this breaks around the "swtiching creature conversation" block in the parser as we have mentioned another character!!
+    man.go(null, l0);
+    aaron.go(null, l0);
+    vi.go(null, l0);
+    l0.addObject(note);
+    l0.addObject(notes);
+    l0.addObject(plant);
+    l0.addObject(bookshelf);
+    p0.acceptItem(sword);
+    p0.acceptItem(cake);
+    engine("talk to ice cream man");
+    const input = "where do you think aaron is?";
+    const expectedResult = "You ask the ice cream man to find aaron<br>...<br>'He's right here.'"; 
+    let actualResult = engine(input).description.substring(0,expectedResult.length);
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test - dialogue - with busy location - requests with "help" in are treated as a generic request for help.', () => {
+    //this breaks around the "swtiching creature conversation" block in the parser as we have mentioned another character!!
+    man.go(null, l0);
+    aaron.go(null, l0);
+    vi.go(null, l0);
+    l0.addObject(note);
+    l0.addObject(notes);
+    l0.addObject(plant);
+    l0.addObject(bookshelf);
+    p0.acceptItem(sword);
+    p0.acceptItem(cake);
+    engine("talk to ice cream man");
+    const input = "please help me find my textbook";
+    const expectedResult = "He says 'OK. Here's some things to try...'<br>"; 
+    let actualResult = engine(input).description.substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });
