@@ -466,7 +466,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             };
             
             //before we go any futher, we need to remove any current prefixes (an, a, some, the)
-            let tokens = anItemDescription.split(" ");
+            let tokens = anItemDescription.split(/\s+/); 
             if (["some", "an", "a"].includes(tokens[0])) {
                 tokens.shift();
                 anItemDescription = tokens.join(" ");
@@ -510,7 +510,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 if (self.getChargeUnit() != "charge") {
                     collectionPlurals.push(self.getChargeUnit());
                 };
-                var descriptionAsWords = anItemDescription.split(" "); 
+                var descriptionAsWords = anItemDescription.split(/\s+/); 
                 if (descriptionAsWords.length>2) {
                     //"x of y" ?
                     if (!(collectionPlurals.indexOf(descriptionAsWords[0]) > -1 && descriptionAsWords[1] == "of")) {
@@ -2481,9 +2481,9 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
 
             if (!(repairer.canRepair(self))) {
                 if (repairerType == "player") {
-                    return "Unfortunately you don't have the skills needed to fully repair "+_suffix+"."; 
+                    return "Unfortunately you don't have the skills needed to fully repair "+_suffix+". Somebody around here can hopefully sort "+_suffix+" out for you if you <i>ask</i> them nicely.<br>If you're in a hurry, you <i>might</i> be able to find a guide somewhere and learn how to sort "+_suffix+" out on your own."; 
                 } else {
-                    return "Unfortunately "+repairer.getPrefix().toLowerCase()+" doesn't have the skills needed to fully repair "+_suffix+"."; 
+                    return "Unfortunately "+repairer.getPrefix().toLowerCase()+" can't fix "+_suffix+"."; 
                 };
             };
 

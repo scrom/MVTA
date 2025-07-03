@@ -300,14 +300,23 @@ test('test - dialogue - with busy location - *ask* everyone to wait.', () => {
     };
 });
 
-test('test asking "why"', () => {
+test('test asking "why" to a creature', () => {
     let kitchen = m0.getLocation("kitchen-ground-floor")
     p0.setLocation(kitchen);
     const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
     const object = mb.buildCreature(objectJSON);
     object.go(null, kitchen);
     const input = "why is the coffee machine not working?";
-    const expectedResult = "xx";
+    const expectedResult = "Aaron says 'Good question.'<br>'I'd love to help you but I'm afraid I just don't know.'<br>'You'll need to work it out yourself.'";
+    const actualResult = engine(input).description; 
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('test asking "why" without creature', () => {
+    let kitchen = m0.getLocation("kitchen-ground-floor")
+    p0.setLocation(kitchen);
+    const input = "why is the coffee machine not working?";
+    const expectedResult = "You ask 'Why is the coffee machine not working'<br>There's nobody nearby to hear you.";
     const actualResult = engine(input).description; 
     expect(actualResult).toBe(expectedResult);
 });

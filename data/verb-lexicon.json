@@ -297,7 +297,7 @@
   },
   "read": {
     "category": "item_use",
-    "aliases": ["study", "reda"]
+    "aliases": ["study", "reda", "learn"]
   },
   "write": {
     "category": "writing",

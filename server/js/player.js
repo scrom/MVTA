@@ -1697,7 +1697,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             var directionString = "";
             var artefact = getObjectFromPlayer(artefactName);
             if (!(artefact)) {
-                var splitName = artefactName.split(" ");
+                var splitName = artefactName.split(/\s+/);
                 var firstWord = splitName[0];
                 if (firstWord == "all") {
                     return self.dropAll(verb, artefactName.replace("all ", "", map));  
@@ -3343,7 +3343,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     
                     for (let c=0; c<creatures.length;c++) {
                         let names = [creatures[c].getName(), creatures[c].getDisplayName().toLowerCase()].concat(creatures[c].getSyns());
-                        names.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words - greatest first
+                        names.sort((p1, p2) => p2.split(/\s+/).length - p1.split(/\s+/).length); //sort by number of words - greatest first
                         for (let n=0; n<names.length; n++) {
                             if (speech.includes(names[n])) {
                                 receiverName = creatures[c].getName();
@@ -3588,7 +3588,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     };
                 };  
             };
-            let tokens = verb.split(" ");
+            let tokens = verb.split(/\s+/);
             if (["at", "for"].includes(tokens[tokens.length-1])) {
                 position = tokens[tokens.length-1];
                 tokens.pop();
@@ -4060,6 +4060,15 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
         self.canRepair = function(anArtefact) {
             for (var i=0; i<_repairSkills.length;i++) {
                 if (anArtefact.syn(_repairSkills[i])) {
+                    return true;
+                };
+                if (anArtefact.getType() == _repairSkills[i]) {
+                    return true;
+                };
+                if (anArtefact.getSubType() == _repairSkills[i]) {
+                    return true;
+                };
+                if (["all", "any", "anything", "everything"].includes(_repairSkills[i])) {
                     return true;
                 };
             };

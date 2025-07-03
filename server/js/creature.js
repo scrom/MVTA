@@ -1658,6 +1658,15 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 if (anArtefact.syn(_repairSkills[i])) {
                     return true;
                 };
+                if (anArtefact.getType() == _repairSkills[i]) {
+                    return true;
+                };
+                if (anArtefact.getSubType() == _repairSkills[i]) {
+                    return true;
+                };
+                if (["all", "any", "anything", "everything"].includes(_repairSkills[i])) {
+                    return true;
+                };
             };
             return false;
         };
