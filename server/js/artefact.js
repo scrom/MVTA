@@ -4,11 +4,11 @@
 module.exports.Artefact = function Artefact(name, description, detailedDescription, attributes, linkedExits, delivers) { 
     try{  
         //module deps
-        var tools = require('./tools.js');
-        var inventoryObjectModule = require('./inventory');    
-        var missionObjectModule = require('./mission.js');
-        var contagionObjectModule = require('./contagion.js');
-        var customAction = require('./customaction.js');
+        const tools = require('./tools.js');
+        const inventoryObjectModule = require('./inventory');    
+        const missionObjectModule = require('./mission.js');
+        const contagionObjectModule = require('./contagion.js');
+        const customAction = require('./customaction.js');
 
         //attributes
 	    var self = this; //closure so we don't lose this reference in callbacks
@@ -737,7 +737,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             if (artefactAttributes.initialDescription != _initialDescription) { saveAttributes.initialDescription = artefactAttributes.initialDescription; };
 
             if (artefactAttributes.defaultAction != "examine") { saveAttributes.defaultAction = artefactAttributes.defaultAction;};
-            if (artefactAttributes.extendedInventoryDescription != self.getPrefix()+" contains $inventory." && artefactAttributes.extendedInventoryDescription != self.getPrefix()+" contain $inventory." && artefactAttributes.extendedInventoryDescription != "") {
+            if (artefactAttributes.extendedInventoryDescription != _prefix+" contains $inventory." && artefactAttributes.extendedInventoryDescription != _prefix+" contain $inventory." && artefactAttributes.extendedInventoryDescription != "") {
                 saveAttributes.extendedInventoryDescription = artefactAttributes.extendedInventoryDescription;
             };
             if (artefactAttributes.weight != 0) {saveAttributes.weight = parseFloat(artefactAttributes.weight);};
@@ -1077,7 +1077,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             };
             var wasWere = "was";
             if (liquids.length >1) {wasWere = "were";};
-            resultString += " that "+wasWere+" in "+self.getSuffix()+" slowly trickles away.";
+            resultString += " that "+wasWere+" in "+_suffix+" slowly trickles away.";
             return resultString;
         };
 
@@ -1175,7 +1175,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                     };
                     resultString += self.descriptionWithCorrectPrefix(_drawings[a], pluralArt);
                 };
-                resultString+= " on "+self.getSuffix()+".<br>";
+                resultString+= " on "+_suffix+".<br>";
             };
 
             if (_writings.length>0) {
@@ -1189,7 +1189,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                     resultString += "'"+_writings[a]+"'";
                 };
                 if (_drawings.length==0) {
-                    resultString+= " on "+self.getSuffix();
+                    resultString+= " on "+_suffix;
                 };
                 resultString+= ".<br>";                
             };
@@ -1269,7 +1269,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 };
             };
             
-            resultString = resultString.replace("placed on top", "on " + self.getSuffix());
+            resultString = resultString.replace("placed on top", "on " + _suffix);
             
             resultString += self.describeView(_viewDestination, map);
             
@@ -1374,13 +1374,13 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
 
             //describe remaining charges (if not unlimited)
             if (self.chargesRemaining() == 0) {
-                resultString += "<br>"+tools.initCap(self.getDescriptivePrefix())+" all used up.";
+                resultString += "<br>"+tools.initCap(_descriptivePrefix)+" all used up.";
             }
             else if (self.chargesRemaining() > 1) { //we don't report when there's only a single use left.
                 var lineBreak = "<br>";
                 if (!_switched) {
                     if (_on && (self.isFlammable() || self.isExplosive())) {
-                        resultString += "<br>" + tools.initCap(self.getDescriptivePrefix()) + " burning away quite happily. ";
+                        resultString += "<br>" + tools.initCap(_descriptivePrefix) + " burning away quite happily. ";
                         lineBreak = "";
                     };
                 };
@@ -1412,7 +1412,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 resultString += tools.listSeparator(i, _wetted.length);
                 resultString += _wetted[i];
             };
-            if (_wetted.length > 0) {resultString += " on "+self.getSuffix()+".";};
+            if (_wetted.length > 0) {resultString += " on "+_suffix+".";};
 
             if ((_inventory.size() != _inventory.size(true, true)) && self.getType() != "scenery") {
                 if ( inventoryIsVisible || (_inventory.getPositionedObjects(true).length > 0)) {
@@ -1420,7 +1420,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                     //50% chance of spotting something amiss
                     var randomInt = Math.floor(Math.random() * 2);
                     if (randomInt > 0) {
-                        resultString += "<br>You notice something odd about "+self.getDisplayName()+". "+self.getPrefix()+" might bear even closer inspection.";
+                        resultString += "<br>You notice something odd about "+self.getDisplayName()+". "+_prefix+" might bear even closer inspection.";
                     };  
                 };
             };
@@ -2077,7 +2077,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                         anObject.consume();
                         return "Ooh shiny!"
                     };
-                    return self.getDescriptivePrefix()+" polished as much as "+self.getPrefix().toLowerCase()+" can be already.";
+                    return _descriptivePrefix+" polished as much as "+_prefix.toLowerCase()+" can be already.";
                 };
 
                 if (self.getSubType() == "sharp" && anObject.getSubType() == "sharpen") {
@@ -2087,7 +2087,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                         anObject.consume();
                         return "That's a keen edge you've got going there!<br>Nice job."
                     };
-                    return "I think "+self.getDescriptivePrefix().toLowerCase()+" as sharp as you're going to get "+self.getPrefix().toLowerCase()+".";
+                    return "I think "+_descriptivePrefix.toLowerCase()+" as sharp as you're going to get "+_prefix.toLowerCase()+".";
                 };
 
                 if (anObject.isLiquid()) {
@@ -2125,9 +2125,9 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                     sloshesOrRattles = "sloshes";
                 };
                 if (self.isOpen()) {
-                    return tools.initCap(liquidOrPowder.getName())+" "+sloshesOrRattles+" around inside " + self.getSuffix() + " but you manage not to spill any.";
+                    return tools.initCap(liquidOrPowder.getName())+" "+sloshesOrRattles+" around inside " + _suffix + " but you manage not to spill any.";
                 } else {
-                    return "You hear "+sloshesOrRattles+" from inside " + self.getSuffix() + ".";
+                    return "You hear "+sloshesOrRattles+" from inside " + _suffix + ".";
                 };
             };
             if (_inventory.size(true, true) > 0) {
@@ -2211,7 +2211,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             if (_collectable) {
                 return "You attempt to "+verb+" "+self.getDisplayName()+direction+". Nothing of interest happens.";
             };
-            return self.getDescriptivePrefix()+" fixed in place, there's no obvious way to "+verb+" "+self.getSuffix()+".";
+            return _descriptivePrefix+" fixed in place, there's no obvious way to "+verb+" "+_suffix+".";
         };        
 
         self.switchOnOrOff = function(verb, onOrOff, ignitionSource) {
@@ -2293,7 +2293,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             
             if (_flammable && !(_on) && (onOrOff != "off" || onOrOff != "out" || onOrOff != "stop" )) {
                 if (!ignitionSource) {
-                    return "You don't have anything to light "+self.getSuffix()+ " with."
+                    return "You don't have anything to light "+_suffix+ " with."
                 };
             };
 
@@ -2849,7 +2849,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             };
             if (verb == 'unlock') { return "You "+verb+" "+self.getDisplayName()+"."};
 
-            if (_broken) {return self.getDescriptivePrefix()+" broken.";};
+            if (_broken) {return _descriptivePrefix+" broken.";};
             return "You try to "+verb+" "+self.getDisplayName()+".<br>After a few minutes of yanking and shoving you conceed defeat.";
         };
 
@@ -2898,11 +2898,11 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
         
         self.inject = function (player) {            
             if (!self.checkCustomAction("inject")) {
-                return tools.initCap(self.getDescriptivePrefix()) + " not designed for that kind of personal medical use.";
+                return tools.initCap(_descriptivePrefix) + " not designed for that kind of personal medical use.";
             };
             var cures = _inventory.getAllObjectsOfType("cure");
             if (cures.length == 0) {
-                return "There's nothing in " + self.getSuffix() + " that you can sensibly inject.";
+                return "There's nothing in " + _suffix + " that you can sensibly inject.";
             };
             
             for (var c = 0; c < cures.length; c++) {
@@ -2943,7 +2943,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 };
             }
             if ((!self.isOpen()) && self.opens()) {
-                return consumer.getPrefix() + "'ll need to open " + self.getSuffix() + " up first.";
+                return consumer.getPrefix() + "'ll need to open " + _suffix + " up first.";
             }
             if (self.isDestroyed()) {
                 return "There's nothing left for " + consumer.getSuffix() + " to " + action + ".";
@@ -3132,7 +3132,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 return tools.initCap(self.getDisplayName()) + " doesn't contain " + anObjectName + ".";
             };
 
-            if (delivering && !(self.canDeliver(anObjectName))) { return "Sorry. "+self.getDisplayName()+" "+doesPlural()+" seem to be working at the moment.<br>Try <i>examining</i> "+self.getSuffix()+" to see what's wrong."+tools.imgTag(self);};
+            if (delivering && !(self.canDeliver(anObjectName))) { return "Sorry. "+self.getDisplayName()+" "+doesPlural()+" seem to be working at the moment.<br>Try <i>examining</i> "+_suffix+" to see what's wrong."+tools.imgTag(self);};
             
             if (!(objectToGive.isCollectable())) {
                 if (objectToGive.checkCustomAction("get")) {
@@ -3258,7 +3258,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                 return "There's already something "+position+" there."
             };
             _inventory.position(anObject, position);            
-            return self.getDisplayName()+" now has "+anObject.getDescription()+" "+position+" "+self.getSuffix()+".";
+            return self.getDisplayName()+" now has "+anObject.getDescription()+" "+position+" "+_suffix+".";
         };
 
         self.receive = function(anObject, map, player, playerisAsking) {
@@ -3320,7 +3320,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                             _inventory.remove(inventoryLiquidOrPowder.getName());
                             _inventory.add(combinedLiquidOrPowder);
                             //increase attributes of existing inventory object from attributes of the one we're adding
-                            return resultString + self.getPrefix() + " now contains more " + combinedLiquidOrPowder.getName() + "."+tools.imgTag(self);
+                            return resultString + _prefix + " now contains more " + combinedLiquidOrPowder.getName() + "."+tools.imgTag(self);
                         };
                     };
                 };
@@ -3414,7 +3414,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
             };
             if (!(_lockable)) {return _prefix+" "+doesPlural()+" have a lock.";};
             if (_locked) {
-                if (!(aKey)) {return "You need something to unlock "+self.getSuffix()+" with.";};
+                if (!(aKey)) {return "You need something to unlock "+_suffix+" with.";};
                 if (aKey.keyTo(self)) {
                     _locked = false;
                     if (self.getType() == "property" || self.getType() == "vehicle") {_collectable = true;};
