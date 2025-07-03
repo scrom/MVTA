@@ -167,7 +167,7 @@ var self = module.exports= {
         var wordToReplace = aDescription;
         var replacement = wordToReplace;
 
-        var descriptionAsWords = aDescription.split(" ");
+        var descriptionAsWords = aDescription.split(/\s+/);
         if (descriptionAsWords.length > 2) {
             //"x of y" ?
             if (descriptionAsWords[1] == "of") {
@@ -233,7 +233,7 @@ var self = module.exports= {
         var wordToReplace = aDescription;
         var replacement = wordToReplace;
 
-        var descriptionAsWords = aDescription.split(" ");
+        var descriptionAsWords = aDescription.split(/\s+/);
         if (descriptionAsWords.length > 2) {
             // "x of y" ?
             if (descriptionAsWords[1] == "of") {

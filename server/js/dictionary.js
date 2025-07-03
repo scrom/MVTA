@@ -211,7 +211,7 @@ exports.Dictionary = function Dictionary() {
         };
 
         self.flatDictionary = flatten(_dictionary);
-        self.flatDictionary.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words - greatest first
+        self.flatDictionary.sort((p1, p2) => p2.split(/\s+/).length - p1.split(/\s+/).length); //sort by number of words - greatest first
 
     }
 

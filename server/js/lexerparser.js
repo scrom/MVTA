@@ -57,7 +57,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
         //collate prepositions and sort by number of words - important for when we try to split later.
         let allPrepositions = sharedPrepositions.concat(receivingPrepositions.concat(givingPrepositions.concat(locationPrepositions)));
         allPrepositions = Array.from(new Set(allPrepositions)); //remove duplicates.
-        allPrepositions.sort((p1, p2) => p2.split(" ").length - p1.split(" ").length); //sort by number of words greatest first
+        allPrepositions.sort((p1, p2) => p2.split(/\s+/).length - p1.split(/\s+/).length); //sort by number of words greatest first
 
         //verb dictionary       
         const verbs = fm.readFile("verb-lexicon.json");  //add  'ignore','blank','squeeze','grasp','clutch','clasp','hold','smoosh', 'smear','squish', 'chirp', 'tweet', 'bark', 'meow', 'moo','growl'
@@ -510,7 +510,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
         
                 };
 
-                if (salutations.some((e) => input.split(" ")[0] == e)) { //will only match single words
+                if (salutations.some((e) => input.split(/\s+/)[0] == e)) { //will only match single words
                     verb = "greet";
                     verbInd = -1; //don't trim input
                 };
@@ -518,18 +518,18 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                 if (_inConversation && _inConversation != "everyone") {
                     //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
                     if (
-                        (questions.some((e) =>  input.split(" ")[0] == e)) ||
+                        (questions.some((e) =>  input.split(/\s+/)[0] == e)) ||
                         (input.endsWith("?")) ||
-                        (moreQuestions.some((e) =>  input.split(" ")[0] == e)) ||
-                        (modalVerbs.some((e) =>  input.split(" ")[0] == e))
+                        (moreQuestions.some((e) =>  input.split(/\s+/)[0] == e)) ||
+                        (modalVerbs.some((e) =>  input.split(/\s+/)[0] == e))
                     ) {
                         verbInd = -1; //keep talking, don't trim input
                         verb = "question"; //would prefer "ask" but that forces a re-parse from action               
                     } else if (
-                        (yesWords.some((e) =>  input.split(" ")[0] == e)) ||
-                        (politeWords.some((e) =>  input.split(" ")[0] == e)) ||
-                        (goodbyes.some((e) =>  input.split(" ")[0] == e)) ||
-                        (noWords.some((e) =>  input.split(" ")[0] == e))  ||
+                        (yesWords.some((e) =>  input.split(/\s+/)[0] == e)) ||
+                        (politeWords.some((e) =>  input.split(/\s+/)[0] == e)) ||
+                        (goodbyes.some((e) =>  input.split(/\s+/)[0] == e)) ||
+                        (noWords.some((e) =>  input.split(/\s+/)[0] == e))  ||
                         //pronouns...
                         (firstPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))  ||
                         (secondPersonPronouns.some(e => new RegExp(`\\b${e}\\b`, 'i').test(input)))
@@ -701,7 +701,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     let matched = false;
                     let switching = false;
                     let matchedIndex = -1
-                    let tokens = objects[0].split(" ");
+                    let tokens = objects[0].split(/\s+/);
                     for (let t=0; t<tokens.length;t++) {
                         if(!tokens[t]) {continue;};//handle null
                         if (["he", "him", "her", "them", "they", "their", "it", "you"].includes(tokens[t].replace("s","")) || tokens[t] == "his") {

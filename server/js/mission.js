@@ -458,7 +458,7 @@ module.exports.Mission = function Mission(name, displayName, description, attrib
             var keywords = "";
             var defaultDialogue;
             if (inputString) {
-                var keywords = inputString.split(" ");
+                var keywords = inputString.split(/\s+/);
             };
             for (var i=0;i<_dialogue.length;i++) {
                 if (typeof _dialogue[i] == "object") {
