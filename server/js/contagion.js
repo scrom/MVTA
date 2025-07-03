@@ -3,7 +3,7 @@
 exports.Contagion = function Contagion(name, displayName, attributes) {
     try {
         //module deps
-        var tools = require('./tools.js');
+        const tools = require('./tools.js');
         var self = this; //closure so we don't lose this reference in callbacks
 
         var _name = name;

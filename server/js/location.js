@@ -4,11 +4,11 @@ exports.Location = function Location(name, displayName, description, attributes)
     //name, description, detailedDescription, attributes,
     try{
         //module deps
-        var tools = require('./tools.js');
-        var artefactObjectModule = require('./artefact');
-        var exitObjectModule = require('./exit');
-        var inventoryObjectModule = require('./inventory');
-        var missionObjectModule = require('./mission.js');
+        const tools = require('./tools.js');
+        const artefactObjectModule = require('./artefact');
+        const exitObjectModule = require('./exit');
+        const inventoryObjectModule = require('./inventory');
+        const missionObjectModule = require('./mission.js');
               
 	    var self = this; //closure so we don't lose this reference in callbacks
         //self.location = {}; //JSON representation of location {description, objects, exits, creatures}

@@ -12,7 +12,7 @@ exports.GameController = function GameController(mapBuilder, fileManager) {
 	    var _objectName = "GameController";
 
         //module deps
-        var gameObjectModule = require('./game');
+        const gameObjectModule = require('./game');
         var _fm = fileManager;
 
         var readSavedGamesListAsync = async function() {

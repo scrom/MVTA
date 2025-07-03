@@ -3,8 +3,8 @@
 exports.Map = function Map() {
     try{
         //module deps
-        var tools = require('./tools.js');
-        var missionControllerModule = require('./missioncontroller');                
+        const tools = require('./tools.js');
+        const missionControllerModule = require('./missioncontroller');                
         const dictionaryModule = require('./dictionary');    
 
         var self = this; //closure so we don't lose this reference in callbacks

@@ -3,7 +3,7 @@
 module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBalance, ownerName) {
     try{
         //module deps
-        var tools = require('./tools.js');     
+        const tools = require('./tools.js');     
                 
 	    var self = this; //closure so we don't lose this reference in callbacks
 

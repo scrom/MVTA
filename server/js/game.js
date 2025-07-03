@@ -3,7 +3,7 @@
 module.exports.Game = function Game(playerAttributes,aGameID, aMap, mapBuilder, fileName, fileManager) {
     try{
         //module deps
-        var playerObjectModule = require('./player');
+        const playerObjectModule = require('./player');
         const createEngine = require('./engine.js');
 
 	    var self = this; //closure so we don't lose this reference in callbacks

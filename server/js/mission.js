@@ -2,8 +2,8 @@
 //mission object
 module.exports.Mission = function Mission(name, displayName, description, attributes, initialAttributes, conditionAttributes, failAttributes, reward, fail) {
     try {
-        var tools = require('./tools.js');
-        var customAction = require('./customaction.js');
+        const tools = require('./tools.js');
+        const customAction = require('./customaction.js');
 	    var self = this; //closure so we don't lose this reference in callbacks
         var _name = name.toLowerCase();
         var _displayName = displayName;

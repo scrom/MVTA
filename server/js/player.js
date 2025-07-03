@@ -3,9 +3,9 @@
 module.exports.Player = function Player(attributes, map, mapBuilder) {
     try{
         //module deps
-        var tools = require('./tools.js');
-        var inventoryObjectModule = require('./inventory.js');
-        var contagionObjectModule = require('./contagion.js');
+        const tools = require('./tools.js');
+        const inventoryObjectModule = require('./inventory.js');
+        const contagionObjectModule = require('./contagion.js');
         var _mapBuilder = mapBuilder;
         var _map = map;
 

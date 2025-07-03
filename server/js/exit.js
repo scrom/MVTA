@@ -2,7 +2,7 @@
 //exit object - manage exists from locations
 module.exports.Exit = function Exit(aDirection, aSourceName, aDestinationName, aDescription, isHidden, requiredAction) {
     try{
-        var tools = require('./tools.js');
+        const tools = require('./tools.js');
 	    var self = this; //closure so we don't lose this reference in callbacks
         var _name = aDirection;
         var _direction = aDirection;

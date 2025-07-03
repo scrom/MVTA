@@ -1,12 +1,12 @@
 ﻿"use strict";
 //main bootstrap code for node server
-var serverObjectModule = require('./server.js');
-var interpreterObjectModule = require('./interpreter.js');
-var gameControllerModule = require('./gamecontroller.js');
-var fileManagerModule = require('./filemanager.js');
+const serverObjectModule = require('./server.js');
+const interpreterObjectModule = require('./interpreter.js');
+const gameControllerModule = require('./gamecontroller.js');
+const fileManagerModule = require('./filemanager.js');
 
 //load and initialise map
-var mapBuilderModule = require('./mapbuilder');
+const mapBuilderModule = require('./mapbuilder');
 //source data: 
 var gameDataFolder = '../../data/';  
 var gameDataJSONFile = 'root-locations';  

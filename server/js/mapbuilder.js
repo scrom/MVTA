@@ -3,15 +3,15 @@
 exports.MapBuilder = function MapBuilder(mapDataPath, mapDataFile) {
     try{
         //module deps
-        var tools = require('./tools');
-        var validatorModule = require('./validator');        
-        var fileManagerModule = require('./filemanager');
-        var mapObjectModule = require('./map');
-        var locationObjectModule = require('./location'); 
-        var exitObjectModule = require('./exit'); 
-        var artefactObjectModule = require('./artefact');
-        var creatureObjectModule = require('./creature.js');
-        var missionObjectModule = require('./mission.js');
+        const tools = require('./tools');
+        const validatorModule = require('./validator');        
+        const fileManagerModule = require('./filemanager');
+        const mapObjectModule = require('./map');
+        const locationObjectModule = require('./location'); 
+        const exitObjectModule = require('./exit'); 
+        const artefactObjectModule = require('./artefact');
+        const creatureObjectModule = require('./creature.js');
+        const missionObjectModule = require('./mission.js');
 
         var missionsList = [];
 
