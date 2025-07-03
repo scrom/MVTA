@@ -1384,13 +1384,14 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                         lineBreak = "";
                     };
                 };
+       
+                //set plural
+                var tempPluralString = "s";
+                if (self.chargesRemaining() == 1) {tempPluralString = "";};
+                var tempUnits = _chargeUnit+tempPluralString;
+
                 //if (_detailedDescription.indexOf('$') >-1) {//we have custom placeholders in the description
                 if (_chargesDescription.length>0) { //we have a custom description
-
-                    //set plural
-                    var tempPluralString = "s";
-                    if (self.chargesRemaining() == 1) {tempPluralString = "";};
-                    var tempUnits = _chargeUnit+tempPluralString;
 
                     //replace substitution variables if set
                     var tempDescription = _chargesDescription;
@@ -1403,7 +1404,7 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                     };
 
                 } else {
-                    resultString += lineBreak+"There are "+self.chargesRemaining()+" uses remaining."
+                    resultString += lineBreak+"There's "+self.chargesRemaining()+" "+tempUnits+" remaining."
                 };
             };
 

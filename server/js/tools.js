@@ -4,7 +4,7 @@ var self = module.exports= {
 
     //common data
     directions: ['n','north','s','south','e','east','w','west', 'l','left', 'r', 'right', 'i', 'in', 'o', 'out', 'u', 'up', 'd', 'down', 'c', 'continue', 'b','back', 'f', 'forward'],
-    positions:  ['onto', 'on to', 'on top of', 'on', 'over', 'above', 'under', 'underneath', 'below', 'beneath', 'behind'], //split words that are also "put" positions. first 0-3 are "on", next 4-5 are above, 6-10 are below/behind, 
+    positions:  ['onto', 'on to', 'on top of', 'on', 'over', 'above', 'under', 'underneath', 'below', 'beneath', 'behind', 'buried'], //split words that are also "put" positions. first 0-3 are "on", next 4-5 are above, 6-10 are below/behind, 
 
     projectileAttackVerbs: ['nerf','shoot','fire','blast','zap'],
     unarmedAttackVerbs: ['slap','punch','kick','thump',],
