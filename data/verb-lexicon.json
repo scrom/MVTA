@@ -235,7 +235,7 @@
   },
   "hide": {    
     "category": "manipulation",
-    "aliases": ["stash"]
+    "aliases": ["stash", "bury"]
   },
   "place": {    
     "category": "manipulation",
@@ -425,7 +425,7 @@
   },
   "question": {
     "category": "dialogue",
-    "aliases": ["who", "whos", "whose", "what", "whats", "why", "whys", "when", "whens", "where", "wheres", "how", "hows", "have", "do", "is"]
+    "aliases": ["who", "whos", "whose", "what", "whats", "why", "whys", "whay", "when", "whens", "where", "wheres", "how", "hows", "have", "do", "is"]
   },
   "apologise": {
     "category": "dialogue",

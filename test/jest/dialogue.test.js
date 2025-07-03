@@ -299,3 +299,15 @@ test('test - dialogue - with busy location - *ask* everyone to wait.', () => {
         expect(actualResult).toContain(searchTerms[t]);
     };
 });
+
+test('test asking "why"', () => {
+    let kitchen = m0.getLocation("kitchen-ground-floor")
+    p0.setLocation(kitchen);
+    const objectJSON  = fm.readFile("creatures/aaron-prescott.json"); 
+    const object = mb.buildCreature(objectJSON);
+    object.go(null, kitchen);
+    const input = "why is the coffee machine not working?";
+    const expectedResult = "xx";
+    const actualResult = engine(input).description; 
+    expect(actualResult).toBe(expectedResult);
+});
