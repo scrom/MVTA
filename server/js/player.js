@@ -3402,7 +3402,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     var hasSpokenBefore = receivers[r].hasSpoken();
                     speech = " "+speech+" ";
                     speech = speech.replace(" "+verb+" ", "");
-                    speech = speech.replace(" "+verb+" ", "");
                     speech = speech.replace(/\beveryone\b/, "");
                     speech = speech.trim();
 
