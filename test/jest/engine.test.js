@@ -1277,7 +1277,7 @@ test('test ask find', () => {
     const object2 = mb.buildArtefact(object2JSON);
     p0.acceptItem(object2);
     const input = "ask aaron to find my guitar";
-    const expectedResult = "You're carrying it!"; 
+    const expectedResult = "'You're carrying it!'"; 
     let actualResult = engine(input).description;
     expect(actualResult).toBe(expectedResult);
 });

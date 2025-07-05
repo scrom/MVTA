@@ -182,7 +182,7 @@ test('test - dialogue - with busy location - asking creature to find another', (
     p0.acceptItem(cake);
     engine("talk to ice cream man");
     const input = "where do you think aaron is?";
-    const expectedResult = "You ask the ice cream man to find aaron<br>...<br>'He's right here.'"; 
+    const expectedResult = "You ask the ice cream man to find aaron<br>'He's right here.'"; 
     let actualResult = engine(input).description.substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });

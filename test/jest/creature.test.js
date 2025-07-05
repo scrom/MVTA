@@ -513,19 +513,6 @@ test('unfriendlyCreatureWillNotFindForPlayer', () => {
     expect(actual).toBe(expected);
 });
 
-test('neutralCreatureWillNotFindForPlayer', () => {
-    var m = mb.buildMap();
-    var creatureName = 'creature';
-    var c0 = new creature.Creature(creatureName,'beastie', 'a big beastie with teeth',{weight:120, attackStrength:50, gender:'unknown', type:'creature', carryWeight:50, health:150, affinity:0});
-    var expected = "When was the last time you did something for it?<br>It pays to be nice to others.<br>";
-    var playerAggression = 0;
-    var findResult = c0.find("stephen g", playerAggression, m)
-    var actual = findResult.substr(findResult.indexOf("<br>")+8); //exclude initial random reply
-    console.debug("expected: "+expected);
-    console.debug("actual: "+actual);
-    expect(actual).toBe(expected);
-});
-
 test('neutralCreatureWillNotFindForPlayerAndGivesRandomReply', () => {
     var m = mb.buildMap();
     var creatureName = 'creature';
@@ -533,7 +520,7 @@ test('neutralCreatureWillNotFindForPlayerAndGivesRandomReply', () => {
     var expected = ["Sorry $player, I don't have time to help you right now.", "I'm too busy at the moment.", "I've got more important things to do right now."];
     var playerAggression = 0;
     var findResult = c0.find("stephen g", playerAggression, m)
-    var actual = findResult.substr(9,findResult.indexOf("'<br>")-9); //include initial random reply only
+    var actual = findResult.substring(9,findResult.length-1); //include initial random reply only
     console.debug("expected: " + expected);
     console.debug("actual: " + actual);
     expect(expected.indexOf(actual) > -1).toBeTruthy();

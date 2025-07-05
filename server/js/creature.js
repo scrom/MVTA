@@ -2923,18 +2923,18 @@ exports.Creature = function Creature(name, description, detailedDescription, att
 
             if (player) {
                 let object = player.getObject(objectName);
-                if (object) {return "You're carrying "+object.getSuffix()+"!"+returnImage}
+                if (object) {return "'You're carrying "+object.getSuffix()+"!'"+returnImage}
                 object = _currentLocation.getObject(objectName);
-                if (object) {return tools.initCap(object.getDescriptivePrefix())+" right here."+returnImage}
+                if (object) {return "'"+tools.initCap(object.getDescriptivePrefix())+" right here.'"+returnImage}
             };
 
             if (_affinity >= 2) { willFindArtefacts = true };
             if (playerAggression>1) {return _prefix+" say"+s+" 'I'm a bit busy at the moment, can you come back in a while?'<br>'It looks like you could do with walking off some of your tension anyway.'"+ returnImage};            
             if (_affinity < 1) {
-                var randomReplies = ["Sorry $player, I don't have time to help you right now.", "I'm too busy at the moment.", "I've got more important things to do right now."];
-                var randomIndex = Math.floor(Math.random() * randomReplies.length);
-                var reply = _prefix + " says '" + randomReplies[randomIndex] + "'";
-                return reply+"<br><br>When was the last time you did something for " + _suffix + "?<br>It pays to be nice to others.<br>" + returnImage
+                let randomReplies = ["Sorry $player, I don't have time to help you right now.", "I'm too busy at the moment.", "I've got more important things to do right now."];
+                let randomIndex = Math.floor(Math.random() * randomReplies.length);
+                let reply = _prefix + " says '" + randomReplies[randomIndex] + "'";
+                return reply+returnImage
             };
             //if we're here, aggression is low and affinity is positive.
             
@@ -3401,7 +3401,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             artefactName = artefactName.replace(/\bthink\b/, "");
                             artefactName = artefactName.replace(/\bbe\b/, "");
                             artefactName = artefactName.trim();
-                            return "You ask " + self.getFirstName() + " to find " + artefactName + "<br>...<br>'" + player.ask("find", self.getName(), artefactName, map)+"'";
+                            return "You ask " + self.getFirstName() + " to find " + artefactName + "<br>" + player.ask("find", self.getName(), artefactName, map);
                             break;
                     case 'give':
                     case 'ask':
