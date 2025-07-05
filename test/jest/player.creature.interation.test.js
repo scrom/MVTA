@@ -139,6 +139,47 @@ test('player can hit a creature with a weapon they are carrying', () => {
     expect(actualResult).toBe(expectedResult);
 });
 
+
+test('armed player cannot strangle a creature with wrong weapon', () => {
+    p0.get('get', weapon.getName());
+    const expectedResult = "You prepare your most aggressive stance and then realise you can't effectively strangle with a mighty sword.";
+    let hitcount = 0;
+    let actualResult;
+    while (hitcount < 1) {
+        actualResult = p0.hit('strangle', c0.getName(), weapon.getName());
+        if (actualResult !== "You missed!") {
+            hitcount++;
+        }
+    }
+    expect(actualResult).toBe(expectedResult);
+});
+
+test('unarmed player cannot strangle a creature', () => {
+    const expectedResult = "You reach out to grab the creature but your feeble hands feel more like a caress.";
+    let hitcount = 0;
+    let actualResult;
+    while (hitcount < 1) {
+        actualResult = p0.hit('strangle', c0.getName());
+        if (actualResult !== "You missed!") {
+            hitcount++;
+        }
+    }
+    expect(actualResult.substring(0, expectedResult.length)).toBe(expectedResult);
+});
+
+test('player cannot strangle an inanimate object', () => {
+    const expectedResult = "You picture yourself wrapping your hands around the mighty sword before accepting that you can't really choke an inanimate object.";
+    let hitcount = 0;
+    let actualResult;
+    while (hitcount < 1) {
+        actualResult = p0.hit('choke', weapon.getName());
+        if (actualResult !== "You missed!") {
+            hitcount++;
+        }
+    }
+    expect(actualResult).toBe(expectedResult);
+});
+
 test('a healthy player does full damage to a creature', () => {
     p0.get('get', weapon.getName());
     p0.hurt(49);

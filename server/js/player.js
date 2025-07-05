@@ -4986,6 +4986,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
             //get receiver if it exists
             var receiver = getObjectFromPlayerOrLocation(receiverName);
+            var receiverDisplayName = receiver.getDisplayName();
+
             if (!(receiver)) {
                 if (self.syn(receiverName)) {
                     return "I know things might seem desperate at times but that's not going to help you. I recommend you get some qualified professional support."
@@ -5005,6 +5007,14 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             if (receiver.isDestroyed()) {
                 return "Don't you think you've done enough damage already?<br>There's not enough of "+receiver.getSuffix()+" left to do any more damage to.";
             };
+  
+            if ((tools.chokeAttackVerbs.includes(verb)) && (receiver.getType() != "creature")) {
+                //check for custom action just in case.
+                if (receiver.checkCustomAction(verb)) {
+                    return self.customAction(verb, receiver.getName());
+                };
+                return "You picture yourself wrapping your hands around "+receiverDisplayName+" before accepting that you can't really "+verb+" an inanimate object.";
+            };
 
             //regardless of whether this is successful, 
             //by this point this is definitely an aggressive act. Increase aggression
@@ -5020,8 +5030,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
             //build result...
             var resultString;
-            
-            var receiverDisplayName = receiver.getDisplayName();
 
             //initial dead/destroyed checks and affinity impact.
             if (receiver.getType() == "creature") {

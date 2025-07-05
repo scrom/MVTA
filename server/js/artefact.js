@@ -929,17 +929,24 @@ module.exports.Artefact = function Artefact(name, description, detailedDescripti
                     break;
                 case "projectile":
                     if (tools.sharpAttackVerbs.includes(verb)) {return false}; //can still use blunt attacks
+                    if (tools.chokeAttackVerbs.includes(verb)) {return false};
                     if (tools.projectileAttackVerbs.includes(verb) && self.isDamaged()) {return false};
                     break;
                 case "blunt":
                     if (tools.sharpAttackVerbs.includes(verb)) {return false};
+                    if (tools.chokeAttackVerbs.includes(verb)) {return false};
                     if (tools.projectileAttackVerbs.includes(verb)) {return false};
                     break;
                 case "sharp":
                     if (tools.projectileAttackVerbs.includes(verb)) {return false};
+                    if (tools.chokeAttackVerbs.includes(verb)) {return false};
                     break;
+                case "choke":
+                    if (tools.sharpAttackVerbs.includes(verb)) {return false};
+                    if (tools.projectileAttackVerbs.includes(verb)) {return false};      
+                    break;                   
                 default:
-                    //assume neither sharp, nor projectile - e.g. throwing and hitting things?
+                    //assume neither sharp, nor projectile - e.g. choking, throwing and hitting things?
                     if (tools.sharpAttackVerbs.includes(verb)) {return false};
                     if (tools.projectileAttackVerbs.includes(verb)) {return false};
                     break;
