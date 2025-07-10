@@ -5846,7 +5846,7 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 
                 //bleed?
                 if (_bleeding) {
-                    damage+=2*time; //if you rest or sleep whilst bleeding, this will be very bad
+                    damage+=2; //if you rest or sleep whilst bleeding, this will be very bad
                 } else {
                     //slowly recover health (this makes rest and sleep work nicely although we'll give them a boost)
                     healPoints++;

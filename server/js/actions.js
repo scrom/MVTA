@@ -41,7 +41,7 @@ module.exports.Actions = function Actions(parser, fileManager) {
         return false;
       };
         
-        //after player has performed an action, each creature in the room has an opportunuty to react
+        //after player has performed an action, each creature in the map has an opportunuty to react
         self.processCreatureTicks = function(time, map, player) {
           try {
             var result = "";
@@ -90,9 +90,7 @@ module.exports.Actions = function Actions(parser, fileManager) {
             //if time is passing, what additional things happen to a player?
             //note - player ticks happen last so that we can adjust responses based on current state
             //(wait/sleep) are explicitly covered elsewhere so return 0 for time
-            if (time > 0) {
-              result += player.tick(time, map);
-            };
+            result += player.tick(time, map);
 
             return result;
                       

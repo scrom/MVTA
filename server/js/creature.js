@@ -3857,12 +3857,12 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             }; 
         };
         
-        self.willMove = function (hasActedSoFarString, playerLocation, playerAggression) {
+        self.willMove = function (hasActedSoFarString, playerLocationName, playerAggression) {
             //figure out if creature will or will not automatically move
             if (hasActedSoFarString.length > 0) { return false; }; //has already acted
             if (_currentDelay > -1) { return false; }; //is in a delay cycle
             if (!(_traveller || (_canTravel && _destinations.length > 0))) { return false; }; //can't or won't travel
-            if (playerLocation == _currentLocation.getName() && self.willFollow(playerAggression)) { return false; }; //will follow player instead
+            if (playerLocationName == _currentLocation.getName() && self.willFollow(playerAggression)) { return false; }; //will follow player instead
           
             return true;      
         };
@@ -4068,9 +4068,9 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             var resultString = "";
             var visibleResultString = "";
 
-            var playerLocation = player.getCurrentLocation().getName();
+            var playerLocationName = player.getCurrentLocation().getName();
             var playerAggression = player.getAggression();
-            var homeLocation = _currentLocation.getName();
+            var startLocationName = _currentLocation.getName();
 
             var damage = 0;
             var healPoints = 0;
@@ -4098,7 +4098,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 };                
                 
                 //if creature is in same location as player, fight or flee...
-                if (playerLocation == _currentLocation.getName()) {
+                if (playerLocationName == _currentLocation.getName()) {
                     showMoveToPlayer = true;
                     var tempResultString = "";
                     tempResultString += self.helpPlayer(player);  // may return sentence with <br>+self.getDisplayName()
@@ -4111,7 +4111,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     resultString += tempResultString;
                     
                     //re-fetch player location in case we just killed them!
-                    //playerLocation = player.getCurrentLocation().getName();
+                    //playerLocationName = player.getCurrentLocation().getName();
                     visibleResultString += resultString;
                 };
                 
@@ -4119,10 +4119,10 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 resultString = "";
                 
                 //update any active delays
-                self.calculateAndUpdateDelay(playerLocation, playerAggression);
+                self.calculateAndUpdateDelay(playerLocationName, playerAggression);
                 
                 //if creature will move on this tick
-                if (self.willMove(visibleResultString, playerLocation, playerAggression)) {
+                if (self.willMove(visibleResultString, playerLocationName, playerAggression)) {
                     
                     //start of creature moving
                     var exit;
@@ -4211,7 +4211,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                                 };
                             
                                 //if creature ends up in player location (rather than starting there)...
-                                if (playerLocation == _currentLocation.getName()) {
+                                if (playerLocationName == _currentLocation.getName()) {
                                     showMoveToPlayer = true;
                                     visibleResultString += "<br>" + movementPrefixString + " ";
                                     var movementVerb = "wanders";
@@ -4291,7 +4291,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
 
                 //contagion?
                 var enactedContagion = false;
-                var contagionString = self.enactContagion(player, playerLocation, t); //may return 2 sentences starting with self.getDisplayName() etc. - per tick
+                var contagionString = self.enactContagion(player, playerLocationName, t); //may return 2 sentences starting with self.getDisplayName() etc. - per tick
                 if (contagionString.length > 0) {
                     enactedContagion = true;
                 };
@@ -4401,7 +4401,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 };
             }; //end of "ticks" loop.
 
-            if (playerLocation == _currentLocation.getName()) {
+            if (playerLocationName == _currentLocation.getName()) {
                 showMoveToPlayer = true;
             };
 
@@ -4454,8 +4454,8 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 };
             };    
 
-            //note we store playerLocation at the beginning in case the player was killed as a result of the tick.
-            if (playerLocation == _currentLocation.getName()) {
+            //note we store playerLocationName at the beginning in case the player was killed as a result of the tick.
+            if (playerLocationName == _currentLocation.getName()) {
                 if (!self.willInitiateConversation()) {
                     self.setHuntingPlayer(false); //has no reason to be hunting any more
                 } else {
@@ -4473,7 +4473,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 if (showMoveToPlayer) {
                     return visibleResultString;
                 };
-            } else if (playerLocation == homeLocation) {
+            } else if (playerLocationName == startLocationName) {
                 return visibleResultString; //just the outcome of what was visible in their inital move - e.g. fleeing/helping/leaving.
             } else {
                 //nothing visible to player.

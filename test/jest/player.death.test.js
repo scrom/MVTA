@@ -189,7 +189,7 @@ test('playerDeathFromContagionReturnsExpectedStringResult', () => {
     const con = new contagion.Contagion("death", "deathness", { "communicability": 1, "transmission": "bite", "symptoms": [{ "action": "hurt", "health": "3", "frequency": 1 }], "duration": -1 });
     p0.setContagion(con);
     const expectedResult = "<br><br>You collapse in a pool of weeping pus.<br>That was unfortunate. It looks like you were overcome by the death contagion or something equally nasty.<br>Fortunately, we currently have a special on reincarnation.<br>This time we've charged you 50 points and you'll need to find your way back to where you were to pick up all your stuff!<br>Good luck.<br><br>Current location: Home<br>a home location<br><br>You can see a creature, Mr Evil, an artefact of little consequence, a mighty sword, a drinking glass, a slab of sugary goodness, and a container.<br>There is a single exit to the South.<br>";
-    const actualResult = p0.tick(36, m0); // oddly, this triggers bleeding to death - not directly contagion - but good enough.
+    const actualResult = p0.tick(80, m0); // oddly, this triggers bleeding to death - not directly contagion - but good enough.
     console.debug(p0.health());
     console.debug("Expected: " + expectedResult);
     console.debug("Actual  : " + actualResult);
