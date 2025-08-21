@@ -3513,10 +3513,15 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         };
 
                         //fall through
+                        remainderString = (remainderString.replace(/\bdo\b/, "")).trim();
+                        remainderString = (remainderString.replace(/\bwould\b/, "")).trim();
+                        remainderString = (remainderString.replace(/\bhave\b/, "")).trim();
+
                     case 'would': 
                     case 'have':
                     case 'do'://you/i think/know/want ??
-                        remainderString = (remainderString.replace(/\byou\b/, "")).trim();
+                        remainderString = (remainderString.replace(/\byou \b/, " ")).trim();
+                        remainderString = (remainderString.replace(/\bfancy \b/, "like ")).trim();
                         if (remainderString.startsWith("have ")) {
                             artefactName = remainderString; //reset
                             artefactName = artefactName.replace(/\bhave\b/, "");
@@ -3556,6 +3561,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             artefactName = remainderString; //reset
                             artefactName = artefactName.replace(/\bwant \b/, "");
                             artefactName = artefactName.replace(/\blike \b/, "");
+                            artefactName = artefactName.replace(/\bfancy \b/, "");
                             let response = "You ask " + self.getFirstName() + " if "+_prefix.toLowerCase()+" want"+s+" " + artefactName + ".<br>" + _prefix+" replies ";
                             if (artefactName.startsWith("to ")) {return response + "'I'm good for now, thanks.'"};
                             artefactName = artefactName.replace(/\bsome \b/, "");
