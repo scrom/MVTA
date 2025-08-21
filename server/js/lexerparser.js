@@ -495,7 +495,10 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     playerLocation = player.getCurrentLocation();
                     if (_inConversation) {
                         lastCreature = playerLocation.getCreature(_inConversation);
-                    }
+                        if (!(lastCreature)) {
+                            _inConversation = null; //creature not found, drop out of conversation
+                        };
+                    };
                 };
 
                 if (tokens.includes("everyone")) {
@@ -541,10 +544,12 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     //did we explicitly mention them in this new sentence?
                     if (!verb || verbs[verb].category != "dialogue") {
                         for (let t=0; t<tokens.length; t++) {
-                            if (lastCreature.syn(tokens[t])) {
-                                verbInd = -1; //keep talking, don't trim input
-                                verb = "say"; 
-                                break;                           
+                            if (lastCreature) {
+                                if (lastCreature.syn(tokens[t])) {
+                                    verbInd = -1; //keep talking, don't trim input
+                                    verb = "say"; 
+                                    break;                           
+                                };
                             };
                         };
                     };
@@ -752,7 +757,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                         //we have a single creature with a matching synonym but could be further on in the sentence than the first word!.
                         //if we're have a question *before* a creature name we don't want to switch
                         //this is where we can use "inputVerbs" to help us.
-                        for (t=0; t<tokens.length;t++) {
+                        for (let t=0; t<tokens.length;t++) {
                             if (inputVerbs.includes(tokens[t])) {
                                 //we've hit a verb before a matching name...
                                 break;

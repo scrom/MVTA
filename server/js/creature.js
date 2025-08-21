@@ -3436,16 +3436,26 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             return self.replyToKeyword("help", player, map)+"<br>'If that's not the sort of help you're looking for, you can try rephrasing your question'";
                         };
                         if (artefactName.startsWith("give ") || artefactName.startsWith("i have ") || artefactName.startsWith("have ") || artefactName.startsWith("tell ")) {
-                            artefactName = artefactName.replace(/\bgive\b/, "to give");
-                            artefactName = artefactName.replace(/\byour\b/, _possessiveSuffix);
-                            artefactName = artefactName.replace(/\bmy\b/, "your");
-                            artefactName = artefactName.replace(/\bme\b/, "you");
-                            artefactName = artefactName.replace(/\btell\b/, "to");
-                            artefactName = artefactName.replace(/\bi have\b/, "for");
-                            artefactName = artefactName.replace(/\bhave\b/, "for");
+                            let requestString = artefactName;
+                            artefactName = artefactName.replace(/\bgive\b/, "");
+                            artefactName = artefactName.replace(/\byour\b/, "");
+                            artefactName = artefactName.replace(/\bmy\b/, "");
+                            artefactName = artefactName.replace(/\bme\b/, "");
+                            artefactName = artefactName.replace(/\btell\b/, "");
+                            artefactName = artefactName.replace(/\bi have\b/, "");
+                            artefactName = artefactName.replace(/\bhave\b/, "");
                             artefactName = artefactName.trim();
+
+                            requestString = requestString.replace(/\bgive\b/, "to give");
+                            requestString = requestString.replace(/\byour\b/, _possessiveSuffix);
+                            requestString = requestString.replace(/\bmy\b/, "your");
+                            requestString = requestString.replace(/\bme\b/, "you");
+                            requestString = requestString.replace(/\btell\b/, "to");
+                            requestString = requestString.replace(/\bi have\b/, "for");
+                            requestString = requestString.replace(/\bhave\b/, "for");
+                            requestString = requestString.trim();
                             //@todo trap "can you give x to y" here in future.
-                            return "You ask " + self.getFirstName() +" "+ artefactName + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
+                            return "You ask " + self.getFirstName() +" "+ requestString + ".<br>" + player.ask("ask", self.getName(), artefactName, map);
                         };
                         if (artefactName.startsWith("fix ") || artefactName.startsWith("mend ") || artefactName.startsWith("repair ")) {
                             artefactName = artefactName.replace(/\bfix\b/, "");
@@ -3500,6 +3510,9 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         if (!(remainderString == remainderString.replace(/\b you\b/, ""))) {
                             return tools.initCap(self.getFirstName()) + " says 'I'll be around somewhere.'";
                         };
+                    case 'want':
+                    case 'fancy':
+                        remainderString = "want "+remainderString;
                     case 'how'://is/are/can/will/many/much/about
                         if (remainderString.startsWith("is ") || remainderString.startsWith("are ")) {
                             if (remainderString == remainderString.replace(/\b you\b/, "")) {
@@ -3557,11 +3570,12 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             artefactName = artefactName.trim();
                         };
 
-                        if (remainderString.startsWith("want ") || remainderString.startsWith("like ")) {
+                        if (remainderString.startsWith("want ") || remainderString.startsWith("like ") || remainderString.startsWith("about ")|| remainderString.startsWith("fancy ")) {
                             artefactName = remainderString; //reset
                             artefactName = artefactName.replace(/\bwant \b/, "");
                             artefactName = artefactName.replace(/\blike \b/, "");
                             artefactName = artefactName.replace(/\bfancy \b/, "");
+                            artefactName = artefactName.replace(/\babout \b/, "");
                             let response = "You ask " + self.getFirstName() + " if "+_prefix.toLowerCase()+" want"+s+" " + artefactName + ".<br>" + _prefix+" replies ";
                             if (artefactName.startsWith("to ")) {return response + "'I'm good for now, thanks.'"};
                             artefactName = artefactName.replace(/\bsome \b/, "");
