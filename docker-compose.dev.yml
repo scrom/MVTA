@@ -5,9 +5,8 @@ networks:
 services:
   mvta:
     build: .
-    expose:
-      - "${MVTA_PORT}"
-      - "${MVTA_SSL_PORT}"
+    ports:
+      - "${MVTA_PORT}:${MVTA_PORT}"
     depends_on:
       mvta-redis:
         condition: service_healthy
@@ -22,15 +21,12 @@ services:
       - MVTA_RATELIMITMINUTES=${MVTA_RATELIMITMINUTES}
       - MVTA_RATELIMITREQUESTS=${MVTA_RATELIMITREQUESTS}
       - MVTA_PORT=${MVTA_PORT}
-      - MVTA_SSL_PORT=${MVTA_SSL_PORT}
-      - MVTA_FALLBACK_PORT=${MVTA_FALLBACK_PORT}
-      - MVTA_FALLBACK_SSL_PORT=${MVTA_FALLBACK_SSL_PORT}
       - MVTA_HOST=${MVTA_HOST}
       - MVTA_PROTOCOL=${MVTA_PROTOCOL}
       - NODE_ENV=production
     user: "node"
     healthcheck:
-      test: ["CMD", "curl", "-f", "${MVTA_PROTOCOL}://${MVTA_HOST}/health"]
+      test: ["CMD", "curl", "-f", "${MVTA_PROTOCOL}://${MVTA_HOST}:${MVTA_PORT}/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -39,17 +35,16 @@ services:
     restart: always
 
   mvta-redis:
-
     build:
       context: .
       dockerfile: Dockerfile.redis
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
+      interval: 1s
+      timeout: 2s
       retries: 10
-    restart: always
     environment:
+      - REDIS_HOST=mvta-redis
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PWD=${REDIS_PWD}
     volumes:
@@ -57,23 +52,7 @@ services:
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     networks:
       - backend_net
-
-  caddy:
-    image: caddy:2
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
-      - caddy-data:/data
-      - caddy-config:/config
-    depends_on:
-      - mvta
-    networks:
-      - backend_net
     restart: always
 
 volumes:
   redis-data:
-  caddy-data:
-  caddy-config:

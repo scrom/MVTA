@@ -1,0 +1,8 @@
+mvta.io, www.mvta.io {
+    reverse_proxy mvta:80
+    encode gzip
+    log {
+        output stdout
+        format console
+    }
+}
