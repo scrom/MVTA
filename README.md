@@ -1,8 +1,7 @@
 Minimum Viable Text Adventure" ("MVTA")**
 =======================================
 ** *Now developed way beyond "minimum viable" **
-*This game was originally live and running at: http://mvta.herokuapp.com/ *
-*It will "shortly" be back up and live at https://mvta.io/  (!!!) *
+*The game is back! live and running at: https://mvta.io/  (!!!) *
 
 MVTA: March 2014 to Present day (2025).
 
@@ -167,8 +166,7 @@ On the server side, I'm trying to keep the main game engine away from node-speci
 Development & deployment platforms
 -----------------------------------
 This game is developed on Windows but is designed to be able to run from docker Linux containers.
-I'l do a full writeup/script on deployment. Once it's ready, I'm hoping to host on AWS. (mostly for the extra learning experience)
-*(in the past it was deployed to Heroku - I'm sure I've already mentioned that)*
+It is currently hosted and live on AWS EC2 as a couple of small docker containers
 
 Whilst the game was originally developed in Visual Studio 2012 and can still be developed in VS2022, I've found it far better to work on it using VSCode. 
 
@@ -197,14 +195,14 @@ Module Dependencies
 The game was originally designed to run on Node version 0.10.33 but has now been upgraded to run on Node 24.2.0 and upward.
 
 Node Module dependencies are defined in \package.json
-As of June 2025 they are...
+As of August 2025 they are...
 
 For the server:
 ---
     "body-parser": "^2.2.0",
     "express": "^5.1.0",
-    "express-rate-limit": "^7.5.0",
-    "express-slow-down": "^2.1.0",
+    "express-rate-limit": "^8.0.1",
+    "express-slow-down": "^3.0.0",
     "jsonfile": "^6.1.0",
     "morgan": "^1.10.0",
     "redis": "^5.0.1"
