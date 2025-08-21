@@ -15,7 +15,7 @@
   "author": "simon.cromarty",
   "repository": {
     "type": "git",
-    "url": "git://github.com/scrom/Experiments.git"
+    "url": "git://github.com/scrom/MVTA.git"
   },
   "dependencies": {
     "body-parser": "^2.2.0",
@@ -36,9 +36,9 @@
     "sharp": "^0.34.2"
   },
   "bugs": {
-    "url": "https://github.com/scrom/Experiments/issues"
+    "url": "https://github.com/scrom/MVTA/issues"
   },
-  "homepage": "https://github.com/scrom/Experiments#readme",
+  "homepage": "https://github.com/scrom/MVTA#readme",
   "keywords": [],
   "license": "ISC"
 }
