@@ -523,10 +523,13 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
         //internal function (used twice in getObject)
         var getMatchedItemForGetObject = function (item, anObjectName, ignoreSynonyms, customAction, ignoreScenery) {
             var foundItem = false;
+            let itemName = item.getName();
             //name/syn match
-            if (ignoreSynonyms && (item.getName() == anObjectName)) {
+            if (ignoreSynonyms && (itemName == anObjectName)) {
                 foundItem = true;
             } else if (!ignoreSynonyms && item.syn(anObjectName)) {
+                foundItem = true;
+            } else if (item.getDescription().replace(/\ba \b/, "") == anObjectName) {
                 foundItem = true;
             };
             

@@ -3495,6 +3495,9 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         return tools.initCap(self.getFirstName()) + " says 'You should know better. I accept your apology for now but I suggest you back off for a while.'";
                         };
                         break;
+                    case 'want':
+                    case 'fancy':
+                        remainderString = "want "+remainderString;
                     case 'why'://is/are/do
                         if ((!(remainderString == remainderString.replace(/\b you\b/, ""))) || remainderString == "that" || remainderString == "is that") {
                             return tools.initCap(self.getFirstName()) + " says 'Well, it's just a thing, you know.'";
@@ -3510,9 +3513,6 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         if (!(remainderString == remainderString.replace(/\b you\b/, ""))) {
                             return tools.initCap(self.getFirstName()) + " says 'I'll be around somewhere.'";
                         };
-                    case 'want':
-                    case 'fancy':
-                        remainderString = "want "+remainderString;
                     case 'how'://is/are/can/will/many/much/about
                         if (remainderString.startsWith("is ") || remainderString.startsWith("are ")) {
                             if (remainderString == remainderString.replace(/\b you\b/, "")) {
