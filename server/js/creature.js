@@ -3504,7 +3504,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         };
                     case 'who': //is/are [character]
                     case 'what': //is/are/can (see can) [object]
-                        if (!(remainderString == remainderString.replace(/\b you do\b/, ""))) {
+                        if (["goes", "gives", "up", "going on", "goin on", "goin down", "going down", "happening"].includes(remainderString) || !(remainderString == remainderString.replace(/\b you do\b/, ""))) {
                             return tools.initCap(self.getFirstName()) + " says 'I'm just doing stuff, being busy, that kinda thing.'<br>'How about you?'";
                         } else if (!(remainderString == remainderString.replace(/\b you\b/, ""))) {
                             return tools.initCap(self.getFirstName()) + " says 'I'm "+self.getFirstName()+".'<br>'Is there anything you need?'";

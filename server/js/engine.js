@@ -46,7 +46,7 @@ function createEngine(player, map) {
     } catch (err) {
       	console.error('Error: userAction: "'+input+'". Error message/stack: '+err+"/"+err.stack);
       if (err.toString().includes("not implemented")) {
-        return a.buildResultJSON("This action isn't implemented (yet). We've logged it for review. (Thanks for finding it!)", null, player, {originalInput:input});
+        return a.buildResultJSON("I'm afraid I don't <i>quite</i> understand you. Try using a different verb.<br><br><i>(This action hasn't been implemented yet. It's logged for review though, thanks for trying!)</i>", null, player, {originalInput:input});
       };
       return a.buildResultJSON("Something bad happened on the server. We've logged it for review. If this happens again, you've probably found a bug. (Thanks for finding it!)", null, player, {originalInput:input});
     };
