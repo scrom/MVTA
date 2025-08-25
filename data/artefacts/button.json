@@ -27,6 +27,13 @@
     "lift call",
     "lift button",
     "lift call button",
-    "door"
+    "door",
+    "elevator",
+    "elevator call",
+    "elevator button",
+    "elevator call button",
+    "elevator door",
+    "lift door"
+
   ]
 }

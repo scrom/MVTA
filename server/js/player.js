@@ -4986,7 +4986,6 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
 
             //get receiver if it exists
             var receiver = getObjectFromPlayerOrLocation(receiverName);
-            var receiverDisplayName = receiver.getDisplayName();
 
             if (!(receiver)) {
                 if (self.syn(receiverName)) {
@@ -4994,6 +4993,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                 };
                 return notFoundMessage(receiverName);
             };
+
+            var receiverDisplayName = receiver.getDisplayName();
 
             if (receiver.getSubType() == "intangible") {
                 //check for custom action just in case.
