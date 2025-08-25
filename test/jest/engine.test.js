@@ -849,7 +849,7 @@ test('test push/shove', () => {
 
 test('test unimplemented verb', () => {
     const input = "conjure demon";
-    const expectedResult = "Something bad happened on the server. We've logged it for review. If this happens again, you've probably found a bug. (Thanks for finding it!)"; 
+    const expectedResult = "I'm afraid I don't <i>quite</i> understand you. Try using a different verb.<br><br><i>(This action hasn't been implemented yet. It's logged for review though, thanks for trying!)</i>"; 
     let actualResult = engine(input).description;
     
     expect(actualResult).toBe(expectedResult);

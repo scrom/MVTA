@@ -3018,16 +3018,23 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     return self.get(verb, artefactName);
                 };
 
-                var creatures = _currentLocation.getCreatures(); 
-                if (creatures.length > 1) {
-                    return verb + " from whom or what?"
-                } else {
-                    //there's only 1 creature to buy from.
-                    if (creatures[0].sells(artefactName)) {
-                        return creatures[0].sell(artefactName, self);
+                var creatures = _currentLocation.getCreatures();
+                let sellingCreatures = []; 
+                for (let c=0 ; c < creatures.length; c++) {
+                    if (creatures[c].sells(artefactName)) {
+                        sellingCreatures.push(creatures[c])
                     };
-                    return self.get(verb, artefactName);
                 };
+
+                if (sellingCreatures.length > 1) {
+                    return verb + " from whom or what? There are " + sellingCreatures.length + " options.";
+                } else if (sellingCreatures.length === 1) {
+                    //there's only 1 creature to buy from.
+                    return sellingCreatures[0].sell(artefactName, self);
+                } 
+
+                return self.get(verb, artefactName);
+
             };
 
             //if giverName is a creature - buy
@@ -3331,6 +3338,8 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
                     //we are greeting soneone - may or may not be current creature.
                     if (tools.stringIsEmpty(speech)) {
                         speech = "hello";
+                    } else if (receiverName && receiverName != _lastCreatureSpokenTo) {
+                            speech = "hello";        
                     } else if (!(speech.includes(_lastCreatureSpokenTo))) {
                         receiverName = null; //wipe receiver and check again.
                     };

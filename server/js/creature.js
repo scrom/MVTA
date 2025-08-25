@@ -374,7 +374,11 @@ exports.Creature = function Creature(name, description, detailedDescription, att
         };
 
         var notFoundMessage = function(objectName, map) {
-            return map.notFoundFallback(objectName, null, self);
+            let sales = "";
+            if (_salesInventory.size() >= 1) {
+                sales = "<br>'I can <i>sell</i> you something else if you'd like though.'";
+            };
+            return map.notFoundFallback(objectName, null, self)+ sales;
         };
 
         var getObjectFromSelfPlayerOrLocation = function(objectName, player) {
@@ -3338,6 +3342,16 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                 if (tokens[0] == "to") {
                     tokens.shift();
                 };
+
+                if (tokens.length == 0) {
+                    return tools.initCap(replyName) + " say"+ss+" 'Is there something I can help you with?'";
+                };
+                if (tokens.length == 1) {
+                    var singleWord = tokens[0];
+                    if (map.dictionaryLookup(singleWord)) {
+                        return tools.initCap(replyName) + " say"+ss+" 'What about "+singleWord+"?'";
+                    };
+                };
                 var firstWord = tokens[0];
                 var remainderString = "";
                 if (firstWord.substr(firstWord.length - 1) == "s") {
@@ -3507,6 +3521,13 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                         if (["goes", "gives", "up", "going on", "goin on", "goin down", "going down", "happening"].includes(remainderString) || !(remainderString == remainderString.replace(/\b you do\b/, ""))) {
                             return tools.initCap(self.getFirstName()) + " says 'I'm just doing stuff, being busy, that kinda thing.'<br>'How about you?'";
                         } else if (!(remainderString == remainderString.replace(/\b you\b/, ""))) {
+                            if (remainderString.includes("have") || remainderString.includes("sell") || remainderString.includes("buy") || remainderString.includes("trade") || remainderString.includes("sale") || remainderString.includes("selling")) {
+                                if (_salesInventory.size() == 0) {
+                                    return tools.initCap(self.getFirstName()) + " says 'I don't have anything for you at the moment.'";
+                                } else {
+                                    return tools.initCap(self.getFirstName()) + " says 'I have " + _salesInventory.describe('price') + " for sale.'";
+                                };
+                            };
                             return tools.initCap(self.getFirstName()) + " says 'I'm "+self.getFirstName()+".'<br>'Is there anything you need?'";
                         };
                     case 'when'://is/are/can (see can)/will [event happen][character arrive be at x]

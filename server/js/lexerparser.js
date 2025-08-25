@@ -450,7 +450,20 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     inputVerbs.splice(isIndex,1);
                 };
             };
-                    
+
+            //working from last verb backwards, test string chunks for dictionary match
+            for (let i = inputVerbs.length - 1; i >= 0; i--) {
+                for (let index = tokens.lastIndexOf(inputVerbs[i]); index > 0; index--) {
+                    let remainderString = [...tokens.slice(index)].join(" ");
+                    let match = self.dictionary.lookup(remainderString);
+                    if (match && inputVerbs.length > 1) {
+                        //we found a match remove as a verb
+                        inputVerbs.splice(i,1);
+                        break;
+                    };
+                };
+            };
+
             //we may be back down to 1 verb now...
             if (inputVerbs.length == 1) {
                 verbIndex = tokens.indexOf(inputVerbs[0]);
@@ -522,7 +535,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                     //handling for follow on questions/bye/Y/N and modal verbs if _inConverastion *before* we extract more verbs - mainly questions and modals
                     if (
                         (questions.some((e) =>  input.split(/\s+/)[0] == e)) ||
-                        (input.endsWith("?")) ||
+                        (input.endsWith("?")) || (input.startsWith("ask")) ||
                         (moreQuestions.some((e) =>  input.split(/\s+/)[0] == e)) ||
                         (modalVerbs.some((e) =>  input.split(/\s+/)[0] == e))
                     ) {
@@ -700,7 +713,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                 };
            
                 //are we *switching* creature whilst talking to another?
-                if (objects.length == 2 && player && (!verb || (verbs[verb].category== "dialogue" && verb != "greet") && _inConversation && _inConversation != "everyone")) { 
+                if (objects.length >=1 && player && (!verb || (verbs[verb].category== "dialogue" && verb != "greet") && _inConversation && _inConversation != "everyone")) { 
                     //do we swap out objects[1] (inConversation) with new creature?
                     let possibleMatches = []
                     let matched = false;
@@ -759,8 +772,10 @@ module.exports.LexerParser = function LexerParser(dictionary) {
                         //this is where we can use "inputVerbs" to help us.
                         for (let t=0; t<tokens.length;t++) {
                             if (inputVerbs.includes(tokens[t])) {
-                                //we've hit a verb before a matching name...
-                                break;
+                                //we've hit a verb before a matching name... - are we talking to new person? //not ask, question, or reply
+                                if ((["ask", "question", "reply", "goodbye", ].includes(self.normaliseVerb(tokens[t])))) {
+                                    break;
+                                };
                             };
                             let key = Object.keys(possibleMatches)[0];
                             if (possibleMatches[key].synonyms.includes(tokens[t])) {
