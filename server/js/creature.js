@@ -520,8 +520,9 @@ exports.Creature = function Creature(name, description, detailedDescription, att
             self.decreaseAffinity(affinityImpact, false);
             player.increaseAggression(1); //don't do this.
 
-            var randomReplies = ["I don't think " + _prefix.toLowerCase() + " appreciates that.", "C'mon, really?!", "Seriously. Consent is a thing you know.", "That's <i>not</i> acceptable behaviour."];
+            var randomReplies = ["I don't think " + _prefix.toLowerCase() + " appreciates that."];
                 if (self.getSubType() != "animal") {
+                    randomReplies.push("C'mon, really?!", "Seriously. Consent is a thing you know.", "That's <i>not</i> acceptable behaviour.");
                     randomReplies.push(_prefix + " says 'Will you stop that please.'");
                     randomReplies.push(_prefix + " says 'HEY!'");
                     randomReplies.push(_prefix + " says 'Back... ...off.'");

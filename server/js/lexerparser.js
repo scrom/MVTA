@@ -98,7 +98,7 @@ module.exports.LexerParser = function LexerParser(dictionary) {
         var _awaitingPlayerAnswer = false;
 
         const sanitiseString = function(aString) {
-            return aString.toLowerCase().substring(0,255).replace(/[^a-z0-9 +]+/g,""); //letters, numbers, and plus sign.
+            return aString.toLowerCase().substring(0,255).replace(/[^a-z0-9 +-]+/g,""); //letters, numbers, and plus/minus signs.
         };
 
         self.setAwaitingPlayerAnswer = function(bool) {
