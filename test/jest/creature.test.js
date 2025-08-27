@@ -856,7 +856,7 @@ test('creatureWillAvoidEmergencyExitsWhenSeekingDestination', () => {
     expect(actual).toBe(true);
 });
 
-test('johnCanFindPathToPlantRoom', () => {
+test('josephCanFindPathToPlantRoom', () => {
     var m = mb.buildMap();
     var p0 = new player.Player({ username: "player" }, m);
     var peacock = m.getLocation("peacock");
@@ -864,25 +864,17 @@ test('johnCanFindPathToPlantRoom', () => {
     var joseph = m.getCreature("Joseph Baxter");
     joseph.clearDestination();
     joseph.clearDestination();
+    joseph.clearDestination();
+    joseph.setDestinationDelay(150, true); //make sure he stays there!
     var destinations = joseph.getDestinations();
-    console.debug(destinations);
-    
+    console.debug("Dest: " + destinations);
+    console.debug("next destination = " + joseph.getNextDestination());
     var path = joseph.findBestPath(joseph.getNextDestination(), m);
     console.debug("Selected path length=" + path.length + ". Path: " + path);
     var pathLength = path.length;
-    joseph.tick(pathLength, m, p0);
+    joseph.tick(pathLength+20, m, p0); //give extra time for assorted paths
     console.debug("Loc = " + joseph.getCurrentLocationName());
-    console.debug("Dest: "+destinations);
-    path = joseph.getPath();
-    console.debug("Selected path length=" + path.length + ". Path: " + path);
-    pathLength = path.length;
-    joseph.tick(pathLength, m, p0);
-    console.debug("Loc = " + joseph.getCurrentLocationName());
-    console.debug("Dest: " + destinations);
-    path = joseph.getPath();
-    console.debug("Selected path length=" + path.length + ". Path: " + path);
-    pathLength = path.length;
-    joseph.tick(pathLength, m, p0);
+
     var expected = "plant-room";
     var actual = joseph.getCurrentLocationName();
     console.debug("Selected path length=" + path.length + ". Path: " + path);

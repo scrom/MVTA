@@ -206,7 +206,13 @@
                     "lift call",
                     "lift button",
                     "lift call button",
-                    "door"
+                    "door",
+                    "elevator",
+                    "elevator call",
+                    "elevator button",
+                    "elevator call button",
+                    "elevator door",
+                    "lift door"
                 ]
             },
             {
@@ -2100,6 +2106,7 @@
                                     "canCollect": true,
                                     "isBreakable": true,
                                     "charges": 5,
+                                    "chargeUnit": "dressing",
                                     "imageName": "firstaidkit.jpg",
                                     "canDrawOn": true
                                 },
@@ -3949,6 +3956,7 @@
                             "canCollect": true,
                             "isBreakable": true,
                             "charges": 5,
+                            "chargeUnit": "dressing",
                             "imageName": "firstaidkit.jpg",
                             "canDrawOn": true
                         },
@@ -5508,7 +5516,7 @@
                             "huntPlayer": true,
                             "static": true,
                             "dialogue": [
-                                "'Hey $player.'<br>'A parcel arrived a moment ago with the facilities team. It's been through the wars a bit but we think might be for you.'<br>'I've popped it in the post room.'"
+                                "'Hey $player.'<br>'A parcel arrived a moment ago with the facilities team. It's been through the wars a bit but we think it might be for you.'<br>'I've popped it in the post room.'"
                             ]
                         },
                         "conditionAttributes": {
@@ -6505,6 +6513,7 @@
                 "attributes": {
                     "weight": 100,
                     "type": "scenery",
+                    "subType": "furniture",
                     "hideDeliveryDescription": true,
                     "customAction": "wash",
                     "defaultResult": "You rinse your face and hands in the sink. You feel clean and refreshed.",
@@ -7371,6 +7380,7 @@
                 "attributes": {
                     "weight": 100,
                     "type": "scenery",
+                    "subType": "furniture",
                     "hideDeliveryDescription": true,
                     "customAction": "wash",
                     "defaultResult": "You rinse your hands in the basin and ponder on where all the water in this place comes from and goes to.<br>Hmmm.",
@@ -7856,6 +7866,7 @@
                     "weight": 151,
                     "carryWeight": 25,
                     "type": "scenery",
+                    "subType": "furniture",
                     "holdsLiquid": true,
                     "isBreakable": true,
                     "canOpen": true,
@@ -7865,7 +7876,8 @@
                 "synonyms": [
                     "chiller",
                     "refrigerator",
-                    "refridgerator"
+                    "refridgerator",
+                    "cooler"
                 ],
                 "inventory": [
                     {
@@ -9262,6 +9274,7 @@
                     "canCollect": true,
                     "isBreakable": true,
                     "charges": 5,
+                    "chargeUnit": "dressing",
                     "imageName": "firstaidkit.jpg",
                     "canDrawOn": true
                 },
@@ -9279,7 +9292,7 @@
         "object": "location",
         "name": "kitchen-ground-floor",
         "displayName": "Kitchen",
-        "description": "You're in the atrium kitchen. This is the main hub of activity for staff refreshments outside mealtimes.<br>Some years ago there was a coffee machine on each floor but they were all removed to encourage serendipity.<br>Although at the time many people complained, It's just something everybody's used to now.",
+        "description": "You're in the atrium kitchen. It has the usual furniture you'd find in a kitchen; sink, fridge, etc.<br>This is the main hub of activity for staff refreshments outside mealtimes.<br>Some years ago there was a coffee machine on each floor but they were all removed to encourage serendipity.<br>Although at the time many people complained, It's just something everybody's used to now.",
         "attributes": {
             "imageName": "kitchen-ground-floor.jpg"
         },
@@ -9506,6 +9519,7 @@
                     "weight": 151,
                     "carryWeight": 25,
                     "type": "scenery",
+                    "subType": "furniture",
                     "holdsLiquid": true,
                     "isBreakable": true,
                     "canOpen": true,
@@ -9515,7 +9529,8 @@
                 "synonyms": [
                     "chiller",
                     "refrigerator",
-                    "refridgerator"
+                    "refridgerator",
+                    "cooler"
                 ],
                 "inventory": [
                     {
@@ -11683,6 +11698,7 @@
                                                 "canCollect": true,
                                                 "isBreakable": true,
                                                 "charges": 1,
+                                                "chargeUnit": "dressing",
                                                 "imageName": "emergencyfirstaid.jpg",
                                                 "canDrawOn": true
                                             },
@@ -12348,6 +12364,7 @@
                     "canCollect": true,
                     "isBreakable": true,
                     "charges": 5,
+                    "chargeUnit": "dressing",
                     "imageName": "firstaidkit.jpg",
                     "canDrawOn": true
                 },
@@ -12777,7 +12794,10 @@
             "first",
             "lift",
             "lift first floor",
-            "lift-first-floor"
+            "lift-first-floor",
+            "elevator",
+            "elevator first floor",
+            "elevator-first-floor"
         ],
         "exits": [
             {
@@ -12892,7 +12912,10 @@
         "synonyms": [
             "lift",
             "lift ground floor",
-            "lift-ground-floor"
+            "lift-ground-floor",
+            "elevator",
+            "elevator ground floor",
+            "elevator-ground-floor"
         ],
         "exits": [
             {
@@ -13020,7 +13043,10 @@
             "lift",
             "lift second floor",
             "lift-second-floor",
-            "second"
+            "second",
+            "elevator-second-floor",
+            "elevator",
+            "elevator second floor"
         ],
         "exits": [
             {
@@ -13592,6 +13618,7 @@
                 "synonyms": [
                     "man",
                     "icecream man",
+                    "ice cream man",
                     "him"
                 ],
                 "missions": [
@@ -15580,6 +15607,7 @@
                             "canCollect": true,
                             "isBreakable": true,
                             "charges": 5,
+                            "chargeUnit": "dressing",
                             "hidden": true,
                             "position": "under",
                             "imageName": "firstaidkit.jpg",
@@ -16116,7 +16144,7 @@
                         ]
                     },
                     "score": 10,
-                    "message": "<br>Violet Says 'Here's your key fob.'<br>'You'll need it to get in and out of some parts of the office.'"
+                    "message": "<br>Violet hands you an electronic key fob.<br>'Here's your key fob.' She says. 'You'll need it to get in and out of some parts of the office.'<br>'Joseph has been assigned as your new starter buddy, he'll come and find you and show you the ropes.'"
                 }
             }
         ]
@@ -18645,6 +18673,7 @@
                 "attributes": {
                     "weight": 100,
                     "type": "scenery",
+                    "subType": "furniture",
                     "hideDeliveryDescription": true,
                     "customAction": "wash",
                     "defaultResult": "You rinse your face and hands in the sink. You feel clean and refreshed.",

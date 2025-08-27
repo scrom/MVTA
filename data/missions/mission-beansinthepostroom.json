@@ -10,7 +10,7 @@
     "huntPlayer": true,
     "static": true,
     "dialogue": [
-      "'Hey $player.'<br>'A parcel arrived a moment ago with the facilities team. It's been through the wars a bit but we think might be for you.'<br>'I've popped it in the post room.'"
+      "'Hey $player.'<br>'A parcel arrived a moment ago with the facilities team. It's been through the wars a bit but we think it might be for you.'<br>'I've popped it in the post room.'"
     ]
   },
   "conditionAttributes": {

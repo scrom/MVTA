@@ -12,7 +12,9 @@
       "heating"
     ],
     "destinations": [
+      "reception",
       "plant-room",
+      "reception",
       "facilities-area",
       "smoking-area"
     ],
@@ -43,8 +45,7 @@
     "joseph b"
   ],
   "missions": [
-    {
-      "file": "mission-beansinthepostroom"
-    }
+      {"file": "mission-newstarterbuddy"},
+      {"file": "mission-beansinthepostroom"}
   ]
 }

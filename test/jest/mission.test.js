@@ -1052,7 +1052,39 @@ test('can Sign In and get keyfobMission', () => {
     console.debug(destroy);
 
     const resultString = m0.updateMissions(1, p0);
-    const expectedResult = "<br><br>Violet Says 'Here's your key fob.'<br>'You'll need it to get in and out of some parts of the office.'<br>";
+    const expectedResult = "<br><br>Violet hands you an electronic key fob.<br>'Here's your key fob.' She says. 'You'll need it to get in and out of some parts of the office.'<br>'Joseph has been assigned as your new starter buddy, he'll come and find you and show you the ropes.'<br>";
     const actualResult = resultString;
     expect(actualResult).toBe(expectedResult);
+});
+
+  
+test('new starter buddy mission is activated', () => {
+        const mc = new missionController.MissionController();
+
+        const reception = m0.getLocation("reception")
+        const keyfob = reception.getMissions(true)[0];
+
+        m0.completeNamedMission("keyfob", p0);
+        p0.setLocation(reception);
+        p0.tick(1, m0);
+        p0.tick(2, m0);
+        mc.updateMissions(2, p0, m0);
+        mc.updateMissions(2, p0, m0);
+
+        const joseph = m0.getCreature("joseph baxter");
+
+        joseph.go(null, reception);
+        joseph.tick(1, m0);
+        mc.updateMissions(2, p0, m0);
+
+        const newstarterbuddy = m0.getNamedMission("newstarterbuddy");
+
+        p0.setLocation(reception);
+        p0.tick(6, m0);
+        mc.updateMissions(4, p0, m0);
+        mc.updateMissions(1, p0, m0);
+
+        const expectedResult = true;
+        const actualResult = newstarterbuddy.isFailedOrComplete();
+        expect(actualResult).toBe(expectedResult);
 });

@@ -4170,10 +4170,18 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     var exit;
                     
                     //hunting player (including mission hunt flags)?
+                    let traceFound = false
                     if (self.isHuntingPlayer()) {
                         _destinationBlockedCount = 0;
                         exit = _currentLocation.getExitWithBestTrace('player', map, _inventory);
-                    } else if (_destinations.length > 0) {
+                        let destinationName = exit.getDestinationName();
+                        let traceLocation = map.getLocation(destinationName);                        
+                        if (traceLocation.getPlayerTrace() > 0) {
+                            traceFound = true;
+                        };
+                    };
+                    
+                    if ((!traceFound) && _destinations.length > 0) {
                         //or has destinations?
                         //is creature in "current" destination?
                         if (_destinations[_destinations.length - 1] == _currentLocation.getName()) {
@@ -4182,8 +4190,8 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                             self.clearPath();
                             self.clearDestination();
                             _destinationBlockedCount = 0;
-                            //if creature is in home location, stay there a short while. (activate wait delay)
-                            if (_currentLocation.getName() == _homeLocation.getName()) {
+                            //if creature is in home location, and not hunting, stay there a short while. (activate wait delay)
+                            if (_currentLocation.getName() == _homeLocation.getName() && (!self.isHuntingPlayer())) {
                                 var randomWait = Math.floor(Math.random() * 9);
                                 _waitDelay = 3 + randomWait;
                                 _currentDelay = 0;
@@ -4502,7 +4510,7 @@ exports.Creature = function Creature(name, description, detailedDescription, att
                     self.setHuntingPlayer(false); //has no reason to be hunting any more
                 } else {
                     //is player is not already talking to someone else?
-                    if (player.getLastCreatureSpokenTo() == undefined || player.getLastCreatureSpokenTo() == self.getName()) {
+                    if (tools.stringIsEmpty(player.getLastCreatureSpokenTo()) || player.getLastCreatureSpokenTo() == self.getName()) {
                         self.setHuntingPlayer(false); //has found player
                         var conversationString = self.initiateConversation(player);
                         if (visibleResultString.indexOf(localDisplayName) > -1) {

@@ -106,7 +106,7 @@ test('"heal" verb for creature', () => {
 
 test('"stats" verb', () => {
     const input = "stats";
-    const expectedResult = "<i>Statistics for Tester:</i><br>Your score is 0 out of 2055";
+    const expectedResult = "<i>Statistics for Tester:</i><br>Your score is 0 out of 2060";
     const actualResult = engine(input).description.substring(0,expectedResult.length);
     expect(actualResult).toBe(expectedResult);
 });

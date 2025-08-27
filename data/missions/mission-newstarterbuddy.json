@@ -1,0 +1,24 @@
+{
+  "object": "mission",
+  "name": "newstarterbuddy",
+  "displayName": "Meet your new starter buddy",
+  "description": "Joseph is your new starter buddy. He'll give you some pointers on where to start.",
+  "attributes": {
+    "parent": "keyfob",
+    "missionObject": "joseph baxter",
+    "initiateConversation": true,
+    "huntPlayer": true,
+    "static": true,
+    "dialogue": [
+      "'Hey $player.'<br>'So you're our new Dogsbody! You'll be on my facilities team.'<br>'Our area with your desk is up on the top floor, tucked away in the far North-East corner <i>(past the IS, Core, and Finance teams).</i>'<br>'The job's pretty simple, you're here to make everyones lives easier. Fix stuff, fetch stuff, generally help people out.'<br>'If you haven't already noticed, your first vital job is to get the coffee machine working it's broken again.'<i>'Don't forget to get some coffee for yourself too, you'll need it!</i><br>'Sorting that out will likely encourage other people to start asking for your support so you can feel a little more useful by the end of the day!'"
+    ]
+  },
+  "conditionAttributes": {
+    "alive": true,
+    "conversationState": 1
+  },
+  "reward": {
+    "score": 5,
+    "message": "<br>Joseph gives you a big smile. 'Welcome to team Porta Rossa!'"
+  }
+}
