@@ -3085,6 +3085,13 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
             return buyer.buy(objectToGive, self);
         };
 
+        self.build = function(verb, artefactName, splitWord, giverName){
+            if (tools.stringIsEmpty(giverName)) { return self.get("get", artefactName); };
+            //var giver = getObjectFromPlayerOrLocation(giverName);
+            //if (!(giver)) { return notFoundMessage(giverName); };
+            return self.take(verb, artefactName, splitWord, giverName);
+        };
+
         self.take = function(verb, artefactName, splitWord, giverName){
             //use "get" if we're not taking from anything
             if (tools.stringIsEmpty(giverName)){ return self.get(verb, artefactName);};

@@ -772,6 +772,15 @@ module.exports.Actions = function Actions(parser, fileManager) {
           return self.processResponse(player.get(po.originalVerb, po.subject), player, map, po ,1);
         };
 
+        self.build = function (verb, player, map, po) {
+          let fail = self.precheckFail(player, map, po);
+          if (fail) { return fail;};
+          if (po.subject && po.object) {
+            return self.take(verb, player, map, po);
+          }
+          return self.processResponse(player.build(po.originalVerb, po.subject, po.preposition, po.object), player, map, po ,1);
+        };
+
         self.pick  = function (verb, player, map, po) {
           let fail = self.precheckFail(player, map, po);
           if (fail) { return fail;};
