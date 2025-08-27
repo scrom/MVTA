@@ -176,27 +176,27 @@ module.exports.LexerParser = function LexerParser(dictionary) {
             if (objects.length == 1 && !preposition) {
                 //check if we start or end with a number and split that out as subject
                 tokens = rest.split(/\s+/);
-                if (Number.isInteger(Number(tokens[0]))) {
-                    preposition = tokens.shift();
-                    objects[0] = tokens.join(" ");
-                } else if (Number.isInteger(Number(tokens[tokens.length-1]))) {
-                    preposition = tokens.pop();
-                    objects[0] = tokens.join(" ");
+                let match;
+                if (Number.isInteger(Number(tokens[0])) || Number.isInteger(Number(tokens[tokens.length-1]))) {
+                    //ensure we're not stripping from a real object.
+                    match = self.dictionary.lookup(rest);
+                };
+                if (match) {
+                    objects[0] = rest;
+                } else {
+                    if (Number.isInteger(Number(tokens[0]))) {
+                        preposition = tokens.shift();
+                        objects[0] = tokens.join(" ");
+                    } else if (Number.isInteger(Number(tokens[tokens.length-1]))) {
+                        preposition = tokens.pop();
+                        objects[0] = tokens.join(" ");
+                    };
                 };
             };
 
             //now try splitting on conversation chunks...
-            if (objects.length == 1 && !preposition) {
-                //check if we start or end with a number and split that out as subject
-                tokens = rest.split(/\s+/);
-                if (Number.isInteger(Number(tokens[0]))) {
-                    preposition = tokens.shift();
-                    objects[0] = tokens.join(" ");
-                } else if (Number.isInteger(Number(tokens[tokens.length-1]))) {
-                    preposition = tokens.pop();
-                    objects[0] = tokens.join(" ");
-                };
-            };
+            //@todo
+
 
             //If current input object is "it", we use the last object instead.
             //work out where last noun will belong 
