@@ -1149,21 +1149,26 @@ module.exports.Player = function Player(attributes, map, mapBuilder) {
         };
 
         self.think = function (verb, artefactName, splitWord, receiverName, originalAction) {
-            if (artefactName.length > 0) {
-                var artefact = getObjectFromPlayerOrLocation(artefactName);
-            };
-            
+
             var receiver;
             if (receiverName) {
                 receiver = getObjectFromPlayerOrLocation(receiverName);
-                if (receiver) {
-                    if (receiver.checkCustomAction(verb)) {
-                        return receiver.performCustomAction(verb, map, self);
-                    };
+            };
+
+            if (receiver) {
+                if (receiver.checkCustomAction(verb)) {
+                    return receiver.performCustomAction(verb, map, self);
                 };
             };
-                      
-            if (receiverName.length == 0 && artefact) {
+
+            var artefact
+            if (artefactName) {
+                if (artefactName.length > 0) {
+                    artefact = getObjectFromPlayerOrLocation(artefactName);
+                };
+            };
+                          
+            if (artefact) {
                 if (artefact.checkCustomAction(verb)) {
                     return artefact.performCustomAction(verb, map, self);
                 };

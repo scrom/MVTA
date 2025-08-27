@@ -135,7 +135,7 @@ module.exports.Inventory = function Inventory(maxCarryingWeight, openingCashBala
         //take a set of objects and return simple JSON description and price.
         //de-duplicate at the same time
         self.prepareItemList = function (items, minSize) {
-            if (minSize == undefined) {
+            if (minSize == undefined || !minSize || minSize == "") {
                 minSize = -999;
             };
 

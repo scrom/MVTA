@@ -6,6 +6,7 @@
 "attributes": {
   "weight": 100,
   "type": "scenery",
+  "subType": "furniture",
   "imageName": "washbasin.jpg", 
   "customAction": "wash",
   "defaultResult": "You rinse your face and hands in the sink. You feel clean and refreshed.",

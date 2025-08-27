@@ -11,6 +11,7 @@
     "canCollect": true,
     "isBreakable": true,
     "charges": 5,
+    "chargeUnit": "dressing",
     "canDrawOn": true
 },
 "synonyms": [

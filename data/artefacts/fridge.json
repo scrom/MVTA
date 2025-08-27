@@ -8,6 +8,7 @@
     "weight": 151,
     "carryWeight": 25,
     "type": "scenery",
+    "subType": "furniture",
     "imageName": "fridge.jpg", 
     "holdsLiquid": true,
     "isBreakable": true,
@@ -18,7 +19,8 @@
   "synonyms": [
     "chiller",
     "refrigerator",
-    "refridgerator"
+    "refridgerator",
+    "cooler"
   ],
   "inventory": [
     { "file": "bottle-of-milk" },

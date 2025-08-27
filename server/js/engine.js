@@ -48,7 +48,7 @@ function createEngine(player, map) {
       if (err.toString().includes("not implemented")) {
         return a.buildResultJSON("I'm afraid I don't <i>quite</i> understand you. Try using a different verb.<br><br><i>(This action hasn't been implemented yet. It's logged for review though, thanks for trying!)</i>", null, player, {originalInput:input});
       };
-      return a.buildResultJSON("Something bad happened on the server. We've logged it for review. If this happens again, you've probably found a bug. (Thanks for finding it!)", null, player, {originalInput:input});
+      return a.buildResultJSON("Ouch. Looks like you found a bug. We've logged it for review. (Thanks for finding it!)<br>Let's avoid doing that again for a while until it's fixed.", null, player, {originalInput:input});
     };
   } ;
 };

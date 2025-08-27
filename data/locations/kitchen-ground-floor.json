@@ -2,7 +2,7 @@
   "object": "location",
   "name": "kitchen-ground-floor",
   "displayName": "Kitchen",
-  "description": "You're in the atrium kitchen. This is the main hub of activity for staff refreshments outside mealtimes.<br>Some years ago there was a coffee machine on each floor but they were all removed to encourage serendipity.<br>Although at the time many people complained, It's just something everybody's used to now.",
+  "description": "You're in the atrium kitchen. It has the usual furniture you'd find in a kitchen; sink, fridge, etc.<br>This is the main hub of activity for staff refreshments outside mealtimes.<br>Some years ago there was a coffee machine on each floor but they were all removed to encourage serendipity.<br>Although at the time many people complained, It's just something everybody's used to now.",
   "attributes": {
     "imageName": "kitchen-ground-floor.jpg"
   },
