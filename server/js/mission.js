@@ -1227,24 +1227,25 @@ module.exports.Mission = function Mission(name, displayName, description, attrib
                 };
 
                 //check all//any/none
-                var missionObjectInventory = missionObject.getInventoryObject();
-                if (_failAttributes.hasOwnProperty("allOf")) {
-                    if (self.checkAllOf(_failAttributes, missionObjectInventory, missionObject)) {
-                        return self.fail("failAttributes");
+                if (missionObject.getName() != "$map") {
+                    var missionObjectInventory = missionObject.getInventoryObject();
+                    if (_failAttributes.hasOwnProperty("allOf")) {
+                        if (self.checkAllOf(_failAttributes, missionObjectInventory, missionObject)) {
+                            return self.fail("failAttributes");
+                        };
                     };
-                };
-                    
-                if (_failAttributes.hasOwnProperty("anyOf"))  {
-                    if (self.checkAnyOf(_failAttributes, missionObjectInventory, missionObject)) {
-                        return self.fail("failAttributes");
-                    };
-                };      
-                 if (_failAttributes.hasOwnProperty("noneOf"))  {
-                    if (self.checkNoneOf(_failAttributes, missionObjectInventory, missionObject)) {
-                        return self.fail("failAttributes");
-                    };
-                };     
-                    
+                        
+                    if (_failAttributes.hasOwnProperty("anyOf"))  {
+                        if (self.checkAnyOf(_failAttributes, missionObjectInventory, missionObject)) {
+                            return self.fail("failAttributes");
+                        };
+                    };      
+                    if (_failAttributes.hasOwnProperty("noneOf"))  {
+                        if (self.checkNoneOf(_failAttributes, missionObjectInventory, missionObject)) {
+                            return self.fail("failAttributes");
+                        };
+                    };     
+                };                    
             };
 
             //console.debug('mission object retrieved. Checking initial and condition attributes...');
