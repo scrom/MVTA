@@ -27,9 +27,8 @@
     }
   ],
   "inventory": [
-    {
-      "file": "joseph-baxter"
-    }
+    {"file": "joseph-baxter"},
+    {"file": "player-desk"}
   ],
   "synonyms": [
     "area",

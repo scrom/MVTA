@@ -5413,7 +5413,9 @@
                     "canTravel": true,
                     "traveller": true,
                     "destinations": [
+                        "reception",
                         "plant-room",
+                        "reception",
                         "facilities-area",
                         "smoking-area"
                     ],
@@ -5500,6 +5502,34 @@
                     "joseph b"
                 ],
                 "missions": [
+                    {
+                        "object": "mission",
+                        "name": "newstarterbuddy",
+                        "displayName": "Meet your new starter buddy",
+                        "description": "Joseph is your new starter buddy. He'll give you some pointers on where to start.",
+                        "attributes": {
+                            "parents": {
+                                "allOf": [
+                                    "keyfob"
+                                ]
+                            },
+                            "missionObject": "joseph baxter",
+                            "initiateConversation": true,
+                            "huntPlayer": true,
+                            "static": true,
+                            "dialogue": [
+                                "'Hey $player.'<br>'So you're our new Dogsbody! You'll be on my facilities team.'<br>'Our area with your desk is up on the top floor, tucked away in the far North-East corner <i>(past the IS, Core, and Finance teams).</i>'<br>'The job's pretty simple, you're here to make everyone's lives easier. Fix stuff, fetch stuff, generally help people out.'<br>'If you haven't already noticed, your first vital job is to get the coffee machine working. It's broken again.'<i><br>'Don't forget to get some coffee for yourself too, you'll need it!'</i><br>'Sorting that out will likely encourage other people to start asking for your support so you can feel a little more useful by the end of the day!'"
+                            ]
+                        },
+                        "conditionAttributes": {
+                            "alive": true,
+                            "conversationState": 1
+                        },
+                        "reward": {
+                            "score": 5,
+                            "message": "<br>Joseph gives you a big smile. 'Welcome to team Porta Rossa!'"
+                        }
+                    },
                     {
                         "object": "mission",
                         "name": "beansinthepostroom",
@@ -5619,6 +5649,25 @@
                             }
                         }
                     }
+                ]
+            },
+            {
+                "object": "artefact",
+                "name": "your desk",
+                "description": "your desk",
+                "detailedDescription": "It's a pretty standard wood-effect office desk.<by>(Hey, at least you <i>have</i> a desk. And on day 1 too! That's better than many places can manage.)",
+                "attributes": {
+                    "weight": 120,
+                    "canDrawOn": true
+                },
+                "synonyms": [
+                    "desk",
+                    "my desk",
+                    "your desk",
+                    "player desk",
+                    "office desk",
+                    "wood-effect desk",
+                    "wood effect desk"
                 ]
             }
         ]

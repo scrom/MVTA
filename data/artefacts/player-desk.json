@@ -1,0 +1,25 @@
+{
+  "object": "artefact",
+  "name": "your desk",
+  "description": "your desk",
+  "detailedDescription": "It's a pretty standard wood-effect office desk.<by>(Hey, at least you <i>have</i> a desk. And on day 1 too! That's better than many places can manage.)",
+  "attributes": {
+    "weight": 120,
+    "isBreakable": false,
+    "canDrawOn": true
+  },
+  "synonyms": [
+    "desk",
+    "my desk",
+    "your desk",
+    "player desk",
+    "office desk",
+    "wood-effect desk",
+    "wood effect desk"    
+  ],
+   "inventory": [
+    {
+      "file": "new-starter-guide"
+    }
+  ]
+}
