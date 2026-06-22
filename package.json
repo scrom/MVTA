@@ -33,7 +33,7 @@
     "fluent-json-schema": "^6.0.0",
     "jest": "^30.0.0",
     "node-mocks-http": "^1.17.2",
-    "sharp": "^0.34.2"
+    "sharp": "^0.35.2"
   },
   "bugs": {
     "url": "https://github.com/scrom/MVTA/issues"
