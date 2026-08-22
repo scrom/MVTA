@@ -24,7 +24,7 @@
     "express-slow-down": "^3.0.0",
     "jsonfile": "^6.1.0",
     "morgan": "^1.10.0",
-    "redis": "^5.0.1"
+    "redis": "^6.2.1"
   },
   "type": "commonjs",
   "devDependencies": {
